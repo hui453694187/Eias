@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:id="@+id/header_bar_select"
+        android:layout_width="fill_parent"
+        android:layout_height="@dimen/album_header_bar_height"
+        android:background="@color/common_title_bg"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/header_bar_leave_selection"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_alignParentLeft="true"
+            android:gravity="center"
+            android:paddingLeft="8.0dip"
+            android:paddingRight="8.0dip"
+            android:singleLine="true"
+            android:text="@string/api_cancel"
+            android:textColor="@drawable/camera_title_text_selector"
+            android:textSize="17.0sp" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal" >
+
+            <TextView
+                android:id="@+id/header_bar_leave_title"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:gravity="center"
+                android:paddingLeft="8.0dip"
+                android:paddingRight="8.0dip"
+                android:singleLine="true"
+                android:text=""
+                android:textColor="@drawable/camera_title_text_selector"
+                android:textSize="17.0sp" />
+        </LinearLayout>
+
+        <CheckBox
+            android:id="@+id/header_bar_leave_select_all"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:paddingRight="8.0dip"
+            android:text="全选"
+            android:textColor="@drawable/camera_title_text_selector"
+            android:textSize="17.0sp" />
+    </RelativeLayout>
+
+</LinearLayout>

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="wrap_content" >
+	<ImageView
+		android:id="@+id/imageView1"
+		android:layout_width="28dip"
+		android:layout_height="28dip"
+		android:layout_margin="5dip"
+		android:src="@drawable/open_dialog_document" >
+	</ImageView>
+	<LinearLayout
+		android:id="@+id/linearLayout1"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:orientation="vertical" >
+		<TextView
+			android:id="@+id/textView1"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="TextView"
+			android:textSize="13dip" >
+		</TextView>
+		<TextView
+			android:id="@+id/textView2"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="TextView"
+			android:textSize="13dip"
+			android:visibility="gone" >
+		</TextView>
+		<TextView
+			android:id="@+id/textView3"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="TextView"
+			android:textSize="14dip" >
+		</TextView>
+	</LinearLayout>
+	<LinearLayout
+		android:id="@+id/linearLayout2"
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:gravity="right" >
+		<CheckBox
+			android:id="@+id/checkBox1"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_alignParentRight="true"
+			android:focusable="false" >
+		</CheckBox>
+	</LinearLayout>
+</LinearLayout>

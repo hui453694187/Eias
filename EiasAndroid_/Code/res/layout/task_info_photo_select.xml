@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <include
+        android:id="@+id/home_title"
+        layout="@layout/app_title_layout" />
+
+    <include layout="@layout/media_title" />
+
+    <LinearLayout
+        android:id="@+id/add_photo_item"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <FrameLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:orientation="vertical" >
+
+            <ImageView
+                android:id="@+id/photo_imageView"
+                android:layout_width="100dp"
+                android:layout_height="100dp"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:background="#FFFFFF"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_launcher" />
+
+            <TextView
+                android:id="@+id/photoName_txt"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_marginBottom="10dip"
+                android:gravity="center"
+                android:text="卧室" />
+        </FrameLayout>
+
+        <Button
+            android:id="@+id/photo_add_btn"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:layout_marginLeft="5dp" />
+    </LinearLayout>
+
+</LinearLayout>

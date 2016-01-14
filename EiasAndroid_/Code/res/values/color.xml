@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="transparent">#21000000</color>
+    <color name="title_color">#0076b3</color>
+    <color name="title_bg">#e5e4e4</color>
+    <color name="huise">#eeeeee</color>
+    <color name="lanse">#5b90c6</color>
+    <color name="textlanse">#5A94B6</color>
+    <color name="gray">#999999</color>
+    <color name="gray1">#d5d4d4</color>
+    <color name="shenglanse">#0386c3</color>
+    <color name="white">#ffffff</color>
+    <color name="blue">#2828FF</color>
+    <color name="statue_normal">#5eb22d</color>
+    <color name="statue_active">#ff6633</color>
+    <color name="bg_wrap">#E5E4E4</color>
+    <color name="bg_wrap_selected">#00C6FF</color>
+    <color name="bg_item_normal">#EFEFEF</color>
+    <color name="bg_item_normal_transparent">#FFFFFF</color>
+    <color name="bg_item_normal_blue">#D7F5F9</color>
+    <color name="bg_item_press">#5AAADE</color>
+    <color name="bg_item_choose">#C3E9EC</color>
+    <color name="button_eb_color">#CC0000</color>
+    <color name="button_uneb_color">#A9A9A9</color>
+    <color name="button_font_color">#FCFAFC</color>
+    <color name="bg_item_press2">#F5FEB5</color>
+    <color name="bg_update_survey_list">#faf79d</color>
+    <color name="red">#FF0000</color>
+    <color name="theme">#1687ca</color>
+    <color name="theme_bg">#ffffff</color>
+    <color name="greenblack">#006000</color>
+    <color name="redblack">#AE0000</color>
+    
+    <color name="green">#00ff00</color>
+    <color name="bottle_green">#0000ff</color>
+    
+    <color name="black">#000000</color>
+    <color name="light_blue">#6593cb</color>
+    
+    
+</resources>

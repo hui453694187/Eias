@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name_en">eias</string>
+    <string name="app_name_ch">外采系统beta</string>
+    <string name="app_name_company">yunfang</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">                                                                                                  Hello world!</string>
+    <string name="app_copyright">©2014 ghsoft.cn.lnc.All Rights Reserved</string>
+    <string name="app_version">版本信息:v2.0.0.1</string>
+    <string name="app_describe1">◆  本系统是由北京云房开发，用于评估业务人员外部数据采集工具， 通过本软件能极大的提高外采工作效率。</string>
+    <string name="app_describe2">◆  本软件由北京云房数据技术有限责任公司版权所有。如果你有建议或需技术支持请联系我们：</string>
+    <string name="about_url">http://www.yunfangdata.com/index.html</string>
+    <string name="about_email">872236364@QQ.com</string>
+    <string name="app_name">eias.apk</string>
+    <!-- xlistview的参数 -->
+    <string name="xlistview_header_hint_normal">下拉刷新</string>
+    <string name="xlistview_header_hint_ready">松开刷新数据</string>
+    <string name="xlistview_header_hint_loading">正在加载</string>
+    <string name="xlistview_header_last_time">上次更新时间：</string>
+    <string name="xlistview_footer_hint_normal">查看更多</string>
+    <string name="xlistview_footer_hint_ready">松开载入更多</string>
+
+    <!-- 任务总数参数 -->
+    <string name="dlq_task">待领取</string>
+    <string name="ywc_task">/已领取</string>
+    <string name="urgent_task">紧急</string>
+    <string name="nomral_task">常规</string>
+    <string name="un_task">待领取任务总数：</string>
+    <string name="un_urgent_task">待领取紧急任务数：</string>
+    <string name="un_nomral_task">待领取常规任务数：</string>
+    <string name="en_task">已完成任务总数：</string>
+    <string name="en_urgent_task">已领取紧急任务数：</string>
+    <string name="en_nomral_task">已领取常规任务数：</string>
+
+    <!-- 任务相关的参数 -->
+    <string name="fee_string">收费金额：</string>
+    <string name="uploadtimes_string">上传次数：</string>
+    <string name="receiptTime_string">接收时间：</string>
+    <string name="createTime_string">创建时间：</string>
+    <string name="receiveDateTime_string">领取时间：</string>
+    <string name="deliveryTime_string">派发时间：</string>
+    <string name="user_string">堪查人：</string>
+    <string name="doneTime_string">完成时间：</string>
+    <string name="usedTime_string">堪查使用时间：</string>
+    <string name="defineDataName_string">勘察表名称：</string>
+    <string name="bookDate_string">预约日期：</string>
+    <string name="bookTime_string">预约时间：</string>
+    <string name="contackPerson_string">联系人：</string>
+    <string name="contackTel_string">联系人电话：</string>
+    <string name="urgentFee_string">加急收费金额：</string>
+    <string name="liveSearchCharge_string">预收费用金额：</string>
+    <string name="taskRemark">任务备注：</string>
+    <string name="pauseRemark">暂停备注：</string>
+    <string name="bookedRemark_string">备注：</string>
+
+    <!-- URL网址,仅做demo -->
+    <string name="website_root">http://192.168.11.2:8099/apis/</string>
+    <!-- 系统提示信息 -->
+    <string name="hint_get_data_fail">数据获取失败！</string>
+    <!-- 颜色 -->
+    <string name="update_datadefine_item_color">#1687ca</string>
+    <string name="export_dir">导出任务</string>
+    <string name="import_dir">导入任务</string>
+    <string name="thumbnail_dir">任务缩略图</string>
+    <string name="project_dir">任务资源</string>
+    <string name="user_image_dir">用户头像</string>
+    
+    <!-- 系统设置 -->
+    <string name="system_setting_copy">复制</string>
+    <string name="system_setting_paste">剪切</string>
+    <string name="system_setting_original_camer">系统自带相机</string>
+    <string name="system_setting_custom_camer">外采定制相机</string>
+    <string name="system_setting_photo_select">图库图片操作</string>
+    <string name="system_setting_camer_select">拍照相机选择</string>
+    
+    <!-- 下拉刷新控件 -->
+    <string name="head">这里是HeadView</string>
+    <string name="pull_to_refresh">下拉刷新</string>
+    <string name="release_to_refresh">释放立即刷新</string>
+    <string name="refreshing">正在刷新...</string>
+    <string name="refresh_succeed">刷新成功</string>
+    <string name="refresh_fail">刷新失败</string>
+    <string name="pullup_to_load">上拉加载更多</string>
+    <string name="release_to_load">释放立即加载</string>
+    <string name="loading">正在加载...</string>
+    <string name="load_succeed">加载成功</string>
+    <string name="load_fail">加载失败</string>
+    
+    <string name="taskInfo_address">任务地址</string>
+    <string name="recordErr_info">录音不成功，请确认是否禁用了外采系统录音权限，请尝试开启录音权限</string>
+</resources>

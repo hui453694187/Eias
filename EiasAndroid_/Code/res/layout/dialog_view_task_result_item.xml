@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="32dp"
+    android:layout_gravity="center_horizontal"
+    android:orientation="horizontal" >
+
+    <ImageView
+        android:id="@+id/dialog_view_task_result_item_img"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/quit" />
+
+    <TextView
+        android:id="@+id/dialog_view_task_result_item_concent"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingLeft="10dp"
+        android:text="TEST" />
+
+</LinearLayout>

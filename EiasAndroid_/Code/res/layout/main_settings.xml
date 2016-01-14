@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_settings_layout"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:background="#e6e6e6"
+    android:orientation="vertical" >
+
+    <include
+        android:id="@+id/mainsetting_title"
+        layout="@layout/app_title_layout" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scrollbarStyle="outsideOverlay" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <RelativeLayout
+                android:id="@+id/mainsetting_user_info"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/setting_btn_bg"
+                android:gravity="center" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="1dp"
+                    android:text="个人信息"
+                    android:textColor="#000"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/mainsetting_log"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/setting_btn_bg"
+                android:gravity="center" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="1dp"
+                    android:text="日志信息"
+                    android:textColor="#000"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/mainsetting_read_eias"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/setting_btn_bg"
+                android:gravity="center" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="1dp"
+                    android:text="功能介绍"
+                    android:textColor="#000"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/mainsetting_update"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/setting_btn_bg"
+                android:gravity="center" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="1dp"
+                    android:text="检查更新"
+                    android:textColor="#000"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/mainsetting_setting"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/setting_btn_bg"
+                android:gravity="center" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="1dp"
+                    android:text="系统设置"
+                    android:textColor="#000"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+            <!-- *********************************************************************** -->
+
+            <RelativeLayout
+                android:id="@+id/mainsetting_about"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="14dp"
+                android:background="@drawable/setting_btn_bg"
+                android:gravity="center" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="1dp"
+                    android:text="关于外采"
+                    android:textColor="#000"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/mainsetting_logout"
+                android:layout_width="fill_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/setting_btn_bg"
+                android:gravity="center" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="1dp"
+                    android:text="退出登录"
+                    android:textColor="#000"
+                    android:textSize="16sp" />
+            </RelativeLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+</LinearLayout>

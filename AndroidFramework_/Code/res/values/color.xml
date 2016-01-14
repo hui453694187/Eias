@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="transparent">#21000000</color>
+    <color name="title_color">#0076b3</color>
+    <color name="title_bg">#e5e4e4</color>
+    <color name="huise">#eeeeee</color>
+    <color name="lanse">#5b90c6</color>
+    <color name="gray">#999999</color>
+    <color name="shenglanse">#0386c3</color>
+    <color name="white">#28FF28</color>
+    <color name="blue">#2828FF</color>
+    <color name="bg_wrap">#E5E4E4</color>
+    <color name="bg_wrap_selected">#00C6FF</color>
+    <color name="bg_item_normal">#EFEFEF</color>
+    <color name="bg_item_normal_transparent">#FFFFFF</color>
+    <color name="bg_item_normal_blue">#D7F5F9</color>
+    <color name="bg_item_press">#5AAADE</color>
+    <color name="button_eb_color">#CC0000</color>
+    <color name="button_uneb_color">#A9A9A9</color>
+    <color name="button_font_color">#FCFAFC</color>
+    <color name="bg_item_press2">#F5FEB5</color>
+    <color name="bg_update_survey_list">#faf79d</color>
+    
+    <color name="main_menu_bg">#aa111213</color>
+    <color name="common_title_bg">#aa111213</color>
+    <color name="primary_title_text_color">#ff888888</color>
+    <color name="common_title_text">#ff565555</color>
+    <color name="common_text_yellow">#ffffe049</color>
+    <color name="album_item_bg">#fffcfcfd</color>
+    <color name="video_playter_bg">#333333</color>
+
+</resources>

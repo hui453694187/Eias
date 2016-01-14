@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical" >
+
+    <include
+        android:id="@+id/home_title"
+        layout="@layout/app_title_layout" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/log_title_bg" >
+
+        <View
+            android:id="@+id/introduction_back"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="center_vertical|center"
+            android:layout_marginLeft="3dp"
+            android:layout_marginRight="3dp"
+            android:background="@drawable/log_title_back"
+            android:visibility="gone" />
+
+        <com.yunfang.framework.view.ComboBox
+            android:id="@+id/introduction_spinner_type"
+            android:layout_width="fill_parent"
+            android:layout_height="40dp"
+            android:layout_gravity="center_vertical|center" >
+        </com.yunfang.framework.view.ComboBox>
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/introduction_listview"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:cacheColorHint="@android:color/transparent"
+        android:divider="@android:color/white"
+        android:dividerHeight="0dp"
+        android:fadeScrollbars="false"
+        android:fadingEdge="none"
+        android:fastScrollEnabled="true"
+        android:focusable="false"
+        android:listSelector="@android:color/transparent"
+        android:paddingLeft="1dp"
+        android:paddingRight="1dp"
+        android:scrollbarFadeDuration="0"
+        android:scrollbars="vertical"
+        android:scrollingCache="false" >
+    </ListView>
+
+</LinearLayout>

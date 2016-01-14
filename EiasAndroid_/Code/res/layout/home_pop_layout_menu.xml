@@ -1,0 +1,143 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/title_function_bg"
+    android:gravity="left"
+    android:orientation="vertical"
+    android:paddingLeft="10dp"
+    android:paddingRight="10dp" >
+
+    <Button
+        android:id="@+id/home_pop_menu_btn_user_info"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/btn_pop_bg"
+        android:drawableBottom="@drawable/title_functionframe_line"
+        android:drawablePadding="6dp"
+        android:text="我"
+        android:textColor="@color/bg_item_normal_transparent"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/home_pop_menu_btn_login"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/btn_pop_bg"
+        android:drawableBottom="@drawable/title_functionframe_line"
+        android:drawablePadding="6dp"
+        android:text="登录"
+        android:textColor="@color/bg_item_normal_transparent"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/home_pop_menu_btn_chang_user"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/btn_pop_bg"
+        android:drawableBottom="@drawable/title_functionframe_line"
+        android:drawablePadding="6dp"
+        android:text="切换账号"
+        android:textColor="@color/bg_item_normal_transparent"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/home_pop_menu_btn_chang_offline"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/btn_pop_bg"
+        android:drawableBottom="@drawable/title_functionframe_line"
+        android:drawablePadding="6dp"
+        android:text="离线勘察"
+        android:textColor="@color/bg_item_normal_transparent"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/home_pop_menu_btn_daily"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/btn_pop_bg"
+        android:drawableBottom="@drawable/title_functionframe_line"
+        android:drawablePadding="6dp"
+        android:text="日志"
+        android:textColor="@color/bg_item_normal_transparent"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/home_pop_menu_btn_setting"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/btn_pop_bg"
+        android:drawableBottom="@drawable/title_functionframe_line"
+        android:drawablePadding="6dp"
+        android:text="系统设置"
+        android:textColor="@color/bg_item_normal_transparent"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/home_pop_menu_btn_Introduction"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/btn_pop_bg"
+        android:drawableBottom="@drawable/title_functionframe_line"
+        android:drawablePadding="6dp"
+        android:text="功能介绍"
+        android:textColor="@color/bg_item_normal_transparent"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/home_pop_menu_btn_about"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/btn_pop_bg"
+        android:drawableBottom="@drawable/title_functionframe_line"
+        android:drawablePadding="6dp"
+        android:text="关于"
+        android:textColor="@color/bg_item_normal_transparent"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/home_pop_menu_btn_quit"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/btn_pop_bg"
+        android:drawableBottom="@drawable/title_functionframe_line"
+        android:drawablePadding="6dp"
+        android:text="退出"
+        android:textColor="@color/bg_item_normal_transparent"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/home_pop_menu_btn_newtask"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/btn_pop_bg"
+        android:drawableBottom="@android:color/transparent"
+        android:drawablePadding="6dp"
+        android:text="新建任务"
+        android:textColor="@color/bg_item_normal_transparent"
+        android:textSize="16sp" />
+<!--     <Button
+        android:id="@+id/home_pop_menu_btn_stop_task"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="6dp"
+        android:background="@drawable/btn_pop_bg"
+        android:drawableBottom="@android:color/transparent"
+        android:drawablePadding="6dp"
+        android:text="暂停任务"
+        android:textColor="@color/bg_item_normal_transparent"
+        android:textSize="16sp"
+        /> -->
+
+</LinearLayout>

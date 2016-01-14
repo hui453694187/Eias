@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="40dp"
+    android:background="@drawable/log_title_bg" >
+
+    <View
+        android:id="@+id/log_back"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center_vertical|center"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        android:background="@drawable/log_title_back" />
+
+    <com.yunfang.framework.view.ComboBox
+        android:id="@+id/log_spinner_type"
+        android:layout_width="140dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center_vertical|center"
+        android:layout_marginRight="1dp" >
+    </com.yunfang.framework.view.ComboBox>
+
+    <EditText
+        android:id="@+id/log_concent"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_gravity="center_vertical|center"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        android:layout_weight="1"
+        android:background="@drawable/log_editipt"
+        android:hint="请输入" />
+
+    <View
+        android:id="@+id/log_search"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_gravity="center_vertical|center"
+        android:layout_marginLeft="3dp"
+        android:layout_marginRight="3dp"
+        android:background="@drawable/search" />
+
+</LinearLayout>

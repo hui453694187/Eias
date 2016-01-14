@@ -1,0 +1,16 @@
+<resources>
+
+    <!--
+         Customize dimensions originally defined in res/values/dimens.xml (such as
+         screen margins) for sw600dp devices (e.g. 7" tablets) here.
+    -->
+    <dimen name="introduction_item">18sp</dimen>
+    <dimen name="text_ico">20dp</dimen>
+    <dimen name="dialog_checksdcard_margin">15dp</dimen>
+    <dimen name="text_size_h7">16.0sp</dimen>
+    <dimen name="text_size_h8">14.0sp</dimen>
+    <dimen name="text_size_h9">12.0sp</dimen>
+    
+    <dimen name="radio_padding">10dp</dimen>
+
+</resources>

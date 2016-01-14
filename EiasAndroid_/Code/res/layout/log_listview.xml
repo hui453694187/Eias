@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical" >
+
+    <include
+        android:id="@+id/home_title"
+        layout="@layout/app_title_layout" />
+
+    <include
+        android:id="@+id/log_header"
+        layout="@layout/log_title_layout" />
+
+    <ListView
+        android:id="@+id/log_listview"
+        android:layout_weight="1"
+        android:layout_width="match_parent"
+		android:layout_height="fill_parent"
+        android:cacheColorHint="@android:color/transparent"
+        android:divider="@color/huise"
+        android:dividerHeight="1dp"
+        android:fadeScrollbars="false"
+        android:fadingEdge="none"
+        android:listSelector="@android:color/transparent"
+        android:scrollbarFadeDuration="0"
+        android:scrollingCache="false" >
+    </ListView>
+
+    <Button
+        android:id="@+id/log_delete"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:background="@drawable/btn_selector"
+        android:text="清空日志"
+        android:textColor="@color/button_font_color"
+        android:textSize="22sp"
+        android:visibility="gone"/>
+
+</LinearLayout>

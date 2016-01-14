@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <include
+        android:id="@+id/task_baseInfo"
+        layout="@layout/task_items_taskbaseinfo"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/task_list_title"
+        layout="@layout/task_list_title_layout" />
+
+    <include
+        android:id="@+id/media_header_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top"
+        layout="@layout/media_header_bar"
+        android:visibility="gone" />
+
+    <!-- <LinearLayout
+        android:id="@+id/defult_pic_type_linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:orientation="horizontal" >
+
+        <TextView 
+            android:layout_weight="3"
+            android:gravity="center"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:text="默认照片类型"
+            android:textSize="15sp"
+            />
+        
+        <com.yunfang.eias.view.MyAutoCompleteTv
+            android:id="@+id/media_type_autoComplecTv"
+            android:layout_weight="7"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:completionThreshold="1"
+            android:dropDownHeight="150dp"
+            android:hint="请选择类型"
+            android:singleLine="true"
+            android:textSize="15sp" />
+    </LinearLayout> -->
+
+     <GridView 
+        android:id="@+id/type_item_gridView"
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:cacheColorHint="@android:color/transparent"
+        android:numColumns="2"
+        android:padding="4dip"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:descendantFocusability="blocksDescendants"
+        android:horizontalSpacing="4dip"
+        android:stretchMode="columnWidth"
+        android:scrollbarFadeDuration="0"
+        android:background="@drawable/juxing_zhijiao_white_normal"
+        android:fadeScrollbars="false">
+        
+    </GridView>
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#ffffffff"
+        android:orientation="vertical" >
+
+        <GridView
+            android:id="@+id/photo_show_gridView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:cacheColorHint="@android:color/transparent"
+            android:gravity="center"
+            android:horizontalSpacing="4dip"
+            android:listSelector="@android:color/transparent"
+            android:numColumns="4"
+            android:padding="4dip"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="4dip" >
+        </GridView>
+
+        <include
+            android:id="@+id/media_bottom_bar"
+            android:layout_width="fill_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            android:layout_gravity="bottom"
+            layout="@layout/media_bottom_bar"
+            android:visibility="gone" />
+    </RelativeLayout>
+
+</LinearLayout>

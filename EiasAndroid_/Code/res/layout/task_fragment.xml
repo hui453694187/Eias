@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	android:background="@android:color/white"
+	android:orientation="vertical" >
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="0dip"
+		android:layout_weight="1"
+		android:orientation="vertical" >
+		<include layout="@layout/task_list_title_layout" />
+		<include
+			android:id="@+id/task_pull_refresh_layout"
+			layout="@layout/task_listview" />
+	</LinearLayout>
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content" >
+		<include
+			android:id="@+id/task_search"
+			layout="@layout/task_list_search" />
+	</LinearLayout>
+</LinearLayout>

@@ -1,0 +1,5 @@
+\Q/bin/\E.*
+\Q/gen/\E.*
+\Q/doc/\E.*
+\Q/libs/android.jar\E
+\Q/libs/android-support-v4.jar\E

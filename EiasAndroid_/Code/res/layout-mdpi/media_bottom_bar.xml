@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="@dimen/album_rooter_bar_height"
+    android:background="@color/common_title_bg"
+    android:gravity="center_vertical"
+    android:orientation="horizontal" >
+
+    <Button
+        android:id="@+id/media_bottom_select_tips"
+        android:layout_width="0.0dip"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:background="@color/common_title_bg"
+        android:gravity="center"
+        android:text="选择类型"
+        android:textColor="@drawable/camera_color_white_yellow"
+        android:textSize="15sp" />    
+
+    <Button
+        android:id="@+id/media_bottom_bar_delete"
+        android:layout_width="0.0dip"
+        android:layout_height="fill_parent"
+        android:layout_weight="1"
+        android:background="@color/common_title_bg"
+        android:gravity="center"
+        android:text="删除"
+        android:textColor="@drawable/camera_color_white_yellow"
+        android:textSize="15sp" />
+
+</LinearLayout>

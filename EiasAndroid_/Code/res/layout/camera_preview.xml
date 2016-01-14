@@ -1,0 +1,43 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:descendantFocusability="blocksDescendants"
+    android:orientation="vertical" >
+
+    <com.yunfang.framework.view.album.FilterImageView
+        android:id="@+id/camera_preview_imageView"
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:adjustViewBounds="true"
+        android:background="@null"
+        android:scaleType="fitXY" />
+    
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:background="@color/common_title_bg"
+        android:gravity="center_vertical"
+        android:orientation="horizontal" >
+
+        <ImageButton
+            android:id="@+id/camera_preview_confirm_img"
+            android:layout_width="0.0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.0"
+            android:background="@drawable/camera_preview_btn_selector"
+            android:src="@drawable/camera_preview_btn_confirm_bg" />
+
+        <ImageButton
+            android:id="@+id/camera_preview_cancel_img"
+            android:layout_width="0.0dip"
+            android:layout_height="fill_parent"
+            android:layout_weight="1.0"
+            android:background="@drawable/camera_preview_btn_selector"
+            android:src="@drawable/camera_preview_btn_cancel_bg" />
+    </LinearLayout>
+
+    
+
+</LinearLayout>

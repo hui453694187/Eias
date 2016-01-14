@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="10dp"
+    android:descendantFocusability="blocksDescendants">
+
+    <ImageView 
+        android:id="@+id/radio_img"
+        android:layout_width="@dimen/text_ico"
+        android:layout_height="@dimen/text_ico"
+        android:layout_marginLeft="@dimen/radio_padding"
+        android:background="@drawable/redio_select"/>
+    <TextView
+        android:id="@+id/type_item_tv"
+        android:gravity="center"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/text_size_h8" >
+    </TextView>
+
+</LinearLayout>

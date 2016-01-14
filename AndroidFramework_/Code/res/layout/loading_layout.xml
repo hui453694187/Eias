@@ -1,0 +1,40 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="150dp"
+    android:layout_height="100dp"
+    android:layout_gravity="center"
+    android:alpha="100"
+    android:background="@color/transparent"
+    android:gravity="center"
+    android:orientation="vertical"
+    tools:context=".MainActivity" >
+
+    <RelativeLayout
+        android:layout_width="80dp"
+        android:layout_height="80dp" >
+
+        <ImageView
+            android:id="@+id/iv_loading"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/base_loading_default_img_normal" />
+
+        <ImageView
+            android:id="@+id/iv_loading1"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/base_loading_word_img_normal" />
+    </RelativeLayout>
+
+    <TextView
+        android:id="@+id/loadingTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="登陆中。。。"
+        android:textColor="#198ac6"
+        android:textSize="25sp" />
+
+</LinearLayout>

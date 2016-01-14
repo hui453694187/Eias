@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:background="@drawable/task_list_view_bg"
+    android:orientation="vertical"
+    android:id="@+id/item_view_layout"
+    android:padding="5dip" >
+
+    <RadioButton
+        android:id="@+id/rdo_taskinfo_residentialarea"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp" />
+
+    <RelativeLayout
+        android:id="@+id/l1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="50dp"
+        android:layout_toRightOf="@id/log_item_img"
+        android:orientation="vertical" >
+
+        <TextView
+            android:id="@+id/txt_residentialareaName"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:padding="1dp"
+            android:text="123"
+            android:textColor="#000000"
+            android:textSize="18sp" />
+
+        <TextView
+            android:id="@+id/txt_taskinfo_addressandnumber"
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:layout_below="@id/txt_residentialareaName"
+            android:padding="1dp"
+            android:text="456"
+            android:textColor="#444444"
+            android:textSize="14sp" />
+
+        <RelativeLayout
+            android:id="@+id/l2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_below="@id/txt_taskinfo_addressandnumber"
+            android:layout_marginBottom="3dp"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:id="@+id/linearLayout1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="时间"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="#9A9A9A"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/txt_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2014-06-26"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="#9A9A9A"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:text="收费："
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="#9A9A9A"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/txt_charge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="500元"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="#9A9A9A"
+                    android:textSize="12sp" />
+            </LinearLayout>
+        </RelativeLayout>
+    </RelativeLayout>
+
+</RelativeLayout>

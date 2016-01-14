@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/bd_rl"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@drawable/estimate_dialog_bdmap_info"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="15dip" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="5dip" >
+
+        <TextView
+            android:id="@+id/mTv_title"
+            android:layout_width="@dimen/login_logo_width"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="1"
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/introduction_item" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="5dip"
+        android:visibility="visible" >
+
+        <TextView
+            android:id="@+id/mTv_info"
+            android:layout_width="@dimen/login_logo_width"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:text="地址暂无....."
+            android:textColor="#FFFFFF"
+            android:textSize="@dimen/text_size_h8" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#7a7b7c" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dip"
+        android:gravity="right|center_vertical"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/mTv_edit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|center_vertical"
+            android:drawableLeft="@drawable/icon_edit"
+            android:gravity="center"
+            android:text="信息录入"
+            android:textColor="#ef7d23"
+            android:textSize="@dimen/text_size_h7" />
+    </LinearLayout>
+
+</LinearLayout>

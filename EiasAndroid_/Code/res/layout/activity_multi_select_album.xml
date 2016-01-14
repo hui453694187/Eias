@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#c000" >
+
+        <Button
+            android:id="@+id/btn_back"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="7dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginTop="7dp"
+            android:background="@drawable/picasso_back_light"
+            android:onClick="onBack" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_toRightOf="@id/btn_back"
+            android:gravity="center"
+            android:text="图片"
+            android:textColor="@color/white"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/tv_confirm"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            android:gravity="center_vertical"
+            android:padding="5dp"
+            android:onClick="confirm"
+            android:clickable="false"
+            android:background="@drawable/btn_album_select_click_enable"
+            android:text="完成"
+            android:textColor="@color/white"
+            android:textSize="15sp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_height="0dp"
+        android:layout_width="match_parent"
+        android:layout_weight="10" >
+
+        <GridView
+            android:id="@+id/grid_album"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:horizontalSpacing="3dp"
+            android:numColumns="3"
+            android:scrollbars="none"
+            android:verticalSpacing="5dp" >
+        </GridView>
+        <ListView
+            android:id="@+id/lv_album"
+            android:layout_width="match_parent"
+            android:layout_height="360dp"
+            android:layout_alignParentBottom="true"
+            android:background="#fff"
+            android:visibility="gone" >
+        </ListView>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="#c000" >
+
+        <Button
+            android:id="@+id/btn_select"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="8dp"
+            android:background="@drawable/spinner_bg"
+            android:onClick="select"
+            android:text="所有图片"
+            android:textColor="#fff"
+            android:textSize="14sp" />
+        
+        <TextView
+            android:id="@+id/tv_preview_select"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:onClick="previewSelect"
+            android:layout_alignParentRight="true"
+            android:paddingRight="10dp"
+            android:paddingLeft="10dp"
+            android:gravity="center"
+            android:textSize="14sp"
+            android:textColor="#fff"
+            android:clickable="false"
+            android:text="预览"
+            />
+        
+    </RelativeLayout>
+
+</LinearLayout>

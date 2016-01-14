@@ -1,0 +1,114 @@
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!--
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    -->
+    <style name="AppBaseTheme" parent="android:Theme.Light">
+        <!--
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        -->
+    </style>
+    <!-- Application theme. -->
+    <style name="AppTheme" parent="AppBaseTheme">
+        <!-- All customizations that are NOT specific to a particular API-level can go here. -->
+    </style>
+
+    <style name="controlBase">
+        <item name="android:paddingBottom">3dp</item>
+        <item name="android:textSize">12sp</item>
+    </style>
+
+    <style name="main_tab_bottom">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:background">@drawable/home_btn_bg</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:button">@null</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:paddingTop">3dp</item>
+        <item name="android:paddingBottom">3dp</item>
+        <item name="android:layout_weight">1.0</item>
+    </style>
+
+    <style name="list_view_common">
+        <item name="android:textSize">10sp</item>
+        <item name="android:textColor">#FFFFFF</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:background">@drawable/task_list_view_bg</item>
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:button">@null</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:paddingTop">3dp</item>
+        <item name="android:paddingBottom">3dp</item>
+        <item name="android:layout_weight">1.0</item>
+    </style>
+
+    <style name="dialog_common" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowTitleStyle">@null</item>
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:windowSoftInputMode">stateUnspecified|adjustResize</item>
+    </style>
+
+    <style name="checkbox_style" parent="@android:style/Widget.CompoundButton.CheckBox">
+        <item name="android:button">@drawable/checkbox_selector</item>
+    </style>
+
+    <style name="loading_dialog" parent="android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <!-- 边框 -->
+        <item name="android:windowNoTitle">true</item>
+        <!-- 无标题 -->
+        <item name="android:windowIsTranslucent">false</item>
+        <!-- 半透明 -->
+        <item name="android:windowBackground">@android:color/white</item>
+        <!-- 背景透明 -->
+        <item name="android:windowIsFloating">true</item>
+        <!-- 是否浮现在activity之上 -->
+        <item name="android:backgroundDimEnabled">false</item>
+        <!-- 模糊，默认为true -->
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:backgroundDimAmount">0.8</item>
+        <!-- 后背景的暗淡度 -->
+    </style>
+    <!-- 继承系统默认的对话框样式 -->
+    <style name="MyDialog" parent="@android:Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowIsFloating">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="Btn">
+        <item name="android:background">@drawable/bg_btn</item>
+        <item name="android:textColor">#ffffff</item>
+        <item name="android:layout_width">70dp</item>
+        <item name="android:layout_height">35dp</item>
+    </style>
+
+    <style name="popupwindow_animation">
+        <item name="android:windowEnterAnimation">@anim/popupwindow_enter</item>
+        <item name="android:windowExitAnimation">@anim/popupwindow_exit</item>
+    </style>
+
+    <style name="filter_layout_match_white">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="task_list_checkbox" parent="@android:style/Widget.CompoundButton.CheckBox"> 
+        <item name="android:button">@drawable/checkbox_task_list</item> 
+    </style>
+</resources>

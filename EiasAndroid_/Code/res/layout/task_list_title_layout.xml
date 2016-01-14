@@ -1,0 +1,86 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="50dp"
+    android:background="@drawable/log_title_bg" >
+
+    <CheckBox
+        android:id="@+id/sub_title_select"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="14dp"
+        android:text="全选"
+        android:visibility="gone" />
+
+    <Button
+        android:id="@+id/btn_menu"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/icon_come_statue" />
+
+    <Button
+        android:id="@+id/btn_menu_add"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/btn_add_statue"
+        android:visibility="invisible" />
+
+    <Button
+        android:id="@+id/btn_previous_Category"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="40dp"
+        android:background="@drawable/btn_previous_statue"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/home_top_title"
+        android:layout_width="fill_parent"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="80dp"
+        android:layout_marginRight="90dp"
+        android:ellipsize="end"
+        android:gravity="center|center_vertical"
+        android:lines="3"
+        android:maxLines="3"
+        android:singleLine="false"
+        android:text="列表信息"
+        android:textColor="#0076b3"
+        android:textSize="16sp" />
+    <Button
+        android:id="@+id/btn_next_Category"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/btn_next_statue"
+        android:visibility="gone"/>
+
+    <Button
+        android:id="@+id/list_reload"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/log_title_refresh_statue"/>
+
+    <Button
+        android:id="@+id/home_top_additional"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_toLeftOf="@id/btn_next_Category"
+        android:layout_centerVertical="true"
+        android:background="@drawable/btn_additional_statue"
+        android:visibility="gone"/>
+</RelativeLayout>

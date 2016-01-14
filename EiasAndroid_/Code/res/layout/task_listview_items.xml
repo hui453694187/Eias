@@ -1,0 +1,73 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="fill_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/category_list_view_bg"
+    android:orientation="vertical"
+    tools:context=".TaskListFragment" >
+
+    <RelativeLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="5dip"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/edit_type_listItem_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="80dp"
+            android:layout_marginTop="10dp"
+            android:text="区域状况"
+            android:textAppearance="?android:attr/textAppearanceLarge"
+            android:textColor="#5A94B6" />
+
+        
+        <TextView
+            android:id="@+id/edit_type_listItem_required_numberinfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginRight="75dp"
+            android:minWidth="50dp"
+            android:text="(0/7)"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#5A94B6" />
+        
+        <TextView
+            android:id="@+id/edit_type_listItem_numberinfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_margin="10dp"
+            android:minWidth="50dp"
+            android:text="(0/7)"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:textColor="#5A94B6" />
+        
+    </RelativeLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="#CCCCCC" >
+    </View>
+
+    <TextView
+        android:id="@+id/edit_type_listItem_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="项目坐落"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textColor="#ABAA9A" />
+
+</LinearLayout>

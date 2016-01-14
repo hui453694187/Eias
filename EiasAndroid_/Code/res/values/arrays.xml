@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="photo_select">
+        <item>从本地照片库上传</item>
+        <item>拍摄新的照片文件</item>
+        <item>返回</item>
+    </string-array>
+    <string-array name="record_select">
+        <item>从本地音频库上传</item>
+        <item>录制新的音频文件</item>
+        <item>返回</item>
+    </string-array>
+    <string-array name="video_select">
+        <item>从本地视频库上传</item>
+        <item>录制新的视频文件</item>
+        <item>返回</item>
+    </string-array>
+    <string-array name="open_dialog_menu1">
+        <item>复制</item>
+        <item>剪切</item>
+        <item>删除</item>
+        <item>重命名</item>
+        <item>返回</item>
+    </string-array>
+    <string-array name="open_dialog_menu2">
+        <item>剪切</item>
+        <item>复制</item>
+        <item>删除</item>
+        <item>返回</item>
+    </string-array>
+    <string-array name="open_dialog_hubby">
+        <item>新建文件夹</item>
+        <item>搜索</item>
+        <item>操作</item>
+        <item>粘贴</item>
+        <item>返回</item>
+    </string-array>
+    <string-array name="photo_item_select">
+        <item>查看</item>
+        <item>删除</item>
+    </string-array>
+
+</resources>

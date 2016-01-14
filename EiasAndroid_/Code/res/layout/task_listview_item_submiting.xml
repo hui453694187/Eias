@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/task_list_view_bg"
+    android:orientation="vertical"
+    android:padding="6dp" >
+
+    <LinearLayout
+        android:id="@+id/lltp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal" >
+
+        <TextView
+            android:id="@+id/status_Txt"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_marginLeft="1dp"
+            android:layout_marginRight="2dp"
+            android:gravity="center"
+            android:text="紧"
+            android:textColor="#ffffff"
+            android:textSize="@dimen/text_size_h9" />
+
+        <TextView
+            android:id="@+id/TaskNum_Txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.4"
+            android:textColor="#333333"
+            android:textSize="@dimen/text_size_h8" />
+
+        <TextView
+            android:id="@+id/RAName_Txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.6"
+            android:textColor="#333333"
+            android:textSize="@dimen/text_size_h8" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/TargetAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:maxLines="3"
+        android:text="任务编号和任务地址"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="#000000"
+        android:textSize="@dimen/text_size_h7" />
+
+    <View
+        android:id="@+id/divide"
+        android:layout_width="fill_parent"
+        android:layout_height="1px"
+        android:background="@color/huise" >
+    </View>
+
+    <LinearLayout
+        android:id="@+id/ll1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:orientation="vertical"
+        android:textSize="@dimen/text_size_h8" >
+
+        <RelativeLayout
+            android:id="@+id/rl2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:id="@+id/ll2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true" >
+
+                <TextView
+                    android:id="@+id/receiveDateTimeTitle_Txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/receiveDateTime_string"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/gray" />
+
+                <TextView
+                    android:id="@+id/receiveDateTime_Txt"
+                    android:layout_width="0dp"
+                    android:layout_weight="5"
+                    android:layout_height="wrap_content"
+                    android:text="Time"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/gray" />
+            <!-- </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true" > -->
+
+                <TextView
+                    android:id="@+id/createTimeTitle_Txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/receiptTime_string"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/gray" />
+
+                <TextView
+                    android:id="@+id/createtime_Txt"
+                    android:layout_width="0dp"
+                    android:layout_weight="5"
+                    android:layout_height="wrap_content"
+                    android:text="Small Text"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/gray" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rl2"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:id="@+id/ll4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true" >
+
+                <TextView
+                    android:id="@+id/userTitle_Txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/user_string"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/gray" />
+
+                <TextView
+                    android:id="@+id/user_Txt"
+                    android:layout_width="0dp"
+                    android:layout_weight="5"
+                    android:layout_height="wrap_content"
+                    android:text="user"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/gray" />
+            <!-- </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true" > -->
+
+                <TextView
+                    android:id="@+id/feeTitle_Txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/fee_string"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/gray" />
+
+                <TextView
+                    android:id="@+id/fee_Txt"
+                    android:layout_width="0dp"
+                    android:layout_weight="5"
+                    android:layout_height="wrap_content"
+                    android:text="未设置"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/gray" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rl2"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:id="@+id/ll6"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true" >
+
+                <TextView
+                    android:id="@+id/uploadTimesTitle_Txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="提交次数："
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/gray" />
+
+                <TextView
+                    android:id="@+id/uploadTimes_Txt"
+                    android:layout_width="0dp"
+                    android:layout_weight="5"
+                    android:layout_height="wrap_content"
+                    android:text="0"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/gray" />
+            <!-- </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true" > -->
+
+                <TextView
+                    android:id="@+id/submitTimeTitle_Txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="提交时间："
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/gray" />
+
+                <TextView
+                    android:id="@+id/latestUploadDate_Txt"
+                    android:layout_width="0dp"
+                    android:layout_weight="5"
+                    android:layout_height="wrap_content"
+                    android:text="暂无"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/gray" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rl2"
+            android:orientation="horizontal" >
+
+            <LinearLayout
+                android:id="@+id/ll8"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true" >
+
+                <TextView
+                    android:id="@+id/uploadStatusTitle_Txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="上传状态："
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/gray" />
+
+                <TextView
+                    android:id="@+id/uploadStatus_Txt"
+                    android:layout_width="0dp"
+                    android:layout_weight="5"
+                    android:layout_height="wrap_content"
+                    android:text="无"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/gray" />
+            <!-- </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/l5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true" >
+ -->
+                <TextView
+                    android:id="@+id/defineDataTitle_Txt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/defineDataName_string"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/gray" />
+
+                <TextView
+                    android:id="@+id/defineData_Txt"
+                    android:layout_width="0dp"
+                    android:layout_weight="5"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/gray" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/rl_urgent_fee"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/rl5"
+            android:orientation="horizontal"
+            android:visibility="gone" >
+
+            <LinearLayout
+                android:id="@+id/ll12"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/urgentFee_string"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/gray" />
+
+                <TextView
+                    android:id="@+id/urgent_fee"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/red" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/ll13"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/liveSearchCharge_string"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/gray" />
+
+                <TextView
+                    android:id="@+id/liveSearchCharge"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text=""
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:textColor="@color/red" />
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+
+</LinearLayout>

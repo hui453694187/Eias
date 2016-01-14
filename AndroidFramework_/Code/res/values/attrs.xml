@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="TempImageView">
+        <attr name="animat_id" format="integer" />
+    </declare-styleable>
+    <declare-styleable name="FocusImageView">
+        <attr name="focus_focusing_id" format="integer" />
+        <attr name="focus_success_id" format="integer" />
+        <attr name="focus_fail_id" format="integer" />
+    </declare-styleable>
+    <declare-styleable name="roundedimageview">
+        <attr name="border_thickness" format="dimension" />
+        <attr name="border_inside_color" format="color" />
+        <attr name="border_outside_color" format="color" />
+    </declare-styleable>
+    <declare-styleable name="SwipeLayout">
+        <attr name="drag_edge" format="enum">
+            <enum name="left" value="0" />
+            <enum name="right" value="1" />
+            <enum name="top" value="2" />
+            <enum name="bottom" value="3" />
+        </attr>
+        <attr name="show_mode" format="enum">
+            <enum name="lay_down" value="0" />
+            <enum name="pull_out" value="1" />
+        </attr>
+    </declare-styleable>
+    <declare-styleable name="baiduMapAttr">
+        <attr name="showAddressControl" format="boolean" />
+        <attr name="selectPoint" format="boolean" />
+        <attr name="showZoomControls" format="boolean" />
+        <attr name="showBaiduLogo" format="boolean" />
+        <attr name="mapZoomSize" format="float" />
+        <attr name="mapMaxZoomSize" format="float" />
+        <attr name="mapMinZoomSize" format="float" />
+        <attr name="showScaleControl" format="boolean" />
+        <attr name="showResetloc" format="boolean"></attr>
+        <attr name="showlocFollowing" format="boolean"></attr>
+    </declare-styleable>
+    <declare-styleable name="comboboxAttr">
+        <attr name="editText" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="xclChartsAttr">
+        <attr name="scatterPieSize" format="float" value="5" />
+    </declare-styleable>
+
+</resources>

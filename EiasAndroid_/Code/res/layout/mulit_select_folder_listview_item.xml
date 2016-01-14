@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="5dp">
+    
+    <ImageView 
+        android:id="@+id/img_folder_head"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_alignParentLeft="true"
+        android:background="@drawable/picasso_dir"
+        android:scaleType="fitXY"
+        android:padding="15dp"
+        android:src="@drawable/friends_sends_pictures_no"
+        />
+    
+    <LinearLayout 
+        android:layout_height="100dp"
+        android:layout_toRightOf="@id/img_folder_head"
+        android:layout_toEndOf="@id/img_folder_head"
+        android:layout_width="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="20dp"
+        android:gravity="center">
+        <TextView
+            android:id="@+id/tv_folder_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="/所有图片"
+            android:textSize="20sp"
+            />
+        <TextView 
+            android:id="@+id/tv_img_count"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="0张图片"
+            android:textColor="@color/bg_item_press"
+            android:textSize="15sp"/>
+    </LinearLayout>
+    
+    <ImageView 
+        android:id="@+id/img_choose"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="10dp"
+        android:background="@drawable/picasso_dir_choose"
+        />
+
+</RelativeLayout>

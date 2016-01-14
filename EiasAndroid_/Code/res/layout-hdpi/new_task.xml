@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/new_task_layout"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:layout_centerHorizontal="true"
+	android:layout_centerVertical="true"
+	android:orientation="vertical" >
+	<include
+		android:id="@+id/home_title"
+		layout="@layout/app_title_layout" />
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="10dp"
+		android:orientation="vertical" >
+		<TextView
+			android:id="@+id/textView1"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="勘察表"
+			android:textAppearance="?android:attr/textAppearanceMedium" />
+		<Spinner
+			android:id="@+id/new_task_spinner_table"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content" />
+	</LinearLayout>
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="10dp"
+		android:orientation="vertical" >
+		<TextView
+			android:id="@+id/TextView01"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:inputType="none"
+			android:text="任务编号"
+			android:textAppearance="?android:attr/textAppearanceMedium" />
+		<EditText
+			android:id="@+id/new_task_et_pid"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:ems="10" />
+	</LinearLayout>
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="10dp"
+		android:orientation="vertical" >
+		<TextView
+			android:id="@+id/TextView02"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="地址"
+			android:textAppearance="?android:attr/textAppearanceMedium" />
+		<EditText
+			android:id="@+id/new_task_et_address"
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:ems="10" />
+	</LinearLayout>
+	<LinearLayout
+		android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="10dp" >
+		<Button
+			android:id="@+id/btn_CreateNewTask"
+			android:layout_width="100dp"
+			android:layout_height="40dp"
+			android:layout_marginLeft="5dp"
+			android:layout_marginTop="10dp"
+			android:layout_weight="1"
+			android:background="@drawable/btn_selector"
+			android:text="创建"
+			android:textColor="@color/button_font_color"
+			android:textSize="18sp" />
+		<Button
+			android:id="@+id/btn_ResetTask"
+			android:layout_width="100dp"
+			android:layout_height="40dp"
+			android:layout_marginLeft="5dp"
+			android:layout_marginTop="10dp"
+			android:layout_weight="1"
+			android:background="@drawable/btn_selector"
+			android:text="新建"
+			android:textColor="@color/button_font_color"
+			android:textSize="18sp" />
+		<Button
+			android:id="@+id/btn_CancelCreateNewTask"
+			android:layout_width="100dp"
+			android:layout_height="40dp"
+			android:layout_marginLeft="5dp"
+			android:layout_marginTop="10dp"
+			android:layout_weight="1"
+			android:background="@drawable/btn_selector"
+			android:gravity="center"
+			android:text="返回"
+			android:textColor="@color/button_font_color"
+			android:textSize="18sp" />
+	</LinearLayout>
+</LinearLayout>
