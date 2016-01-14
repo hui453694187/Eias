@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="javadoc">
+    <target name="javadoc">
+        <javadoc access="public" additionalparam="-encoding utf-8 -charset utf-8 -docencoding utf-8 &#13;&#10;-charset utf-8" author="true" classpath="../libs/locSDK_4.1.jar;../libs/android.jar;../libs/baidumapapi_v3_0_0.jar;../libs/photoview.jar;../libs/android-support-v4.jar" destdir="" nodeprecated="false" nodeprecatedlist="false" noindex="false" nonavbar="false" notree="false" packagenames="com.yunfang.framework.httpClient,com.yunfang.framework.dto,com.yunfang.framework.base,com.yunfang.framework.maps,com.yunfang.framework.view,com.yunfang.framework.model,com.yunfang.framework.utils,com.yunfang.framework.enumObj,com.yunfang.framework.db" source="1.7" sourcefiles="../gen/com/yunfang/framework/R.java,../gen/com/yunfang/framework/BuildConfig.java" sourcepath="../src;../gen" splitindex="true" use="true" version="true">
+            <link href="file:/D:/a/"/>
+            <link href="file:/E:/Work softs/IDE/Eclipse/adt-bundle-windows-x86_64-20131030/sdk/docs/reference"/>
+        </javadoc>
+    </target>
+</project>

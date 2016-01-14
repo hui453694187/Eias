@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:id="@+id/root"
+	android:layout_width="290dp"
+	android:layout_height="match_parent"
+	android:orientation="vertical" >
+	<include layout="@layout/dialog_long_press_title" />
+	<LinearLayout
+		android:id="@+id/message_layout"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:background="@color/bg_item_normal"
+		android:paddingLeft="5dp"
+		android:paddingRight="5dp" >
+		<TextView
+			android:id="@+id/message"
+			android:layout_width="fill_parent"
+			android:layout_height="match_parent"
+			android:ellipsize="end"
+			android:gravity="center|center_vertical"
+			android:lines="2"
+			android:singleLine="false"
+			android:textColor="#000000" />
+	</LinearLayout>
+	<RelativeLayout
+		android:id="@+id/btns_layout"
+		android:layout_width="fill_parent"
+		android:layout_height="50dp"
+		android:background="@color/bg_item_normal"
+		android:gravity="center_vertical"
+		android:orientation="horizontal"
+		android:paddingLeft="15dp"
+		android:paddingRight="15dp" >
+		<Button
+			android:id="@+id/left"
+			style="@style/Btn" />
+		<Button
+			android:id="@+id/right"
+			style="@style/Btn"
+			android:layout_alignParentRight="true" />
+	</RelativeLayout>
+</LinearLayout>
