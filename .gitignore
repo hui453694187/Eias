@@ -27,5 +27,11 @@ bin/
 
 .git/
 
-EiasAndroid/.git/
-AndroidFramework/.git/
+EiasAndroid_/.git/
+AndroidFramework_/.git/
+EiasAndroid_/.gitignore
+AndroidFramework_/.gitignore
+EiasAndroid_/README.md
+EiasAndroid_/Doc/
+AndroidFramework_/README.md
+AndroidFramework_/Doc/
