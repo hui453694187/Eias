@@ -2,7 +2,7 @@
 <resources>
 
     <string name="app_name_en">eias</string>
-    <string name="app_name_ch">外采系统beta</string>
+    <string name="app_name_ch">云房外采系统</string>
     <string name="app_name_company">yunfang</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">                                                                                                  Hello world!</string>
@@ -44,6 +44,7 @@
     <string name="doneTime_string">完成时间：</string>
     <string name="usedTime_string">堪查使用时间：</string>
     <string name="defineDataName_string">勘察表名称：</string>
+    <string name="customer_source">客户来源：</string>
     <string name="bookDate_string">预约日期：</string>
     <string name="bookTime_string">预约时间：</string>
     <string name="contackPerson_string">联系人：</string>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.yunfang.eias.beta"
+    package="com.yunfang.eias"
     android:installLocation="auto"
     android:versionCode="3"
-    android:versionName="2.1.3.65" >
+    android:versionName="2.1.3.68" >
 
     <uses-sdk
         android:minSdkVersion="11"
@@ -22,20 +22,20 @@
         android:smallScreens="true" />
     <!-- 测试�? -->
     <application
-        android:name="com.yunfang.eias.beta.base.EIASApplication"
+        android:name="com.yunfang.eias.base.EIASApplication"
         android:allowBackup="true"
         android:icon="@drawable/yunfang_logo"
         android:label="@string/app_name_ch"
         android:theme="@android:style/Theme.Light.NoTitleBar" >
 -
         <activity
-            android:name="com.yunfang.eias.beta.ui.HomeActivity"
+            android:name=".ui.HomeActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.yunfang.eias.beta.ui.LogoActivity"
+            android:name="com.yunfang.eias.ui.LogoActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait" >
@@ -46,140 +46,140 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.yunfang.eias.beta.ui.LoginActivity"
+            android:name=".ui.LoginActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustPan" >
         </activity>
         <activity
-            android:name="com.yunfang.eias.beta.ui.MediaNavigationActivity"
+            android:name=".ui.MediaNavigationActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.yunfang.eias.beta.ui.ShowPhotoActivity"
+            android:name=".ui.ShowPhotoActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.yunfang.eias.beta.ui.ShowVideoActivity"
+            android:name=".ui.ShowVideoActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.yunfang.eias.beta.ui.CreateTaskActivity"
+            android:name=".ui.CreateTaskActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.yunfang.eias.beta.ui.TaskInfoActivity"
+            android:name=".ui.TaskInfoActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.yunfang.eias.beta.ui.TaskListFragment"
+            android:name=".ui.TaskListFragment"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.yunfang.eias.beta.ui.TaskInfoInquiryActivity"
+            android:name=".ui.TaskInfoInquiryActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.yunfang.eias.beta.ui.TaskMatchActivity"
+            android:name=".ui.TaskMatchActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.yunfang.eias.beta.ui.TaskMatchFragment"
+            android:name=".ui.TaskMatchFragment"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.yunfang.eias.beta.ui.DataLogActivity"
+            android:name=".ui.DataLogActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.yunfang.eias.beta.ui.UserInfoActivity"
+            android:name=".ui.UserInfoActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.yunfang.eias.beta.ui.SystemSettingActivity"
+            android:name=".ui.SystemSettingActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.yunfang.eias.beta.ui.IntroductionActivity"
+            android:name=".ui.IntroductionActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.yunfang.eias.beta.ui.TaskImportGuide"
+            android:name=".ui.TaskImportGuide"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.yunfang.eias.beta.ui.OpenDialogResource"
+            android:name=".ui.OpenDialogResource"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.yunfang.eias.beta.ui.MainSettingActivity"
+            android:name=".ui.MainSettingActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.yunfang.eias.beta.ui.AboutActivity"
+            android:name=".ui.AboutActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.yunfang.eias.beta.ui.BaiduMapActivity"
+            android:name=".ui.BaiduMapActivity"
             android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.yunfang.eias.beta.ui.CameraActivity"
+            android:name=".ui.CameraActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.yunfang.eias.beta.ui.CameraPreviewActivity"
+            android:name=".ui.CameraPreviewActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait" >
-        </activity> <!-- MultiSelectAlbumActivity -->
+        </activity><!-- MultiSelectAlbumActivity -->
         <activity
-            android:name="com.yunfang.eias.beta.ui.MultiSelectAlbumActivity"
+            android:name=".ui.MultiSelectAlbumActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait" >
         </activity>
         <activity
-            android:name="com.yunfang.eias.beta.ui.StopTaskListActivity"
+            android:name=".ui.StopTaskListActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait" >
@@ -188,7 +188,7 @@
         <uses-library android:name="android.test.runner" />
         <!-- 服务 -->
         <service
-            android:name="com.yunfang.eias.beta.base.MainService"
+            android:name="com.yunfang.eias.base.MainService"
             android:exported="false"
             android:permission="oem.permission.SENDMAIL" >
             <intent-filter>
@@ -204,17 +204,17 @@
 
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
-            android:value="I0YXgPQlv323i1ELahB83NbR" />
+            android:value="6coMH7OYGfW2u22mPtT1OR9q" />
         <!-- ljp  android:value="EGgXaPLRzCywWFBFgqNRsGFS" -->
         <!-- hj android:value="9QSqCU63TAZiGiTN7aPOwnC2" /> -->
         <!-- gorson android:value="RuBg0RZc9GDGKnEifscfnrGG" /> -->
         <!-- lhm android:value="guGqlBGgVupcyL5vUPtU6GnY" /> -->
         <!-- lhm android:value="IIMBeLj7vfC6ZO7UYP3hDGZT" /> -->
         <!-- 发布版本 6coMH7OYGfW2u22mPtT1OR9q -->
-        <!-- kevin android:value="GOULsb0qUwhoHS2L7rnX6xTN" 
+       	<!-- kevin android:value="GOULsb0qUwhoHS2L7rnX6xTN" 
        	           beta 发布版本：I0YXgPQlv323i1ELahB83NbR
-       	           beta 开发版本：VwakiQMZqcKame6OcxVdmimp 
-        -->
+       	           beta 开发版本：VwakiQMZqcKame6OcxVdmimp                     
+       	-->
     </application>
 
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />

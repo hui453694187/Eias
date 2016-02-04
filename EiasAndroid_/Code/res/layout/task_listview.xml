@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.yunfang.eias.beta.view.PullToRefreshLayout 
+<com.yunfang.eias.view.PullToRefreshLayout 
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/task_pull_refresh_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     
 	<include layout="@layout/refresh_head"/>
-    <com.yunfang.eias.beta.view.PullableListView
+    <com.yunfang.eias.view.PullableListView
         android:id="@+id/task_listview"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -20,7 +20,7 @@
         android:listSelector="@android:color/transparent"
         android:scrollbarFadeDuration="0"
         android:scrollingCache="false" >
-    </com.yunfang.eias.beta.view.PullableListView>
+    </com.yunfang.eias.view.PullableListView>
     <include layout="@layout/load_more"/>
 
-</com.yunfang.eias.beta.view.PullToRefreshLayout>
+</com.yunfang.eias.view.PullToRefreshLayout>

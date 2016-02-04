@@ -6,11 +6,11 @@
     android:background="@android:color/background_light"
     android:orientation="vertical" >
 
-    <com.yunfang.eias.beta.view.MultilevelChoiceView
+    <com.yunfang.eias.view.MultilevelChoiceView
         android:id="@+id/CustomMultipleChoiceView"
         android:layout_width="match_parent"
         android:layout_height="match_parent" >
-    </com.yunfang.eias.beta.view.MultilevelChoiceView>
+    </com.yunfang.eias.view.MultilevelChoiceView>
 
     <!--
     <com.yunfang.framework.view.CustomMultipleChoiceView
