@@ -30,7 +30,8 @@ public class DataDefineWorker {
 	 *            ：勘察配置基本信息表对象，包含勘察配置表分类项信息表对象的集合 ,每个分类下包含其下属的分类属性信息
 	 * @return
 	 */
-	public static ResultInfo<Long> fillCompleteDataDefindInfos(DataDefine dataDefine) {
+	public static ResultInfo<Long> fillCompleteDataDefindInfos(
+			DataDefine dataDefine) {
 		ResultInfo<Long> resultInfo = new ResultInfo<Long>();
 		// 插入数据是否成功的标志（大于0成功）
 		long ddID = 0;
@@ -41,12 +42,14 @@ public class DataDefineWorker {
 			db.beginTransaction();
 			// 重置勘察配置基本信息
 			ddID = resetDataDefine(db, dataDefine);
-			if (dataDefine.Categories != null && dataDefine.Categories.size() > 0) {
+			if (dataDefine.Categories != null
+					&& dataDefine.Categories.size() > 0) {
 				// 向勘察配置表分类项信息表(DataCategoryDefine)插入多条数据
 				for (DataCategoryDefine dataCategoryDefine : dataDefine.Categories) {
 					resetDataCategoryDefine(db, dataCategoryDefine);
 
-					if (dataCategoryDefine.Fields != null && dataCategoryDefine.Fields.size() > 0) {
+					if (dataCategoryDefine.Fields != null
+							&& dataCategoryDefine.Fields.size() > 0) {
 						// 向勘察配置表属性信息表（DataFieldDefine）插入多条数据
 						for (DataFieldDefine dataFieldDefine : dataCategoryDefine.Fields) {
 							resetDataFieldDefine(db, dataFieldDefine);
@@ -58,16 +61,15 @@ public class DataDefineWorker {
 			}
 			// 删除多出的分类项
 			deleteExcessCategories(db, dataDefine);
+			resultInfo.Data = ddID;// 此id为最后插入行的id值
 			// 设置事务操作成功的标志
 			db.setTransactionSuccessful();
-			db.endTransaction();
-			resultInfo.Data = ddID;// 此id为最后插入行的id值
 		} catch (Exception e) {
 			resultInfo.Message = "请重试";
 			resultInfo.Success = false;
 			resultInfo.Data = (long) -1;
 		} finally {
-
+			db.endTransaction();
 		}
 		return resultInfo;
 	}
@@ -80,9 +82,11 @@ public class DataDefineWorker {
 	 * @param dataCategoryDefine
 	 *            :勘察表分类项（包含子项信息）
 	 */
-	private static void deleteExcessFields(SQLiteDatabase db, DataCategoryDefine dataCategoryDefine) {
+	private static void deleteExcessFields(SQLiteDatabase db,
+			DataCategoryDefine dataCategoryDefine) {
 		// 查询该分类项下的所有子项
-		ResultInfo<ArrayList<DataFieldDefine>> fields = queryDataFieldDefineByID(dataCategoryDefine.DDID, dataCategoryDefine.CategoryID);
+		ResultInfo<ArrayList<DataFieldDefine>> fields = queryDataFieldDefineByID(
+				dataCategoryDefine.DDID, dataCategoryDefine.CategoryID);
 		// 循环服务器中取下来的子项，与本地的对比以找出服务器已经删除的子项。并在本地中删除。
 		if (fields.Data != null) {
 			for (DataFieldDefine localField : fields.Data) {
@@ -93,7 +97,8 @@ public class DataDefineWorker {
 					}
 				}
 				if (!isContains) {
-					db.delete(new DataFieldDefine().getTableName(), "BaseID=?", new String[] { String.valueOf(localField.BaseID) });
+					db.delete(new DataFieldDefine().getTableName(), "BaseID=?",
+							new String[] { String.valueOf(localField.BaseID) });
 				}
 			}
 		}
@@ -107,22 +112,32 @@ public class DataDefineWorker {
 	 * @param dataDefine
 	 *            ：勘察配置表属性信息
 	 */
-	private static void resetDataFieldDefine(SQLiteDatabase db, DataFieldDefine dataFieldDefine) {
+	private static void resetDataFieldDefine(SQLiteDatabase db,
+			DataFieldDefine dataFieldDefine) {
 		// 准备数据
 		ContentValues taskDataFieldDefine = dataFieldDefine.getContentValues();
 
 		// 获取当前勘察任务分类项信息
-		Cursor dataFieldDefineCursor = db.query(dataFieldDefine.getTableName(), null, "CategoryID=? and DDID=? and BaseID=?",
-				new String[] { String.valueOf(dataFieldDefine.CategoryID), String.valueOf(dataFieldDefine.DDID), String.valueOf(dataFieldDefine.BaseID) }, null, null, null);
+		Cursor dataFieldDefineCursor = db.query(
+				dataFieldDefine.getTableName(),
+				null,
+				"CategoryID=? and DDID=? and BaseID=?",
+				new String[] { String.valueOf(dataFieldDefine.CategoryID),
+						String.valueOf(dataFieldDefine.DDID),
+						String.valueOf(dataFieldDefine.BaseID) }, null, null,
+				null);
 
-		if (dataFieldDefineCursor != null && dataFieldDefineCursor.moveToFirst()) {
+		if (dataFieldDefineCursor != null
+				&& dataFieldDefineCursor.moveToFirst()) {
 			DataFieldDefine dbItem = new DataFieldDefine();
 			dbItem.setValueByCursor(dataFieldDefineCursor);
-			db.update(dataFieldDefine.getTableName(), taskDataFieldDefine, "ID=?", new String[] { String.valueOf(dbItem.ID) });
+			db.update(dataFieldDefine.getTableName(), taskDataFieldDefine,
+					"ID=?", new String[] { String.valueOf(dbItem.ID) });
 		} else {
-			dataFieldDefine.ID = (int) db.insert(dataFieldDefine.getTableName(), null, taskDataFieldDefine);
+			dataFieldDefine.ID = (int) db.insert(
+					dataFieldDefine.getTableName(), null, taskDataFieldDefine);
 		}
-		 dataFieldDefineCursor.close();
+		dataFieldDefineCursor.close();
 	}
 
 	/**
@@ -133,7 +148,8 @@ public class DataDefineWorker {
 	 * @param dataDefine
 	 *            ：勘察表对象(包含分类项信息)
 	 */
-	private static void deleteExcessCategories(SQLiteDatabase db, DataDefine dataDefine) {
+	private static void deleteExcessCategories(SQLiteDatabase db,
+			DataDefine dataDefine) {
 		// 查询该勘察表下所有分类项
 		ResultInfo<ArrayList<DataCategoryDefine>> categorys = queryDataCategoryDefineByDDID(dataDefine.DDID);
 		if (categorys.Data != null) {
@@ -147,12 +163,20 @@ public class DataDefineWorker {
 				}
 				if (!isContains) {
 					// 删除分类项
-					db.delete(new DataCategoryDefine().getTableName(), "CategoryID=? and  DDID=?", new String[] { String.valueOf(localCategory.CategoryID), String.valueOf(localCategory.DDID) });
+					db.delete(
+							new DataCategoryDefine().getTableName(),
+							"CategoryID=? and  DDID=?",
+							new String[] {
+									String.valueOf(localCategory.CategoryID),
+									String.valueOf(localCategory.DDID) });
 					// 查询该分类项下的所有子项
-					ResultInfo<ArrayList<DataFieldDefine>> fields = queryDataFieldDefineByID(localCategory.DDID, localCategory.CategoryID);
+					ResultInfo<ArrayList<DataFieldDefine>> fields = queryDataFieldDefineByID(
+							localCategory.DDID, localCategory.CategoryID);
 					if (fields.Data != null) {
 						for (DataFieldDefine localField : fields.Data) {
-							db.delete(new DataFieldDefine().getTableName(), "BaseID=?", new String[] { String.valueOf(localField.BaseID) });
+							db.delete(new DataFieldDefine().getTableName(),
+									"BaseID=?", new String[] { String
+											.valueOf(localField.BaseID) });
 						}
 					}
 				}
@@ -168,22 +192,34 @@ public class DataDefineWorker {
 	 * @param dataDefine
 	 *            ：勘察配置表分类项信息
 	 */
-	private static void resetDataCategoryDefine(SQLiteDatabase db, DataCategoryDefine dataCategoryDefine) {
+	private static void resetDataCategoryDefine(SQLiteDatabase db,
+			DataCategoryDefine dataCategoryDefine) {
 		// 准备插入的参数
-		ContentValues dataCategoryDefineValues = dataCategoryDefine.getContentValues();
+		ContentValues dataCategoryDefineValues = dataCategoryDefine
+				.getContentValues();
 
 		// 获取当前勘察任务分类项信息
-		Cursor dataCategoryDefineCursor = db.query(dataCategoryDefine.getTableName(), null, "DDID=? and CategoryID=?",
-				new String[] { String.valueOf(dataCategoryDefine.DDID), String.valueOf(dataCategoryDefine.CategoryID) }, null, null, null);
+		Cursor dataCategoryDefineCursor = db.query(
+				dataCategoryDefine.getTableName(),
+				null,
+				"DDID=? and CategoryID=?",
+				new String[] { String.valueOf(dataCategoryDefine.DDID),
+						String.valueOf(dataCategoryDefine.CategoryID) }, null,
+				null, null);
 
-		if (dataCategoryDefineCursor != null && dataCategoryDefineCursor.moveToFirst()) {
+		if (dataCategoryDefineCursor != null
+				&& dataCategoryDefineCursor.moveToFirst()) {
 			DataCategoryDefine dbItem = new DataCategoryDefine();
 			dbItem.setValueByCursor(dataCategoryDefineCursor);
-			db.update(dataCategoryDefine.getTableName(), dataCategoryDefineValues, "ID=?", new String[] { String.valueOf(dbItem.ID) });
+			db.update(dataCategoryDefine.getTableName(),
+					dataCategoryDefineValues, "ID=?",
+					new String[] { String.valueOf(dbItem.ID) });
 		} else {
-			dataCategoryDefine.ID = (int) db.insert(dataCategoryDefine.getTableName(), null, dataCategoryDefineValues);
+			dataCategoryDefine.ID = (int) db.insert(
+					dataCategoryDefine.getTableName(), null,
+					dataCategoryDefineValues);
 		}
-		 dataCategoryDefineCursor.close();
+		dataCategoryDefineCursor.close();
 	}
 
 	/**
@@ -198,19 +234,23 @@ public class DataDefineWorker {
 	private static long resetDataDefine(SQLiteDatabase db, DataDefine dataDefine) {
 		long ddID;
 		// 获取当前勘察任务分类项信息
-		Cursor dataDefineCursor = db.query(new DataDefine().getTableName(), null, "DDID=?", new String[] { String.valueOf(dataDefine.DDID) }, null, null, null);
+		Cursor dataDefineCursor = db.query(new DataDefine().getTableName(),
+				null, "DDID=?",
+				new String[] { String.valueOf(dataDefine.DDID) }, null, null,
+				null);
 
 		// 准备插入的参数
 		ContentValues datadefineValues = dataDefine.getContentValues();
 		if (dataDefineCursor != null && dataDefineCursor.moveToFirst()) {
 			DataDefine dbItem = new DataDefine();
 			dbItem.setValueByCursor(dataDefineCursor);
-			ddID = db.update(dataDefine.getTableName(), datadefineValues, "ID=?", new String[] { String.valueOf(dbItem.ID) });
+			ddID = db.update(dataDefine.getTableName(), datadefineValues,
+					"ID=?", new String[] { String.valueOf(dbItem.ID) });
 		} else {
 			ddID = db.insert(dataDefine.getTableName(), null, datadefineValues);
 			dataDefine.ID = (int) ddID;
 		}
-		 dataDefineCursor.close();
+		dataDefineCursor.close();
 		return ddID;
 	}
 
@@ -230,13 +270,15 @@ public class DataDefineWorker {
 			int rowNum = 0;// 删除数据影响的行数
 			db = SQLiteHelper.getWritableDB();
 			db.beginTransaction();// 开启事务
-			rowNum = db.delete(new DataDefine().getTableName(), "DDID=?", new String[] { String.valueOf(ddid) });
-			rowNum += db.delete(new DataCategoryDefine().getTableName(), "DDID=?", new String[] { String.valueOf(ddid) });
-			rowNum += db.delete(new DataFieldDefine().getTableName(), "DDID=?", new String[] { String.valueOf(ddid) });
+			rowNum = db.delete(new DataDefine().getTableName(), "DDID=?",
+					new String[] { String.valueOf(ddid) });
+			rowNum += db.delete(new DataCategoryDefine().getTableName(),
+					"DDID=?", new String[] { String.valueOf(ddid) });
+			rowNum += db.delete(new DataFieldDefine().getTableName(), "DDID=?",
+					new String[] { String.valueOf(ddid) });
 			// 设置事务操作成功的标志
 			db.setTransactionSuccessful();
-			// 结束事务，默认是回滚
-			db.endTransaction();
+
 			resultInfo.Data = rowNum;// 此rowNum为删除影响的行数
 		} catch (Exception e) {
 			resultInfo.Message = "删除失败，请重试";
@@ -244,12 +286,12 @@ public class DataDefineWorker {
 			resultInfo.Success = false;
 		} finally {
 			// db.close();
+			// 结束事务，默认是回滚
+			db.endTransaction();
 		}
 		return resultInfo;
 	}
 
-	
-	
 	/**
 	 * 根据指定id查询勘察配置基本信息表的数据
 	 * 
@@ -259,7 +301,8 @@ public class DataDefineWorker {
 	 *            ：所在公司的ID值
 	 * @return
 	 */
-	public static ResultInfo<ArrayList<DataDefine>> queryDataDefineByDDIDOrCompanyID(int ddid, int companyID) {
+	public static ResultInfo<ArrayList<DataDefine>> queryDataDefineByDDIDOrCompanyID(
+			int ddid, int companyID) {
 		ResultInfo<ArrayList<DataDefine>> resultInfo = new ResultInfo<ArrayList<DataDefine>>();
 		ArrayList<DataDefine> data = null;
 		SQLiteDatabase db = null;
@@ -268,7 +311,11 @@ public class DataDefineWorker {
 		try {
 			db = SQLiteHelper.getWritableDB();
 			data = new ArrayList<DataDefine>();
-			Cursor cursor = db.query(new DataDefine().getTableName(), null, IDFiled + "=?", new String[] { String.valueOf(ddid > 0 ? ddid : companyID) }, null, null, null);
+			Cursor cursor = db
+					.query(new DataDefine().getTableName(), null, IDFiled
+							+ "=?", new String[] { String
+							.valueOf(ddid > 0 ? ddid : companyID) }, null,
+							null, null);
 			if (cursor != null) {
 				while (cursor.moveToNext()) {
 					DataDefine dataDefine = new DataDefine();
@@ -291,36 +338,35 @@ public class DataDefineWorker {
 
 	/***
 	 * 删除指定DDID 的勘察表， 和 相关联的子表
+	 * 
 	 * @return
 	 */
-	public static boolean deletDataDefneByDDID(List<String> ddidList){
-		
-		SQLiteDatabase db=null;
-		try{
+	public static boolean deletDataDefneByDDID(List<String> ddidList) {
+
+		SQLiteDatabase db = null;
+		try {
 			db = SQLiteHelper.getReadableDB();
 			db.beginTransaction();
-			for(String ddid:ddidList){
-				db.delete(new DataDefine().getTableName(),
-						"DDID=?", 
-						new String[] { ddid});
-				db.delete(new DataFieldDefine().getTableName(),
-						"DDID=?",
-						new String[]{ddid});
-				db.delete(new DataCategoryDefine().getTableName(),
-						"DDID=?",
-						new String[]{ddid});
+			for (String ddid : ddidList) {
+				db.delete(new DataDefine().getTableName(), "DDID=?",
+						new String[] { ddid });
+				db.delete(new DataFieldDefine().getTableName(), "DDID=?",
+						new String[] { ddid });
+				db.delete(new DataCategoryDefine().getTableName(), "DDID=?",
+						new String[] { ddid });
 			}
-			
+
 			// 设置事务操作成功的标志
 			db.setTransactionSuccessful();
-			db.endTransaction();
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
+		}finally{
+			db.endTransaction();
 		}
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * 根据CompanyID查询勘察配置基本信息表的数据
 	 * 
@@ -328,16 +374,21 @@ public class DataDefineWorker {
 	 *            ：所在公司的ID值
 	 * @return
 	 */
-	public static ResultInfo<ArrayList<DataDefine>> queryDataDefineByCompanyID(int companyID) {				
+	public static ResultInfo<ArrayList<DataDefine>> queryDataDefineByCompanyID(
+			int companyID) {
 		ResultInfo<ArrayList<DataDefine>> resultInfo = new ResultInfo<ArrayList<DataDefine>>();
 		SQLiteDatabase db = null;
 		DataDefine dataDefine = null;
 		ArrayList<DataDefine> data = new ArrayList<DataDefine>();
 		Cursor cursor = null;
 		try {
-			String dep = "%["+ EIASApplication.getCurrentUser().CrmDepId +"]%";
+			String dep = "%[" + EIASApplication.getCurrentUser().CrmDepId
+					+ "]%";
 			db = SQLiteHelper.getReadableDB();
-			cursor = db.query(new DataDefine().getTableName(), null, "CompanyID=? OR CrmDepId like ?", new String[] { String.valueOf(companyID),dep }, null, null, null);
+			cursor = db.query(new DataDefine().getTableName(), null,
+					"CompanyID=? OR CrmDepId like ?",
+					new String[] { String.valueOf(companyID), dep }, null,
+					null, null);
 			if (cursor != null) {
 				while (cursor.moveToNext()) {
 					dataDefine = new DataDefine();
@@ -373,7 +424,9 @@ public class DataDefineWorker {
 		try {
 			dataDefine = new DataDefine();
 			db = SQLiteHelper.getReadableDB();
-			Cursor cursor = db.query(new DataDefine().getTableName(), null, "DDID=?", new String[] { String.valueOf(ddid) }, null, null, null);
+			Cursor cursor = db.query(new DataDefine().getTableName(), null,
+					"DDID=?", new String[] { String.valueOf(ddid) }, null,
+					null, null);
 			if (cursor != null) {
 				while (cursor.moveToNext()) {
 					dataDefine.setValueByCursor(cursor);
@@ -399,14 +452,17 @@ public class DataDefineWorker {
 	 *            ：对应后台管理系统中此勘察配置表的ID值
 	 * @return
 	 */
-	public static ResultInfo<ArrayList<DataCategoryDefine>> queryDataCategoryDefineByDDID(int ddid) {
+	public static ResultInfo<ArrayList<DataCategoryDefine>> queryDataCategoryDefineByDDID(
+			int ddid) {
 		ResultInfo<ArrayList<DataCategoryDefine>> resultInfo = new ResultInfo<ArrayList<DataCategoryDefine>>();
 		SQLiteDatabase db = null;
 		ArrayList<DataCategoryDefine> data = null;
 		try {
 			data = new ArrayList<DataCategoryDefine>();
 			db = SQLiteHelper.getReadableDB();
-			Cursor cursor = db.query(new DataCategoryDefine().getTableName(), null, "DDID=?", new String[] { String.valueOf(ddid) }, null, null, "IOrder");
+			Cursor cursor = db.query(new DataCategoryDefine().getTableName(),
+					null, "DDID=?", new String[] { String.valueOf(ddid) },
+					null, null, "IOrder");
 			if (cursor != null) {
 				while (cursor.moveToNext()) {
 					DataCategoryDefine dataCategoryDefine = new DataCategoryDefine();
@@ -436,14 +492,20 @@ public class DataDefineWorker {
 	 *            ：属于哪个分类项的属性列表信息
 	 * @return
 	 */
-	public static ResultInfo<ArrayList<DataFieldDefine>> queryDataFieldDefineByID(int ddid, int categoryID) {
+	public static ResultInfo<ArrayList<DataFieldDefine>> queryDataFieldDefineByID(
+			int ddid, int categoryID) {
 		ResultInfo<ArrayList<DataFieldDefine>> resultInfo = new ResultInfo<ArrayList<DataFieldDefine>>();
 		SQLiteDatabase db = null;
 		ArrayList<DataFieldDefine> data = null;
 		try {
 			data = new ArrayList<DataFieldDefine>();
 			db = SQLiteHelper.getReadableDB();
-			Cursor cursor = db.query(new DataFieldDefine().getTableName(), null, "DDID=? And CategoryID=?", new String[] { String.valueOf(ddid), String.valueOf(categoryID) }, null, null, null);
+			Cursor cursor = db.query(
+					new DataFieldDefine().getTableName(),
+					null,
+					"DDID=? And CategoryID=?",
+					new String[] { String.valueOf(ddid),
+							String.valueOf(categoryID) }, null, null, null);
 			if (cursor != null) {
 				while (cursor.moveToNext()) {
 					DataFieldDefine dataFieldDefine = new DataFieldDefine();
@@ -470,14 +532,18 @@ public class DataDefineWorker {
 	 * @param CategoryId
 	 * @return
 	 */
-	public static ResultInfo<DataCategoryDefine> getDataCategoryDefineByCategoryId(Integer CategoryID) {
+	public static ResultInfo<DataCategoryDefine> getDataCategoryDefineByCategoryId(
+			Integer CategoryID) {
 		ResultInfo<DataCategoryDefine> result = new ResultInfo<DataCategoryDefine>();
 		SQLiteDatabase db = null;
 		DataCategoryDefine dataCategoryDefine = null;
 		try {
 			dataCategoryDefine = new DataCategoryDefine();
 			db = SQLiteHelper.getReadableDB();
-			Cursor cursor = db.query(new DataCategoryDefine().getTableName(), null, "CategoryID=?", new String[] { String.valueOf(CategoryID) }, null, null, null);
+			Cursor cursor = db.query(new DataCategoryDefine().getTableName(),
+					null, "CategoryID=?",
+					new String[] { String.valueOf(CategoryID) }, null, null,
+					null);
 			if (cursor != null) {
 				while (cursor.moveToNext()) {
 					dataCategoryDefine.setValueByCursor(cursor);
@@ -511,26 +577,40 @@ public class DataDefineWorker {
 			dataDefine = new DataDefine();
 			db = SQLiteHelper.getReadableDB();
 			// 数据的勘察信息
-			Cursor cursor = db.query(new DataDefine().getTableName(), null, "DDID=?", new String[] { String.valueOf(ddid) }, null, null, null);
+			Cursor cursor = db.query(new DataDefine().getTableName(), null,
+					"DDID=?", new String[] { String.valueOf(ddid) }, null,
+					null, null);
 			if (cursor != null) {
 				while (cursor.moveToNext()) {
 					// 勘察表的信息
 					dataDefine.setValueByCursor(cursor);
 
-					Cursor cursorByDataCategoryDefine = db.query(new DataCategoryDefine().getTableName(), null, "DDID=?", new String[] { String.valueOf(ddid) }, null, null, "IOrder");
+					Cursor cursorByDataCategoryDefine = db.query(
+							new DataCategoryDefine().getTableName(), null,
+							"DDID=?", new String[] { String.valueOf(ddid) },
+							null, null, "IOrder");
 					if (cursorByDataCategoryDefine != null) {
 						while (cursorByDataCategoryDefine.moveToNext()) {
 							DataCategoryDefine dataCategoryDefine = new DataCategoryDefine();
-							dataCategoryDefine.setValueByCursor(cursorByDataCategoryDefine);
+							dataCategoryDefine
+									.setValueByCursor(cursorByDataCategoryDefine);
 
 							// 勘察表的子项信息
-							Cursor cursorByDataFieldDefine = db.query(new DataFieldDefine().getTableName(), null, "DDID=? And CategoryID=?",
-									new String[] { String.valueOf(ddid), String.valueOf(dataCategoryDefine.CategoryID) }, null, null, "IOrder");
+							Cursor cursorByDataFieldDefine = db
+									.query(new DataFieldDefine().getTableName(),
+											null,
+											"DDID=? And CategoryID=?",
+											new String[] {
+													String.valueOf(ddid),
+													String.valueOf(dataCategoryDefine.CategoryID) },
+											null, null, "IOrder");
 							if (cursorByDataFieldDefine != null) {
 								while (cursorByDataFieldDefine.moveToNext()) {
 									DataFieldDefine dataFieldDefine = new DataFieldDefine();
-									dataFieldDefine.setValueByCursor(cursorByDataFieldDefine);
-									dataCategoryDefine.Fields.add(dataFieldDefine);
+									dataFieldDefine
+											.setValueByCursor(cursorByDataFieldDefine);
+									dataCategoryDefine.Fields
+											.add(dataFieldDefine);
 								}
 								cursorByDataFieldDefine.close();
 							}
@@ -555,14 +635,17 @@ public class DataDefineWorker {
 
 	/**
 	 * 获取有默认值的勘察表子项列表
+	 * 
 	 * @param ddid任务使用的勘察表id
 	 * @return
 	 */
-	public static ResultInfo<ArrayList<DataFieldDefine>> getHasDefaultItem(int ddid) {
+	public static ResultInfo<ArrayList<DataFieldDefine>> getHasDefaultItem(
+			int ddid) {
 		ResultInfo<ArrayList<DataFieldDefine>> result = new ResultInfo<ArrayList<DataFieldDefine>>();
 		try {
 			DataFieldDefine field = new DataFieldDefine();
-			Cursor fieldCur = field.onSelect(null, " DDID = " + ddid + " and value != 'null' and length(value) > 0");
+			Cursor fieldCur = field.onSelect(null, " DDID = " + ddid
+					+ " and value != 'null' and length(value) > 0");
 			if (fieldCur != null) {
 				ArrayList<DataFieldDefine> lstField = new ArrayList<DataFieldDefine>();
 				while (fieldCur.moveToNext()) {
