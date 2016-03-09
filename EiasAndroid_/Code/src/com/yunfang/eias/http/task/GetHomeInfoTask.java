@@ -71,14 +71,14 @@ public class GetHomeInfoTask implements IRequestTask {
 					}
 				} catch (JSONException e) {
 					result.Success = false;
-					result.Message = "服务器异常，获取数据失败";
+					result.Message = "请检查网络！";
 					DataLogOperator.taskHttp("GetHomeInfoTask=>"
 							+ "服务器异常，获取数据失败" + "(getResponseData)",
 							e.getMessage());
 				}
 			} else {
 				result.Success = false;
-				result.Message = "没有返回数据";
+				result.Message = "请检查网络！";
 			}
 		}
 

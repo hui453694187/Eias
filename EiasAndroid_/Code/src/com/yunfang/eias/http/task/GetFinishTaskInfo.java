@@ -22,7 +22,7 @@ import com.yunfang.framework.model.UserInfo;
 import com.yunfang.framework.utils.JSONHelper;
 
 /**
- * @author Administrator
+ * @author kevin
  * 
  */
 public class GetFinishTaskInfo implements IRequestTask {

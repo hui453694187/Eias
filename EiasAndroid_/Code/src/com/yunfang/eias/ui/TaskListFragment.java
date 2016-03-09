@@ -95,6 +95,11 @@ public class TaskListFragment extends BaseWorkerFragment implements
 	 * */
 	private EditText serach_editText;
 
+	/***
+	 * 全选
+	 */
+	private CheckBox sub_title_select;
+
 	/**
 	 * 任务查询按钮
 	 * */
@@ -128,7 +133,6 @@ public class TaskListFragment extends BaseWorkerFragment implements
 	/**
 	 * 任务列表查询控件
 	 */
-	@SuppressWarnings("unused")
 	private LinearLayout taskSearch;
 
 	/**
@@ -310,35 +314,16 @@ public class TaskListFragment extends BaseWorkerFragment implements
 			break;
 		}
 		case TASK_GETTASKINFOES:
-			// {{ 优化查询注释此代码
-
-			// if (viewModel.currentIndex == 1) {
-			// if (!viewModel.onlyReportFinish) {
-			// viewModel.taskInfoes = new ArrayList<TaskInfo>();
-			// }
-			// viewModel.listItemCurrentPosition = 0;
-			// viewModel.remoteTotal = 0;
-			// viewModel.localTotal = 0;
-			// if (!EIASApplication.IsOffline) {// 离线时不需要前后台同时加载
-			// ResultInfo<Integer> temp =
-			// TaskDataWorker.createdByUserTaskTotal(viewModel.currentUser);
-			// if (temp.Success && temp.Data > 0) {
-			// viewModel.localTotal = temp.Data;
-			// }
-			// }
-			// }
-			// if (viewModel.taskStatus == TaskStatus.Todo) {// 加载待提交数据，同时检查更新
-			// mBackgroundHandler.sendEmptyMessage(CHEK_VERSION);
-			// }
-
-			// }}
-
 			uiMsg.obj = TaskOperator.getTaskInfoes(viewModel.currentIndex,
 					viewModel.pageSize, serach_editText.getText().toString(),
 					viewModel.taskStatus, viewModel.currentUser,
 					viewModel.remoteTotal, viewModel.localTotal > 0 ? true
 							: false, viewModel.onlyReportFinish,
 					viewModel.sortType);
+			// 加载待提交数据，同时检查更新, 和勘察表是否同步
+			if (viewModel.taskStatus == TaskStatus.Todo) {
+				mBackgroundHandler.sendEmptyMessage(CHEK_VERSION);
+			}
 			break;
 		case TASK_RECEIVETASK:
 			uiMsg.obj = TaskOperator.receiveTask(viewModel.currentUser,
@@ -522,14 +507,6 @@ public class TaskListFragment extends BaseWorkerFragment implements
 				uiMsg.obj = TaskOperator.taskRemark(
 						EIASApplication.getCurrentUser(),
 						this.viewModel.currentSelectedTask, isDoing);
-			} catch (IllegalStateException e) {
-				ResultInfo<Boolean> errResult = new ResultInfo<Boolean>();
-				errResult.Success = false;
-				errResult.Message = "请稍后再试！^_^";
-				uiMsg.obj = errResult;
-				DataLogOperator.taskHttp("TaskListFragment=>备注任务失败(432)",
-						e.getMessage());
-				e.printStackTrace();
 			} catch (Exception e) {
 				ResultInfo<Boolean> errResult = new ResultInfo<Boolean>();
 				errResult.Success = false;
@@ -582,7 +559,7 @@ public class TaskListFragment extends BaseWorkerFragment implements
 			} else {
 				viewModel.GetDataSuccess = result.Success;
 				if (result.Success) {
-					if (result.Data != null && result.Data.size() > 0) {
+					if (result.Data != null && result.Data.size() >= 0) {
 						// 根据任务获取类型添加任务信息
 						addTaskInfoe(result);
 						showSubmitingStatus();
@@ -701,8 +678,7 @@ public class TaskListFragment extends BaseWorkerFragment implements
 		case TASK_SETPAUSE:
 			ResultInfo<Boolean> resultSetReject = (ResultInfo<Boolean>) msg.obj;
 			if (resultSetReject.Success && resultSetReject.Data) {
-				// viewModel.taskInfoes.remove(viewModel.currentSelectedTask);
-				viewModel.currentSelectedTask = null;
+				// viewModel.currentSelectedTask = null;
 				viewModel.GetDataSuccess = true;
 				viewModel.ToastMsg = "任务已暂停";
 				viewModel.reload = true;
@@ -783,6 +759,7 @@ public class TaskListFragment extends BaseWorkerFragment implements
 		case TASK_PASTED_NEWTASKINFO:
 			ResultInfo<Boolean> resultPastedNewTaskInfo = (ResultInfo<Boolean>) msg.obj;
 			if (resultPastedNewTaskInfo.Success && resultPastedNewTaskInfo.Data) {
+
 				viewModel.currentSelectedTask = null;
 				viewModel.GetDataSuccess = true;
 				viewModel.reload = true;
@@ -860,14 +837,20 @@ public class TaskListFragment extends BaseWorkerFragment implements
 			viewModel.reload = false;
 			break;
 		case TASK_RESTART_TASK:
-			// 前台处理 暂停任务的启用
+			// 前台处理 启用任务
 			ResultInfo<Boolean> restartResult = (ResultInfo<Boolean>) msg.obj;
-			if (restartResult.Success && restartResult.Data) {
-				viewModel.reload = true;
-				viewModel.currentSelectedTask.Status = TaskStatus.Doing;
-			} else {
+			try {
+				if (restartResult.Success && restartResult.Data) {
+					viewModel.reload = true;
+					viewModel.currentSelectedTask.Status = TaskStatus.Doing;
+				} else {
+					viewModel.reload = false;
+					viewModel.ToastMsg = restartResult.Message;
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 				viewModel.reload = false;
-				viewModel.ToastMsg = restartResult.Message;
+				viewModel.ToastMsg = "操作繁忙，请稍后再试";
 			}
 			break;
 		case TASK_REMARK:
@@ -893,11 +876,17 @@ public class TaskListFragment extends BaseWorkerFragment implements
 			}
 			break;
 		case CHEK_VERSION:
+			viewModel.reload=false;
+			colseLoading=false;
 			boolean hasUpdateDatadefin = (boolean) msg.obj;
 			// 检查更新
-			viewModel.homeActivity.appHeader.downloadTipsDialog("");
+			// 今日是否再提示
+			if (viewModel.homeActivity.appHeader.getUpdateTipsIsShow()) {
+				viewModel.homeActivity.appHeader.updateTipsDialog("");
+			}
 			if (hasUpdateDatadefin) {// 切换到homeFragment
-				viewModel.homeActivity.toHomeFragment();
+				// viewModel.homeActivity.toHomeFragment();
+				showToast("有勘察表需要更新，请更新勘察表");
 			}
 			break;
 		default:
@@ -1086,7 +1075,8 @@ public class TaskListFragment extends BaseWorkerFragment implements
 			default:
 				break;
 			}
-			if (recId != -1) {
+			// TODO taskListViewAdapter null
+			if (recId != -1 && taskListViewAdapter == null) {
 				taskListViewAdapter = new TaskListViewAdapter(
 						viewModel.homeActivity, recId, viewModel.taskInfoes);
 			}
@@ -1097,9 +1087,12 @@ public class TaskListFragment extends BaseWorkerFragment implements
 				taskListViewAdapter.refachView(viewModel.taskInfoes);
 			} else {// 刷新数据
 				taskListViewAdapter.refachView(viewModel.taskInfoes);
-				// taskListViewAdapter.notifyDataSetChanged();
 			}
-			if (viewModel.sortType != null) {
+			// 取消全选
+			sub_title_select.setChecked(false);
+
+			// 是否滚到底部
+			if (!viewModel.onPullup) {
 
 				task_listview.post(new Runnable() {
 					@Override
@@ -1108,11 +1101,8 @@ public class TaskListFragment extends BaseWorkerFragment implements
 						task_listview.setSelection(0);
 					}
 				});
-				/*
-				 * task_listview.requestFocus(); task_listview.setItemChecked(0,
-				 * true); task_listview.smoothScrollToPosition(0);
-				 */
 			}
+			viewModel.onPullup = false;
 			// 显示统计出的记录数量
 			setCountTitle();
 		}
@@ -1199,7 +1189,6 @@ public class TaskListFragment extends BaseWorkerFragment implements
 				// 刷新，重新加载数据，清空缓存，重新获取数据。
 				viewModel.taskInfoes.retainAll(viewModel.taskInfoes);
 				viewModel.taskInfoes.clear();
-				viewModel.sortType = null;
 				loadData();
 			}
 		});
@@ -1207,8 +1196,7 @@ public class TaskListFragment extends BaseWorkerFragment implements
 		viewModel.currentUser = EIASApplication.getCurrentUser();
 		titleTextView = (TextView) mView.findViewById(R.id.home_top_title);
 
-		CheckBox sub_title_select = (CheckBox) mView
-				.findViewById(R.id.sub_title_select);
+		sub_title_select = (CheckBox) mView.findViewById(R.id.sub_title_select);
 		sub_title_select
 				.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 					@Override
@@ -1231,7 +1219,6 @@ public class TaskListFragment extends BaseWorkerFragment implements
 			switch (viewModel.taskStatus) {
 			case Todo:
 				setTitle("待堪察的列表");
-				// taskSearch.setVisibility(View.GONE);
 				break;
 			case Doing:
 				sub_title_select.setVisibility(View.VISIBLE);
@@ -1245,6 +1232,7 @@ public class TaskListFragment extends BaseWorkerFragment implements
 				temp.add(BroadRecordType.AFTER_SUBMITED);
 				break;
 			case Submiting:
+				taskSearch.setVisibility(View.GONE);
 				setTitle("提交中的列表");
 				temp.add(BroadRecordType.WAIT_TO_SUBMIT);
 				temp.add(BroadRecordType.AFTER_SUBMITED);
@@ -1263,7 +1251,6 @@ public class TaskListFragment extends BaseWorkerFragment implements
 				viewModel.currentIndex = 1;
 				viewModel.taskInfoes.retainAll(viewModel.taskInfoes);
 				viewModel.taskInfoes.clear();
-				viewModel.sortType = null;
 				synData();
 				// loadData();
 			}
@@ -1317,11 +1304,18 @@ public class TaskListFragment extends BaseWorkerFragment implements
 				.findViewById(R.id.order_by_status);
 		viewModel.order_by_finish = (RadioButton) mView
 				.findViewById(R.id.order_by_finish);
+		viewModel.order_by_booktime = (RadioButton) mView
+				.findViewById(R.id.order_by_booktime);
 		viewModel.create_img = (ImageView) mView.findViewById(R.id.create_img);
 		viewModel.receive_img = (ImageView) mView
 				.findViewById(R.id.receive_img);
 		viewModel.status_img = (ImageView) mView.findViewById(R.id.status_img);
 		viewModel.finish_img = (ImageView) mView.findViewById(R.id.finish_img);
+		viewModel.booktime_img = (ImageView) mView
+				.findViewById(R.id.booktime_img);
+		View booktime_layout = mView.findViewById(R.id.booktime_layout);
+		View finish_layout = mView.findViewById(R.id.finish_layout);
+		// booktime
 
 		viewModel.search_bar_rdg = (RadioGroup) mView
 				.findViewById(R.id.search_bar_rdg);
@@ -1330,19 +1324,22 @@ public class TaskListFragment extends BaseWorkerFragment implements
 		case Todo:// 待领取
 			viewModel.order_by_receive.setVisibility(View.INVISIBLE);
 			viewModel.order_by_status.setVisibility(View.INVISIBLE);
-			viewModel.order_by_finish.setVisibility(View.INVISIBLE);
+			booktime_layout.setVisibility(View.GONE);
+			finish_layout.setVisibility(View.GONE);
 			viewModel.receive_img.setVisibility(View.INVISIBLE);
 			viewModel.status_img.setVisibility(View.INVISIBLE);
-			viewModel.finish_img.setVisibility(View.INVISIBLE);
 			break;
 		case Doing:// 待提交，无已完成时间
-			viewModel.order_by_finish.setVisibility(View.INVISIBLE);
-			viewModel.finish_img.setVisibility(View.INVISIBLE);
+			finish_layout.setVisibility(View.GONE);
+			booktime_layout.setVisibility(View.VISIBLE);
 			break;
 		case Done:
 			viewModel.order_by_receive.setVisibility(View.GONE);
 			viewModel.order_by_status.setVisibility(View.GONE);
 			viewModel.order_by_create.setVisibility(View.GONE);
+
+			booktime_layout.setVisibility(View.GONE);
+
 			viewModel.receive_img.setVisibility(View.GONE);
 			viewModel.status_img.setVisibility(View.GONE);
 			viewModel.create_img.setVisibility(View.GONE);
@@ -1357,6 +1354,7 @@ public class TaskListFragment extends BaseWorkerFragment implements
 		viewModel.order_by_receive.setOnClickListener(this);
 		viewModel.order_by_status.setOnClickListener(this);
 		viewModel.order_by_finish.setOnClickListener(this);
+		viewModel.order_by_booktime.setOnClickListener(this);
 	}
 
 	/**
@@ -1516,7 +1514,6 @@ public class TaskListFragment extends BaseWorkerFragment implements
 				// 刷新列表
 				viewModel.currentIndex = 1;
 				isLoad = true;
-				viewModel.sortType = null;
 				loadData();
 
 			}
@@ -1536,11 +1533,12 @@ public class TaskListFragment extends BaseWorkerFragment implements
 					temp += (viewModel.remoteTotal + viewModel.localTotal)
 							% viewModel.pageSize > 0 ? 1 : 0;
 				}
-				if (viewModel.currentIndex == temp) {
+				if (viewModel.currentIndex >= temp) {
 					showToast("已经是最后一页信息");
-					if (viewModel.localTotal % viewModel.pageSize == 0) {
-						viewModel.currentIndex = temp + 1;
-					}
+					/*
+					 * if (viewModel.localTotal % viewModel.pageSize == 0) {
+					 * viewModel.currentIndex = temp + 1; }
+					 */
 					isLoad = false;
 					pullToRefreshLayout
 							.loadmoreFinish(PullToRefreshLayout.SUCCEED);
@@ -1548,8 +1546,9 @@ public class TaskListFragment extends BaseWorkerFragment implements
 					viewModel.currentIndex++;
 					viewModel.listItemCurrentPosition = task_listview
 							.getLastVisiblePosition();
-					viewModel.sortType = null;
+					viewModel.onPullup = true;
 					loadData();
+
 				}
 			}
 		});
@@ -1565,11 +1564,6 @@ public class TaskListFragment extends BaseWorkerFragment implements
 
 				}
 				if (visibleItemCount + firstVisibleItem == totalItemCount) {// 滑到底部
-					/*
-					 * Log.d("lee","totalItemCount:"+totalItemCount+"-");
-					 * Log.d("lee","visibleItemCount:"+visibleItemCount+"-");
-					 * Log.d("lee","firstVisibleItem:"+firstVisibleItem+"-");
-					 */
 				}
 
 			}
@@ -1593,15 +1587,15 @@ public class TaskListFragment extends BaseWorkerFragment implements
 								temp += (viewModel.remoteTotal + viewModel.localTotal)
 										% viewModel.pageSize > 0 ? 1 : 0;
 							}
-							if (viewModel.currentIndex == temp) {
-								// showToast("已经是最后一页信息");
-								if (viewModel.localTotal % viewModel.pageSize == 0) {
-									viewModel.currentIndex = temp + 1;
-								}
-							} else {
+							if (viewModel.currentIndex < temp) {
 								viewModel.currentIndex++;
-								viewModel.sortType = null;
+								viewModel.onPullup = true;
 								loadData();
+							} else {
+								// showToast("已经是最后一页信息");
+								/*if (viewModel.localTotal % viewModel.pageSize == 0) {
+									viewModel.currentIndex = temp + 1;
+								}*/
 							}
 						} else {
 						}
@@ -1708,7 +1702,8 @@ public class TaskListFragment extends BaseWorkerFragment implements
 	 * */
 	public void synData() {
 		if (viewModel.taskInfoes == null || viewModel.taskInfoes.size() <= 0
-				|| viewModel.taskStatus == TaskStatus.Todo) {
+				|| viewModel.taskStatus == TaskStatus.Todo
+				|| viewModel.taskStatus == TaskStatus.Doing) {
 			viewModel.homeActivity.loadingWorker.showLoading("数据加载中...");
 		}
 		Message TaskMsg = new Message();
@@ -1887,6 +1882,8 @@ public class TaskListFragment extends BaseWorkerFragment implements
 	 * @param id
 	 */
 	private void setSearchBarRdgStatus(int id, SortType sortType) {
+		// 取消全选
+		sub_title_select.setChecked(false);
 		switch (id) {
 		case R.id.order_by_create: {
 			String tag = "";
@@ -1903,6 +1900,7 @@ public class TaskListFragment extends BaseWorkerFragment implements
 			setStatus("1", viewModel.receive_img, viewModel.order_by_receive);
 			setStatus("1", viewModel.status_img, viewModel.order_by_status);
 			setStatus("1", viewModel.finish_img, viewModel.order_by_finish);
+			setStatus("1", viewModel.booktime_img, viewModel.order_by_booktime);
 
 			break;
 		}
@@ -1921,6 +1919,7 @@ public class TaskListFragment extends BaseWorkerFragment implements
 			setStatus("1", viewModel.create_img, viewModel.order_by_create);
 			setStatus("1", viewModel.status_img, viewModel.order_by_status);
 			setStatus("1", viewModel.finish_img, viewModel.order_by_finish);
+			setStatus("1", viewModel.booktime_img, viewModel.order_by_booktime);
 
 			break;
 		}
@@ -1939,6 +1938,7 @@ public class TaskListFragment extends BaseWorkerFragment implements
 			setStatus("1", viewModel.create_img, viewModel.order_by_create);
 			setStatus("1", viewModel.receive_img, viewModel.order_by_receive);
 			setStatus("1", viewModel.finish_img, viewModel.order_by_finish);
+			setStatus("1", viewModel.booktime_img, viewModel.order_by_booktime);
 
 			break;
 		}
@@ -1957,9 +1957,29 @@ public class TaskListFragment extends BaseWorkerFragment implements
 			setStatus("1", viewModel.receive_img, viewModel.order_by_receive);
 			setStatus("1", viewModel.status_img, viewModel.order_by_status);
 			setStatus("1", viewModel.create_img, viewModel.order_by_create);
+			setStatus("1", viewModel.booktime_img, viewModel.order_by_booktime);
 
 			break;
 		}
+		case R.id.order_by_booktime: {
+			String tag = "";
+			if (sortType != null) {
+				tag = sortType.isAsc() ? "0" : "1";
+			} else {
+				viewModel.sortType = SortType.预约时间;
+				tag = (String) viewModel.order_by_booktime.getTag();
+			}
+			boolean isAsc = tag.equals("0") ? true : false;
+			viewModel.sortType.setAsc(isAsc);
+
+			setStatus(tag, viewModel.booktime_img, viewModel.order_by_booktime);
+			setStatus("1", viewModel.finish_img, viewModel.order_by_finish);
+			setStatus("1", viewModel.receive_img, viewModel.order_by_receive);
+			setStatus("1", viewModel.status_img, viewModel.order_by_status);
+			setStatus("1", viewModel.create_img, viewModel.order_by_create);
+			break;
+		}
+
 		default:
 			break;
 		}
@@ -1976,6 +1996,8 @@ public class TaskListFragment extends BaseWorkerFragment implements
 			return R.id.order_by_status;
 		case 领取时间:
 			return R.id.order_by_receive;
+		case 预约时间:
+			return R.id.order_by_booktime;
 		default:
 			return R.id.order_by_receive;
 		}

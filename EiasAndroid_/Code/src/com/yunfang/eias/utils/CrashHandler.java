@@ -36,7 +36,11 @@ import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-
+/***
+ * 
+ * @author Kevin
+ *
+ */
 public class CrashHandler implements UncaughtExceptionHandler {
 	public static final String TAG = "CrashHandler";
 
@@ -88,14 +92,6 @@ public class CrashHandler implements UncaughtExceptionHandler {
 		} else {
 			Log.d("errLog", "uploadException");
 			uploadException(ex);
-			/*
-			 * try { Thread.sleep(9000); } catch (InterruptedException e) {
-			 * Log.e(TAG, "error : ", e); }
-			 * 
-			 * // 退出程序
-			 * android.os.Process.killProcess(android.os.Process.myPid());
-			 * System.exit(1);
-			 */
 		}
 	}
 
@@ -255,7 +251,6 @@ public class CrashHandler implements UncaughtExceptionHandler {
 						UploadLogInfoTask setLogTask = new UploadLogInfoTask();
 						ResultInfo<Boolean> uploadInfo = setLogTask.request(currentUser, log);
 						isSuccessSaveInService = (uploadInfo.Data && uploadInfo.Success);
-					} else {
 					}
 					// 上传失败，或者无网情况，则写入本地数据库
 					if (!isSuccessSaveInService) {

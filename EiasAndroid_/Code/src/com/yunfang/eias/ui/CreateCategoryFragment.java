@@ -533,8 +533,7 @@ public class CreateCategoryFragment extends BaseWorkerFragment {
 			taskCategoryInfo = new TaskCategoryInfo();
 			taskCategoryInfo.TaskID = viewmodel.isCreatedByUesr ? viewmodel.identityId : viewmodel.taskId;
 			taskCategoryInfo.RemarkName = remarkName;
-			// taskCategoryInfo.BaseCategoryID = selectedCategoryDefine.ID;
-			taskCategoryInfo.BaseCategoryID = -1;
+			taskCategoryInfo.BaseCategoryID = selectedCategoryDefine.ID;
 			taskCategoryInfo.CreatedDate = DateTimeUtil.getCurrentTime();
 			taskCategoryInfo.DataDefineFinishCount = -1;
 			taskCategoryInfo.DataDefineTotal = dataDefineTotal > 0 ? dataDefineTotal : -1;

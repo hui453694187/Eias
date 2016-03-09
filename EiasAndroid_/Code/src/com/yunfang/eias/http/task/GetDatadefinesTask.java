@@ -91,6 +91,16 @@ public class GetDatadefinesTask implements IRequestTask {
 							
 							if (tempDTO != null && tempDTO.size() > 0 && tempDTO.get(0) != null) {
 								result.Data = tempDTO;
+								if (result.Data != null) {
+									ArrayList<DataDefine> defines = (ArrayList<DataDefine>) result.Data;
+									if (defines != null && defines.size() > 0) {
+										for (DataDefine define : defines) {
+											define.DDID = define.ID;
+											define.ID = -1;
+										}
+										result.Data = defines;
+									}
+								}
 							}
 						}
 					}

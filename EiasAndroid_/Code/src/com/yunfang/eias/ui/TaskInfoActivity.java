@@ -194,7 +194,7 @@ public class TaskInfoActivity extends BaseWorkerFragmentActivity implements OnSc
 		case TASK_GETTASKINFO:
 			Bundle bundle = getIntent().getExtras();
 			Integer taskId = bundle.getInt("taskId");
-			Integer identityId = bundle.getInt("identityId");
+			Integer identityId = bundle.getInt("identityId");//任务在客户端的自增ID
 			ResultInfo<TaskInfo> temp = TaskOperator.getTaskInfo(taskId, identityId);
 			if (temp != null && temp.Data != null && temp.Data.ID > 0) {
 				// 如果任务所属报告完成就删除资源文件
@@ -583,6 +583,7 @@ public class TaskInfoActivity extends BaseWorkerFragmentActivity implements OnSc
 				item.ThumbnailPhoto = null;
 			}
 			appHeader.unRegisterReceiver();
+			mainServerCreatedReceiver.unregisterReceiver();
 		} catch (Exception e) {
 			DataLogOperator.other("TaskInfoActivity.onDestroy.Exception:" + e.getLocalizedMessage());
 		}

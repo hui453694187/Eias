@@ -90,13 +90,11 @@ public class MultilevelChoiceView extends LinearLayout implements View.OnClickLi
 	/** 全选 */
 	private void selectAll() {
 		mutilevelChoiceAdt.changStatus(true);
-		mutilevelChoiceAdt.notifyDataSetChanged();
 	}
 
 	/** 取消全选不选 */
 	private void deselectAll() {
 		mutilevelChoiceAdt.changStatus(false);
-		mutilevelChoiceAdt.notifyDataSetChanged();
 	}
 
 	public void setTitle(String title) {

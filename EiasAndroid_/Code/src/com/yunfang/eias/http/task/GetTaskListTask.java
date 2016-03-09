@@ -78,7 +78,7 @@ public class GetTaskListTask implements IRequestTask {
 					}					
 				} catch (JSONException e) {
 					result.Success = false;
-					result.Message ="服务器异常，获取任务列表失败";
+					result.Message ="获取任务列表失败";
 					DataLogOperator.taskHttp("GetTaskListTask=>" + result.Message + "(getResponseData)",e.getMessage());
 				}
 			}else{
@@ -110,7 +110,7 @@ public class GetTaskListTask implements IRequestTask {
 		params.put("pageSize",pageSize);
 		params.put("queryString", queryStr);
 		if(sortType!=null){
-			params.put("OrderByCreateTime", sortType.isAsc()?"esc":"desc");
+			params.put("OrderByCreateTime", sortType.isAsc()?"asc":"desc");
 		}
 		
 

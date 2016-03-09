@@ -58,12 +58,13 @@ import com.yunfang.framework.view.RoundImage;
 
 /**
  * 主界面信息
+ * 
  * @author 贺隽
- *
+ * 
  */
 @SuppressLint("InflateParams")
 public class HomeFragment extends BaseWorkerFragment {
-	
+
 	// {{ 变量
 	/**
 	 * Activity对象
@@ -89,25 +90,26 @@ public class HomeFragment extends BaseWorkerFragment {
 	/**
 	 * 新版本任务数量显示控件 待领取任务信息
 	 */
-	private TextView un_task,un_task_number_all, un_urgent_task_number,
+	private TextView un_task, un_task_number_all, un_urgent_task_number,
 			un_nomral_task_number;
-	
+
 	/**
 	 * 已经领取任务信息
 	 */
-	private TextView en_task,en_task_number_all, en_urgent_task_number,
+	private TextView en_task, en_task_number_all, en_urgent_task_number,
 			en_nomral_task_number;
-	
+
 	/**
 	 * 手机容量
 	 */
-	private TextView home_scard_title,home_scard_rest_size,home_scard_total_size;
+	private TextView home_scard_title, home_scard_rest_size,
+			home_scard_total_size;
 
 	/**
 	 * 新版本任务数量显示控件(括号内数字)
 	 */
 	private TextView tp_un_task_num_all, tp_en_task_num_all;
-	 
+
 	/**
 	 * 头像
 	 */
@@ -117,12 +119,12 @@ public class HomeFragment extends BaseWorkerFragment {
 	 * 当前视图类
 	 */
 	public HomeViewModel currentViewModel = new HomeViewModel();
-	
+
 	/**
 	 * 勘察表更新列表
 	 */
 	private ListView dataDefine_listview;
-	
+
 	/**
 	 * 展示信息
 	 */
@@ -142,12 +144,12 @@ public class HomeFragment extends BaseWorkerFragment {
 	 * 上次点击勘察项
 	 */
 	private View oldView;
-	
+
 	/**
 	 * 切换为离线之后
 	 */
 	private BaseBroadcastReceiver changedOfflineReceiver;
-	
+
 	// }}
 
 	// {{ 任务类型
@@ -166,14 +168,14 @@ public class HomeFragment extends BaseWorkerFragment {
 	 * 需要同步的升级配置信息表
 	 */
 	private final int TASK_UPDATE_ALLDATADEFINE = 2;
-	
+
 	/** 上传本地数据库崩溃日志 */
-	private final int TASK_UPLOAD_DB_DATALOG=3;
+	private final int TASK_UPLOAD_DB_DATALOG = 3;
 
 	// }}
 
 	// {{ 进程调用重载类
-	
+
 	@Override
 	protected void handlerBackgroundHandler(Message msg) {
 		currentViewModel.ToastMsg = "";
@@ -191,18 +193,20 @@ public class HomeFragment extends BaseWorkerFragment {
 					currentViewModel.currentUpdateDataDefines);
 			break;
 		case TASK_GET_HOMEINFO:
-			message.obj = HomeOperator.getHomeData(currentViewModel.currentUser);
+			message.obj = HomeOperator
+					.getHomeData(currentViewModel.currentUser);
 			break;
 		case TASK_UPLOAD_DB_DATALOG:
-			//检查本地未捕获异常，提交服务器。
-			DataLogOperator.upLoadUnCrashExection4Db(currentViewModel.currentUser);
+			// 检查本地未捕获异常，提交服务器。
+			DataLogOperator
+					.upLoadUnCrashExection4Db(currentViewModel.currentUser);
 			break;
 		default:
 			break;
 		}
 		mUiHandler.sendMessage(message);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	protected void handUiMessage(Message msg) {
@@ -211,7 +215,8 @@ public class HomeFragment extends BaseWorkerFragment {
 		case TASK_UPDATE_DATADEFINE:
 			ResultInfo<Boolean> updatedResult = (ResultInfo<Boolean>) msg.obj;
 			if (updatedResult.Success && updatedResult.Data) {
-				currentViewModel.currentUpdateDataDefines.remove(currentViewModel.currentUpdateDataDefine);
+				currentViewModel.currentUpdateDataDefines
+						.remove(currentViewModel.currentUpdateDataDefine);
 				currentViewModel.currentUpdateDataDefine = null;
 				currentViewModel.ToastMsg = "数据同步成功";
 			} else {
@@ -242,7 +247,8 @@ public class HomeFragment extends BaseWorkerFragment {
 					currentViewModel.ToastMsg = updatedAllResult.Message;
 				}
 			}
-			dataDefinesAdapter.refersh(currentViewModel.currentUpdateDataDefines);
+			dataDefinesAdapter
+					.refersh(currentViewModel.currentUpdateDataDefines);
 			dataDefinesAdapter.notifyDataSetChanged();
 			break;
 		case TASK_GET_HOMEINFO:
@@ -267,8 +273,6 @@ public class HomeFragment extends BaseWorkerFragment {
 			mHomeActivity.loadingWorker.closeLoading();
 		}
 	}
-
-	
 
 	// }}
 
@@ -298,44 +302,65 @@ public class HomeFragment extends BaseWorkerFragment {
 	 */
 	private void showUserTaskInfo() {
 		if (currentViewModel.currentUserTaskInfo != null) {
-			if(EIASApplication.IsOffline){
+			if (EIASApplication.IsOffline) {
 				tp_un_task_num_all.setText("待领取项目");
 				tp_en_task_num_all.setText("已领取项目");
-			}else{
-				tp_un_task_num_all.setText("待领取项目("
-						+ currentViewModel.currentUserTaskInfo.NonReceivedTotals
-						+ "" + ")");
+			} else {
+				tp_un_task_num_all
+						.setText("待领取项目("
+								+ currentViewModel.currentUserTaskInfo.NonReceivedTotals
+								+ "" + ")");
 				tp_en_task_num_all.setText("已领取项目("
 						+ currentViewModel.currentUserTaskInfo.ReceivedTotals
 						+ "" + ")");
 			}
-			un_task_number_all.setText(currentViewModel.currentUserTaskInfo.NonReceivedTotals+"");
-			un_urgent_task_number.setText(currentViewModel.currentUserTaskInfo.NonReceivedUrgent+"");
-			un_nomral_task_number.setText(currentViewModel.currentUserTaskInfo.NonReceivedNormal+"");
-			//已经领取总数
-			en_task_number_all.setText(currentViewModel.currentUserTaskInfo.ReceivedTotals+"");
-			//已领取紧急任务数量
-			en_urgent_task_number.setText(currentViewModel.currentUserTaskInfo.ReceivedUrgent+"");
-			//已领取常规任务数量
-			en_nomral_task_number.setText(currentViewModel.currentUserTaskInfo.ReceivedNormal+"");
+			un_task_number_all
+					.setText(currentViewModel.currentUserTaskInfo.NonReceivedTotals
+							+ "");
+			un_urgent_task_number
+					.setText(currentViewModel.currentUserTaskInfo.NonReceivedUrgent
+							+ "");
+			un_nomral_task_number
+					.setText(currentViewModel.currentUserTaskInfo.NonReceivedNormal
+							+ "");
+			// 已经领取总数
+			en_task_number_all
+					.setText(currentViewModel.currentUserTaskInfo.ReceivedTotals
+							+ "");
+			// 已领取紧急任务数量
+			en_urgent_task_number
+					.setText(currentViewModel.currentUserTaskInfo.ReceivedUrgent
+							+ "");
+			// 已领取常规任务数量
+			en_nomral_task_number
+					.setText(currentViewModel.currentUserTaskInfo.ReceivedNormal
+							+ "");
 		} else {
-			if(EIASApplication.IsOffline){
+			if (EIASApplication.IsOffline) {
 				tp_un_task_num_all.setText("待领取项目");
 				tp_en_task_num_all.setText("已领取项目");
-			}else{
-				tp_un_task_num_all.setText("待领取项目("+ EIASApplication.DefaultHorizontalLineValue + ")");
-				tp_en_task_num_all.setText("已领取项目("+ EIASApplication.DefaultHorizontalLineValue + ")");
-			}		
-			un_task_number_all.setText(EIASApplication.DefaultHorizontalLineValue);
-			un_urgent_task_number.setText(EIASApplication.DefaultHorizontalLineValue);
-			un_nomral_task_number.setText(EIASApplication.DefaultHorizontalLineValue);
-			en_task_number_all.setText(EIASApplication.DefaultHorizontalLineValue);
-			en_urgent_task_number.setText(EIASApplication.DefaultHorizontalLineValue);
-			en_nomral_task_number.setText(EIASApplication.DefaultHorizontalLineValue);
+			} else {
+				tp_un_task_num_all.setText("待领取项目("
+						+ EIASApplication.DefaultHorizontalLineValue + ")");
+				tp_en_task_num_all.setText("已领取项目("
+						+ EIASApplication.DefaultHorizontalLineValue + ")");
+			}
+			un_task_number_all
+					.setText(EIASApplication.DefaultHorizontalLineValue);
+			un_urgent_task_number
+					.setText(EIASApplication.DefaultHorizontalLineValue);
+			un_nomral_task_number
+					.setText(EIASApplication.DefaultHorizontalLineValue);
+			en_task_number_all
+					.setText(EIASApplication.DefaultHorizontalLineValue);
+			en_urgent_task_number
+					.setText(EIASApplication.DefaultHorizontalLineValue);
+			en_nomral_task_number
+					.setText(EIASApplication.DefaultHorizontalLineValue);
 		}
-		//修改成离线不隐藏统计信息了
-		//invisibleTaskInfoByOffline();
-		
+		// 修改成离线不隐藏统计信息了
+		// invisibleTaskInfoByOffline();
+
 	}
 
 	/**
@@ -357,6 +382,10 @@ public class HomeFragment extends BaseWorkerFragment {
 		}
 		// 没有勘察表需要更新时
 		else {
+			// 没有勘察表刷新列表
+			if (currentViewModel.currentUpdateDataDefines != null) {
+				binDataDefinesAdapter();
+			}
 			// 离线登录时
 			if (EIASApplication.IsOffline) {
 				currentViewModel.currentUpdateDataDefines = new ArrayList<DataDefine>();
@@ -400,13 +429,14 @@ public class HomeFragment extends BaseWorkerFragment {
 		loadData();
 		upLoadExctionInfo();
 	}
-	
-	//重新进入主页面需要重新检查图片
+
+	// 重新进入主页面需要重新检查图片
 	@Override
-	public void onResume(){
+	public void onResume() {
 		loadUserLogo();
 		super.onResume();
 	}
+
 	// }}
 
 	/**
@@ -436,11 +466,15 @@ public class HomeFragment extends BaseWorkerFragment {
 						new DialogInterface.OnClickListener() {
 							public void onClick(DialogInterface dialog,
 									int which) {
-								mHomeActivity.loadingWorker
-										.showLoading("数据同步中...");
-								Message loginMsg = new Message();
-								loginMsg.what = TASK_UPDATE_ALLDATADEFINE;
-								mBackgroundHandler.sendMessage(loginMsg);
+								if (EIASApplication.IsNetworking) {
+									mHomeActivity.loadingWorker
+											.showLoading("数据同步中...");
+									Message loginMsg = new Message();
+									loginMsg.what = TASK_UPDATE_ALLDATADEFINE;
+									mBackgroundHandler.sendMessage(loginMsg);
+								} else {
+									showToast("请检查网络连接");
+								}
 							}
 						});
 				builder.setNegativeButton("取消", null);
@@ -452,18 +486,26 @@ public class HomeFragment extends BaseWorkerFragment {
 		});
 		userlogo = (RoundImage) mView.findViewById(R.id.userlogo);
 		txt_showMsg = (TextView) mView.findViewById(R.id.txt_showMsg);
-		un_task= (TextView) mView.findViewById(R.id.un_task);
-		un_task_number_all = (TextView) mView.findViewById(R.id.un_task_number_all);
-		un_urgent_task_number = (TextView) mView.findViewById(R.id.un_urgent_task_number);
-		un_nomral_task_number = (TextView) mView.findViewById(R.id.un_nomral_task_number);
-		en_task= (TextView) mView.findViewById(R.id.en_task);
-		en_task_number_all = (TextView) mView.findViewById(R.id.en_task_number_all);
-		en_urgent_task_number = (TextView) mView.findViewById(R.id.en_urgent_task_number);
-		en_nomral_task_number = (TextView) mView.findViewById(R.id.en_nomral_task_number);
+		un_task = (TextView) mView.findViewById(R.id.un_task);
+		un_task_number_all = (TextView) mView
+				.findViewById(R.id.un_task_number_all);
+		un_urgent_task_number = (TextView) mView
+				.findViewById(R.id.un_urgent_task_number);
+		un_nomral_task_number = (TextView) mView
+				.findViewById(R.id.un_nomral_task_number);
+		en_task = (TextView) mView.findViewById(R.id.en_task);
+		en_task_number_all = (TextView) mView
+				.findViewById(R.id.en_task_number_all);
+		en_urgent_task_number = (TextView) mView
+				.findViewById(R.id.en_urgent_task_number);
+		en_nomral_task_number = (TextView) mView
+				.findViewById(R.id.en_nomral_task_number);
 
-		tp_un_task_num_all = (TextView) mView.findViewById(R.id.tp_un_task_num_all);
-		tp_en_task_num_all = (TextView) mView.findViewById(R.id.tp_en_task_num_all);		 
-		
+		tp_un_task_num_all = (TextView) mView
+				.findViewById(R.id.tp_un_task_num_all);
+		tp_en_task_num_all = (TextView) mView
+				.findViewById(R.id.tp_en_task_num_all);
+
 		home_scard_title = (TextView) mView.findViewById(R.id.home_scard_title);
 		home_scard_rest_size = (TextView) mView
 				.findViewById(R.id.home_scard_rest_size);
@@ -472,7 +514,8 @@ public class HomeFragment extends BaseWorkerFragment {
 
 		currentViewModel.currentUser = EIASApplication.getCurrentUser();
 
-		dataDefine_listview = (ListView) mView.findViewById(R.id.DataDefine_listview);
+		dataDefine_listview = (ListView) mView
+				.findViewById(R.id.DataDefine_listview);
 
 		// 监听触摸事件
 		dataDefine_listview.setOnTouchListener(new OnTouchListener() {
@@ -489,63 +532,80 @@ public class HomeFragment extends BaseWorkerFragment {
 			public void onItemClick(AdapterView<?> arg0, View view,
 					int position, long id) {
 				String old_name = "";
-				if(oldView != null){
-					TextView txt_old_name = (TextView) oldView.findViewById(R.id.update_survey_name);
+				if (oldView != null) {
+					TextView txt_old_name = (TextView) oldView
+							.findViewById(R.id.update_survey_name);
 					old_name = (String) txt_old_name.getText();
 				}
-				TextView txt_name = (TextView) view.findViewById(R.id.update_survey_name);
+				TextView txt_name = (TextView) view
+						.findViewById(R.id.update_survey_name);
 				// 若点击项不是旧点击项
-				if(!old_name.equals(txt_name.getText()) ){
+				if (!old_name.equals(txt_name.getText())) {
 					// 修改选中项背景以及字体颜色
-					view.setBackgroundColor(mHomeActivity.getResources().getColor(R.color.lanse));
-					txt_name.setTextColor(mHomeActivity.getResources().getColor(android.R.color.white));
+					view.setBackgroundColor(mHomeActivity.getResources()
+							.getColor(R.color.lanse));
+					txt_name.setTextColor(mHomeActivity.getResources()
+							.getColor(android.R.color.white));
 					// 将上次点击项还原颜色
-						if (oldView != null) {
-							TextView txt_old_name = (TextView) oldView.findViewById(R.id.update_survey_name);
-							oldView.setBackgroundColor(mHomeActivity.getResources().getColor(R.color.bg_update_survey_list));
-							txt_old_name.setTextColor(mHomeActivity.getResources().getColor(android.R.color.black));
-						}
+					if (oldView != null) {
+						TextView txt_old_name = (TextView) oldView
+								.findViewById(R.id.update_survey_name);
+						oldView.setBackgroundColor(mHomeActivity.getResources()
+								.getColor(R.color.bg_update_survey_list));
+						txt_old_name.setTextColor(mHomeActivity.getResources()
+								.getColor(android.R.color.black));
+					}
 				}
 				oldView = view;
 				// 记录点击的位置
-				final DataDefine updateDataDefine = currentViewModel.currentUpdateDataDefines.get(position);
+				final DataDefine updateDataDefine = currentViewModel.currentUpdateDataDefines
+						.get(position);
 				if (updateDataDefine != null) {
-					AlertDialog.Builder builder = new AlertDialog.Builder(mView.getContext());
+					AlertDialog.Builder builder = new AlertDialog.Builder(mView
+							.getContext());
 					builder.setTitle("询问信息");
 					builder.setPositiveButton("确认",
 							new DialogInterface.OnClickListener() {
 								public void onClick(DialogInterface dialog,
 										int which) {
-									mHomeActivity.loadingWorker
-											.showLoading("数据同步中...");
-									Message loginMsg = new Message();
-									currentViewModel.currentUpdateDataDefine = updateDataDefine;
-									loginMsg.what = TASK_UPDATE_DATADEFINE;
-									mBackgroundHandler.sendMessage(loginMsg);
+									// 无网络不请求
+									if (EIASApplication.IsNetworking) {
+										mHomeActivity.loadingWorker
+												.showLoading("数据同步中...");
+										Message loginMsg = new Message();
+										currentViewModel.currentUpdateDataDefine = updateDataDefine;
+										loginMsg.what = TASK_UPDATE_DATADEFINE;
+										mBackgroundHandler
+												.sendMessage(loginMsg);
+									} else {
+										showToast("请检查网络连接是否正常");
+									}
+
 								}
 							});
 					builder.setNegativeButton("取消", null);
-					builder.setMessage("确认同步【" + updateDataDefine.Name + "】信息吗？");
+					builder.setMessage("确认同步【" + updateDataDefine.Name
+							+ "】信息吗？");
 					builder.show();
 				}
 			}
-		});		
-		userlogo.setOnClickListener(new OnClickListener() {			
+		});
+		userlogo.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Intent intent = new Intent();    
-				intent.setClass(mHomeActivity,UserInfoActivity.class);
+				Intent intent = new Intent();
+				intent.setClass(mHomeActivity, UserInfoActivity.class);
 				mHomeActivity.startActivity(intent);
 			}
 		});
-		
+
 		checkSDCardSize();
 		loadUserLogo();
-		//修改成离线不隐藏统计信息了 lee
-		//invisibleTaskInfoByOffline();
+		// 修改成离线不隐藏统计信息了
+		// invisibleTaskInfoByOffline();
 		receiverMainServerCreated();
-		//HomeOperator.synchroReportInfo(currentViewModel.currentUser);
-		
+		// HomeOperator.synchroReportInfo(currentViewModel.currentUser);
+
 	}
 
 	/**
@@ -554,7 +614,8 @@ public class HomeFragment extends BaseWorkerFragment {
 	@SuppressWarnings("deprecation")
 	private void checkSDCardSize() {
 		// 判断是否有插入存储卡
-		if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+		if (Environment.getExternalStorageState().equals(
+				Environment.MEDIA_MOUNTED)) {
 			// 获取出厂内置SD卡 例如三星 和 小米
 			File path = Environment.getExternalStorageDirectory();
 			// 取得SDcard文件路径
@@ -562,10 +623,10 @@ public class HomeFragment extends BaseWorkerFragment {
 			// 获取block的SIZE
 			long blockSize = statfs.getBlockSize();
 			// 获取BLOCK数量
-			long totalBlocks =  statfs.getBlockCount();
+			long totalBlocks = statfs.getBlockCount();
 			// 己使用的Block的数量
 			long availaBlock = statfs.getAvailableBlocks();
-			
+
 			long rest = availaBlock * blockSize / 1024 / 1024;
 			long total = totalBlocks * blockSize / 1024 / 1024;
 
@@ -576,17 +637,22 @@ public class HomeFragment extends BaseWorkerFragment {
 					.getSystemSetting(BroadRecordType.KEY_SETTING_SDCARDSIZE);
 			// 剩余容量是否小于指定大小
 			if (rest < Integer.parseInt(minSDCardSize)) {
-				Double restPoint = (double) ((double)availaBlock /  (double)totalBlocks * 100);
+				Double restPoint = (double) ((double) availaBlock
+						/ (double) totalBlocks * 100);
 				DecimalFormat df = new DecimalFormat("0.##");
 				home_scard_title.setText("手机容量剩余不足" + df.format(restPoint)
 						+ "%,请尽快清理");
-				home_scard_title.setTextColor(EIASApplication.getInstance().getResources().getColor(R.color.red));
-				home_scard_rest_size.setTextColor(EIASApplication.getInstance().getResources().getColor(R.color.red));
-			}else{
-				home_scard_title.setTextColor(EIASApplication.getInstance().getResources().getColor(R.color.theme));
-				home_scard_rest_size.setTextColor(EIASApplication.getInstance().getResources().getColor(R.color.theme));
+				home_scard_title.setTextColor(EIASApplication.getInstance()
+						.getResources().getColor(R.color.red));
+				home_scard_rest_size.setTextColor(EIASApplication.getInstance()
+						.getResources().getColor(R.color.red));
+			} else {
+				home_scard_title.setTextColor(EIASApplication.getInstance()
+						.getResources().getColor(R.color.theme));
+				home_scard_rest_size.setTextColor(EIASApplication.getInstance()
+						.getResources().getColor(R.color.theme));
 			}
-		}		
+		}
 	}
 
 	/**
@@ -594,7 +660,7 @@ public class HomeFragment extends BaseWorkerFragment {
 	 */
 	@SuppressWarnings("unused")
 	private void invisibleTaskInfoByOffline() {
-		if(EIASApplication.IsOffline){
+		if (EIASApplication.IsOffline) {
 			un_task.setVisibility(View.INVISIBLE);
 			un_task_number_all.setVisibility(View.INVISIBLE);
 			en_task.setVisibility(View.INVISIBLE);
@@ -602,13 +668,12 @@ public class HomeFragment extends BaseWorkerFragment {
 		}
 	}
 
-	
 	/** 图片加载类 */
 	private ImageLoader imageLoader;
 	/** imageLoader 参数配置 */
 	@SuppressWarnings("unused")
 	private DisplayImageOptions option;
-	
+
 	/***
 	 * 初始化图片加载类
 	 */
@@ -617,89 +682,96 @@ public class HomeFragment extends BaseWorkerFragment {
 		// 配置ImageLoader
 		option = new DisplayImageOptions.Builder()//
 				.showImageOnLoading(R.drawable.friends_sends_pictures_no)//
-				.showImageForEmptyUri(R.drawable.friends_sends_pictures_no)//url爲空會显示该图片
-				.showImageOnFail(R.drawable.friends_sends_pictures_no)//加载图片出现问题
-				.cacheInMemory(true).cacheOnDisk(true)//缓存到磁盘，和内存
-				.considerExifParams(true)////图片圆角显示，值为整数.displayer(new RoundedBitmapDisplayer(5))
+				.showImageForEmptyUri(R.drawable.friends_sends_pictures_no)// url爲空會显示该图片
+				.showImageOnFail(R.drawable.friends_sends_pictures_no)// 加载图片出现问题
+				.cacheInMemory(true).cacheOnDisk(true)// 缓存到磁盘，和内存
+				.considerExifParams(true)// //图片圆角显示，值为整数.displayer(new
+											// RoundedBitmapDisplayer(5))
 				.imageScaleType(ImageScaleType.EXACTLY)//
 				.bitmapConfig(Bitmap.Config.RGB_565).build();
 	}
+
 	/**
 	 * 读取用户图片
 	 */
-	private void loadUserLogo(){
-		UserInfo user=EIASApplication.getCurrentUser();
-		if(TextUtils.isEmpty(user.ImagePath)){
+	private void loadUserLogo() {
+		UserInfo user = EIASApplication.getCurrentUser();
+		if (TextUtils.isEmpty(user.ImagePath)) {
 			String imagePath = EIASApplication.userRoot + user.Account
 					+ File.separator;
 			FileUtil.mkDir(imagePath);
 			File file = new File(imagePath + EIASApplication.USER_IMAGE_NAME);
-			if (file.exists()){
-				userlogo.setImageBitmap(CameraUtils.getBitmap(file.getAbsolutePath()));
+			if (file.exists()) {
+				userlogo.setImageBitmap(CameraUtils.getBitmap(file
+						.getAbsolutePath()));
 			}
-		}else{// 头像路径存在，使用url 获头像
-			if(imageLoader==null){
+		} else {// 头像路径存在，使用url 获头像
+			if (imageLoader == null) {
 				initImageLoader();
 			}
-			//imageLoader.displayImage(user.LatestServer + user.ImagePath, userlogo, option);// 加载图片
-			imageLoader.loadImage(user.LatestServer + user.ImagePath, new ImageLoadingListener() {
-				
-				@Override
-				public void onLoadingStarted(String arg0, View arg1) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public void onLoadingFailed(String arg0, View arg1, FailReason arg2) {
-					// TODO Auto-generated method stub
-					
-				}
-				
-				@Override
-				public void onLoadingComplete(String arg0, View arg1, Bitmap arg2) {
-					try {
-						userlogo.setImageBitmap(arg2);
-						saveUserImage(UserInfoOperator.getImageStr(arg2));
-					} catch (Exception e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-				}
-				
-				@Override
-				public void onLoadingCancelled(String arg0, View arg1) {
-					// TODO Auto-generated method stub
-					
-				}
-			});
+			// imageLoader.displayImage(user.LatestServer + user.ImagePath,
+			// userlogo, option);// 加载图片
+			imageLoader.loadImage(user.LatestServer + user.ImagePath,
+					new ImageLoadingListener() {
+
+						@Override
+						public void onLoadingStarted(String arg0, View arg1) {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public void onLoadingFailed(String arg0, View arg1,
+								FailReason arg2) {
+							// TODO Auto-generated method stub
+
+						}
+
+						@Override
+						public void onLoadingComplete(String arg0, View arg1,
+								Bitmap arg2) {
+							try {
+								userlogo.setImageBitmap(arg2);
+								saveUserImage(UserInfoOperator
+										.getImageStr(arg2));
+							} catch (Exception e) {
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+						}
+
+						@Override
+						public void onLoadingCancelled(String arg0, View arg1) {
+							// TODO Auto-generated method stub
+
+						}
+					});
 		}
 	}
-	
-	
-	
+
 	/**
 	 * 保存下载后的用户头像
 	 * 
 	 * @param tempResult
 	 * @throws FileNotFoundException
 	 */
-	private void saveUserImage(String bitmapStr)
-			throws FileNotFoundException {
+	private void saveUserImage(String bitmapStr) throws FileNotFoundException {
 		String IMAGE_FILE_NAME = "faceImage.jpg";
-		/*String imagePath = EIASApplication.userRoot
-				+ tempResult.Data.UserAccount + File.separator;*/
-		String imagePath = EIASApplication.userRoot + EIASApplication.getCurrentUser().Account + File.separator;
+		/*
+		 * String imagePath = EIASApplication.userRoot +
+		 * tempResult.Data.UserAccount + File.separator;
+		 */
+		String imagePath = EIASApplication.userRoot
+				+ EIASApplication.getCurrentUser().Account + File.separator;
 		File file = new File(imagePath);
 		if (!file.exists()) {
 			file.mkdirs();
 		}
-		Bitmap photo = BitmapHelperUtil
-				.stringBase64toBitmap(bitmapStr);
+		Bitmap photo = BitmapHelperUtil.stringBase64toBitmap(bitmapStr);
 		FileOutputStream out = new FileOutputStream(imagePath + IMAGE_FILE_NAME);
 		photo.compress(Bitmap.CompressFormat.JPEG, 90, out);
 	}
-	
+
 	/**
 	 * 触屏的事件
 	 */
@@ -721,47 +793,57 @@ public class HomeFragment extends BaseWorkerFragment {
 		loginMsg.what = TASK_GET_HOMEINFO;
 		mBackgroundHandler.sendMessage(loginMsg);
 	}
-	
-	
+
 	/***
 	 * 
 	 * @author kevin
 	 * @date 2015-11-12 下午4:26:44
-	 * @Description: 后台启动上传日志任务     
+	 * @Description: 后台启动上传日志任务
 	 */
-	private void upLoadExctionInfo(){
+	private void upLoadExctionInfo() {
 		Message loginMsg = new Message();
 		loginMsg.what = TASK_UPLOAD_DB_DATALOG;
 		mBackgroundHandler.sendMessage(loginMsg);
 	}
-	
-	
+
 	/**
 	 * 响应切换为离线状态之后
 	 */
 	public void receiverMainServerCreated() {
-		ArrayList<String> temp = new ArrayList<String>();		
-		temp.add(BroadRecordType.CHANGED_OFFLINE);		
-		changedOfflineReceiver = new BaseBroadcastReceiver(mHomeActivity,temp);
-		changedOfflineReceiver.setAfterReceiveBroadcast(new afterReceiveBroadcast() {			
-			@Override
-			public void onReceive(final Context context, Intent intent) {
-				String actionType =intent.getAction();		
-				switch(actionType){
-				case BroadRecordType.CHANGED_OFFLINE:// 这里切换成离线状态
-					//删除其他页面
-					BaseApplication application = (BaseApplication) mHomeActivity.getApplication(); 
-					application.getActivityManager().popAllActivityExceptOne(mHomeActivity.getClass()); 
-					//刷新下拉列表
-					mHomeActivity.setMenuItemsVisibility();
-					loadData();
-					break;
-				default:
-					break;
-				}
-			}
-		});
+		ArrayList<String> temp = new ArrayList<String>();
+		temp.add(BroadRecordType.CHANGED_OFFLINE);
+		changedOfflineReceiver = new BaseBroadcastReceiver(mHomeActivity, temp);
+		changedOfflineReceiver
+				.setAfterReceiveBroadcast(new afterReceiveBroadcast() {
+					@Override
+					public void onReceive(final Context context, Intent intent) {
+						String actionType = intent.getAction();
+						switch (actionType) {
+						case BroadRecordType.CHANGED_OFFLINE:// 这里切换成离线状态
+							// 删除其他页面
+							BaseApplication application = (BaseApplication) mHomeActivity
+									.getApplication();
+							application.getActivityManager()
+									.popAllActivityExceptOne(
+											mHomeActivity.getClass());
+							// 刷新下拉列表
+							mHomeActivity.setMenuItemsVisibility();
+							loadData();
+							break;
+						default:
+							break;
+						}
+					}
+				});
 	}
-	
-	
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		if (changedOfflineReceiver != null) {
+			changedOfflineReceiver.unregisterReceiver();
+		}
+
+	}
+
 }

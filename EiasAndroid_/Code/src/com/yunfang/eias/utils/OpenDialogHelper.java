@@ -7,17 +7,26 @@ import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 import java.text.SimpleDateFormat;
 
-import com.yunfang.eias.R;
-import com.yunfang.eias.ui.OpenDialogResource;
-
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.graphics.Point;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager.LayoutParams;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import com.yunfang.eias.R;
+import com.yunfang.eias.ui.OpenDialogResource;
+import com.yunfang.framework.utils.DialogUtil;
+import com.yunfang.framework.utils.StringUtil;
+import com.yunfang.framework.utils.WinDisplay;
  
 
 public class OpenDialogHelper {
@@ -31,11 +40,55 @@ public class OpenDialogHelper {
 	public OpenDialogHelper(Context context){
 		mContext = context;
 	}
+	
+	/****
+	 * 显示对话款
+	 * @param confirmTxt
+	 * @param cancelTxt
+	 * @param title
+	 * @param msg
+	 * @param confirmL
+	 * @param cancelL
+	 */
+	public Dialog showCommDialog(String confirmTxt,String cancelTxt,String title,String msg,android.view.View.OnClickListener confirmL,android.view.View.OnClickListener cancelL){
+		final Dialog dialog_checksdcard = DialogUtil.commonDialog(mContext, R.layout.dialog_view_comm);
+		LayoutParams params=dialog_checksdcard.getWindow().getAttributes();
+		//获取屏幕信息
+		Point point = WinDisplay.getWidthAndHeight(mContext);
+		if(DensityHelper.isTablet(mContext)){
+			params.width = (int) ((point.x) * (0.5));
+		}else{
+			params.width = (int) ((point.x) * (0.8));
+		}
+		params.height = LinearLayout.LayoutParams.WRAP_CONTENT;
+		dialog_checksdcard.getWindow().setAttributes(params);
+		
+		TextView dialog_view_info_concent = (TextView) dialog_checksdcard.findViewById(R.id.dialog_view_info_concent);
+		TextView dialog_view_info_title = (TextView) dialog_checksdcard.findViewById(R.id.dialog_view_info_title);
+		Button dialog_view_info_confirm = (Button) dialog_checksdcard.findViewById(R.id.dialog_view_info_confirm);
+		Button dialog_view_info_cancel = (Button) dialog_checksdcard.findViewById(R.id.dialog_view_info_cancel);
+		if(!StringUtil.IsNullOrEmpty(confirmTxt)){
+			dialog_view_info_confirm.setText(confirmTxt);
+		}
+		if(!StringUtil.IsNullOrEmpty(cancelTxt)){
+			dialog_view_info_cancel.setText(cancelTxt);
+		}
+		dialog_view_info_confirm.setTag(dialog_checksdcard);
+		dialog_view_info_cancel.setTag(dialog_checksdcard);
+		
+		dialog_view_info_title.setText(title);
+		dialog_view_info_concent.setText(msg);
+		dialog_view_info_confirm.setOnClickListener(confirmL);
+		dialog_view_info_cancel.setOnClickListener(cancelL);
+		
+		return dialog_checksdcard;
+	}
 
 	/**
 	 * 重命名
 	 * 
 	 */
+	@SuppressLint("InflateParams")
 	@SuppressWarnings("deprecation")
 	public void Rename(final Context cont,final String oldtitle,final String oldpath) {
 
@@ -350,6 +403,7 @@ public class OpenDialogHelper {
 	}
 
 	// 新建文件夹
+	@SuppressLint("InflateParams")
 	@SuppressWarnings("deprecation")
 	public void newfile(Context context, String path, boolean bool) {
 
@@ -398,6 +452,7 @@ public class OpenDialogHelper {
 		newnameDialog.show();
 	}
 
+	@SuppressLint("InflateParams")
 	public void getsearch(final Context context) {
 		LayoutInflater factory = LayoutInflater.from(context);
 		/* 初始化myChoiceView，使用rename_alert_dialog为layout */
@@ -422,6 +477,7 @@ public class OpenDialogHelper {
 		renameDialog.show();
 	}
 
+	@SuppressLint("SimpleDateFormat")
 	public void findFiles(File f, String path) {
 		if (f.isDirectory()) {
 			File[] fs = f.listFiles();
@@ -443,10 +499,12 @@ public class OpenDialogHelper {
 		}
 	}
 
+	@SuppressLint("SimpleDateFormat")
 	public static String formatDate(long date) {
 		return new SimpleDateFormat("yyyy-MM-dd hh:mm").format(date);
 	}
 
+	@SuppressLint("DefaultLocale")
 	public static String formatNumber(int bytes) {
 		String unit = "未知大小";
 		if (bytes != -1) {

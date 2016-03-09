@@ -5,7 +5,7 @@ package com.yunfang.eias.dto;
 
 /**
  * @author Administrator
- * 
+ * 	任务补发资源
  */
 public class AdditionalResource {
 

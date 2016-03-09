@@ -10,7 +10,8 @@ public enum SortType {
 	创建时间("CreatedDate",true),
 	领取时间("ReceiveDate",true),
 	状态("Status",true),
-	完成时间("DoneDate",true);
+	完成时间("DoneDate",true),
+	预约时间("BookDate",true);
 	
 	private String fieldName;
 	/**

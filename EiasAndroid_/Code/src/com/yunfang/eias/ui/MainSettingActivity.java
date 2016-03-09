@@ -108,15 +108,21 @@ public class MainSettingActivity extends BaseWorkerActivity {
 		resultMsg.what = msg.what;
 		switch (msg.what) {
 		case TASK_CHECK_VERSION:
+			ResultInfo<VersionDTO> result =new ResultInfo<VersionDTO>();
 			CheckVersionTask taskHttp = new CheckVersionTask();
-			ResultInfo<VersionDTO> result = taskHttp.request(EIASApplication
-					.getCurrentUser());
-			if (result.Success && result.Data != null) {
-				VersionDTO dto = (VersionDTO)result.Data;
-				EIASApplication.version.ServerReleasedTime = dto.LastUpdateTime;
-				EIASApplication.version.ServerVersionCode = dto.VersionCode;
-				EIASApplication.version.ServerVersionDescription = dto.UpdateContent;
-				EIASApplication.version.ServerVersionName = dto.VersionName;
+			if (EIASApplication.IsOffline || !EIASApplication.IsNetworking) {// 没有网络
+				result.Success=false;
+				result.Message="请检查网络";
+			} else {
+				result = taskHttp
+						.request(EIASApplication.getCurrentUser());
+				if (result.Success && result.Data != null) {
+					VersionDTO dto = (VersionDTO) result.Data;
+					EIASApplication.version.ServerReleasedTime = dto.LastUpdateTime;
+					EIASApplication.version.ServerVersionCode = dto.VersionCode;
+					EIASApplication.version.ServerVersionDescription = dto.UpdateContent;
+					EIASApplication.version.ServerVersionName = dto.VersionName;
+				}
 			}
 			resultMsg.obj = result;
 			break;
@@ -218,6 +224,16 @@ public class MainSettingActivity extends BaseWorkerActivity {
 		Message msg = new Message();
 		msg.what = TASK_CHECK_VERSION;
 		mBackgroundHandler.sendMessage(msg);
+	}
+	
+	
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		if(vm!=null&&vm.header!=null){
+			vm.header.unRegisterReceiver();
+		}
+		
 	}
 	// }}
 }

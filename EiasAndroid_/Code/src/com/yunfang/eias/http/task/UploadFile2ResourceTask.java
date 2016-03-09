@@ -7,6 +7,7 @@ import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -142,7 +143,7 @@ public class UploadFile2ResourceTask {
 						taskFile.setFileTaskInfo(taskInfo);
 						taskFile.setFileTypeName(typeName);
 						taskFile.setFileDataId(item.ID);
-						//taskFile.setBaseCategoryID(item.BaseCategoryID);
+						// taskFile.setBaseCategoryID(item.BaseCategoryID);
 						taskFile.setBaseCategoryID(item.CategoryID);
 						result.add(taskFile);
 					}
@@ -166,6 +167,7 @@ public class UploadFile2ResourceTask {
 	 *            文件格式 （ 后台接口暂时不需要这个参数 ）
 	 * @return Boolean 是否所有文件都上传成功
 	 */
+	@SuppressWarnings("deprecation")
 	private Boolean upLoadFile(TaskInfo taskInfo, String typeTile,
 			List<FileInfo> fileEntities, String format) {
 		Boolean result = true;
@@ -175,18 +177,20 @@ public class UploadFile2ResourceTask {
 		try {
 			for (FileInfo fileInfo : fileEntities) {
 				/*
-				 * resUrl+ http://123.57.6.154:9000/
-				 * http://res.yunfangdata.com/ExtAPI/extend/Create //旧版资源库
-				 * /123.56.118.10:8082/ResourcesPoolWrite/ExtAPI/extend/Creat
-				 */// 新版资源库
+				 * http://123.57.6.154:9000/ExtAPI/extend/Create旧版资源库 测试版 ？
+				 * http://res.yunfangdata.com/ExtAPI/extend/Create //旧版资源库 正式版
+				 * http
+				 * ://123.56.118.10:8082/ResourcesPoolWrite/ExtAPI/extend/Creat
+				 * 新版资源库 "http://192.168.3.83:9000"// 帅建服务器
+				 */
 				if (TextUtils.isEmpty(resUrl)) {// 资源库地址为空，提交资源失败
 					return false;
 				}
-				url = resUrl// "http://123.56.118.10:8082/ResourcesPoolWrite/"
+				url = resUrl// "http://123.56.118.10:8082/ResourcesPoolWrite"//
 						+ "/ExtAPI/extend/Create?"
 						+ "title="
-						+ fileInfo.getFileTypeName() + // 标题
-						"&systemName=外采系统" + // 系统名
+						+ URLEncoder.encode(fileInfo.getFileTypeName()) + // 标题
+						"&systemName=" + URLEncoder.encode("外采系统") + // 系统名
 						"&belongID=" + taskInfo.TaskID + // 任务ID 对应后台任务ID
 						"&belongPID=" + taskInfo.ID + // 任务ID 客户段任务ID
 						// "&format="+format+
@@ -203,7 +207,7 @@ public class UploadFile2ResourceTask {
 				DataInputStream dip = new DataInputStream(bis);
 				resultStr = ClientExtAPIUtils.send(urlStr, fileName, dip);
 
-				int resId = this.newResourceLibrary ? newResResult(resultStr,
+				int resId = this.newResourceLibrary ? newResResult(resultStr,//
 						fileName) : oldResResult(resultStr, fileName);
 				if (resId != -1 && resId != 0) {// 返回错误消息描述，且文件编号为0，
 					fileInfo.setResId(resId);// 上传成功，获取资源库的文件ID

@@ -89,8 +89,6 @@ import com.yunfang.framework.utils.ToastUtil;
  */
 public class TaskOperator {
 
-	private static final String SORT_STATUS_SP = "sort_status";
-
 	// {{ 参数列表
 
 	// {{ getTaskList
@@ -164,7 +162,7 @@ public class TaskOperator {
 
 		} else {
 			result.Success = false;
-			result.Message = "保存备注出了点问题，稍后重试 O(∩_∩)O~！";
+			result.Message = "保存备注出了点问题，稍后重试 (∩_∩)";
 		}
 		return result;
 	}
@@ -569,7 +567,8 @@ public class TaskOperator {
 			int execRow = taskInfo.onUpdate("TaskNum='" + taskInfo.TaskNum
 					+ "'");
 			if (execRow > 0) {
-				if (!EIASApplication.IsOffline && !taskInfo.IsNew) {
+				if (!EIASApplication.IsOffline && EIASApplication.IsNetworking
+						&& !taskInfo.IsNew) {
 					SetTaskFeeTask task = new SetTaskFeeTask();
 					result = task.request(currentUser, taskInfo);
 				}
@@ -658,6 +657,7 @@ public class TaskOperator {
 		ResultInfo<Boolean> result = new ResultInfo<Boolean>();
 
 		try {
+			TaskStatus status = taskInfo.Status;
 			taskInfo.Status = TaskStatus.Pause;
 			int execRow = taskInfo.onUpdate("TaskNum='" + taskInfo.TaskNum
 					+ "'");
@@ -665,12 +665,20 @@ public class TaskOperator {
 				if (!EIASApplication.IsOffline && !taskInfo.IsNew) {
 					SetTaskPauseTask task = new SetTaskPauseTask();
 					result = task.request(currentUser, taskInfo);
+				} else {
+					result.Success = false;
+					result.Data = false;
+					result.Message = "请检查网络";
 				}
-				DataLogOperator.taskPause(taskInfo, "");
-				result.Data = true;
 			} else {
+				result.Success = false;
 				result.Data = false;
 				result.Message = "客户端保存失败";
+			}
+			if (!result.Success || !result.Data) {// 暂停任务失败，本地任务状态回滚
+				taskInfo.Status = status;
+				taskInfo.onUpdate("TaskNum='" + taskInfo.TaskNum + "'");
+				DataLogOperator.taskPause(taskInfo,result.Message);
 			}
 		} catch (Exception e) {
 			result.Success = false;
@@ -847,13 +855,13 @@ public class TaskOperator {
 					result.Data = taskInfo;
 				} else if (categroiesInfo.Success
 						&& categroiesInfo.Data == null) { // 处理当前任务勘察表被删除的情况
-					result.Message = "此任务勘察表已在后台被删除 +_+";
+					result.Message = "此任务勘察表已在后台被删除";
 				} else {
-					result.Message = "勘察表未更新，或此勘察被已被删除 (ㄒoㄒ)";
+					result.Message = "勘察表未更新或此任务勘察表已在后台被删除 ";
 				}
 			}
 		} catch (Exception e) {
-			result.Message = e.getMessage();
+			result.Message = "出错了";
 		} finally {
 			if (cursor != null) {
 				cursor.close();
@@ -2475,18 +2483,25 @@ public class TaskOperator {
 				// 获取勘察数据信息
 				ResultInfo<DataDefine> dataDefine = DataDefineWorker
 						.getCompleteDataDefine(locTaskInfo.DDID);
-				// 复制分类项
-				pastedInfoes(serverTaskInfo.Categories, locTaskInfo.Categories,
-						dataDefine.Data, serverTaskInfo, locTaskInfo,
-						OperatorTypeEnum.TaskDataMatching);
-				// 修改返回结果
-				result.Data = true;
-				result.Success = true;
-				result.Message = "匹配成功";
+				if(dataDefine.Success&&dataDefine.Data!=null){
+					// 复制分类项
+					pastedInfoes(serverTaskInfo.Categories, locTaskInfo.Categories,
+							dataDefine.Data, serverTaskInfo, locTaskInfo,
+							OperatorTypeEnum.TaskDataMatching);
+					// 修改返回结果
+					result.Data = true;
+					result.Success = true;
+					result.Message = "匹配成功";
+				}else{
+					// 修改返回结果
+					result.Data = false;
+					result.Success = false;
+					result.Message = "请检查本地任务勘察表";
+				}
 			}
 		} catch (Exception e) {
 
-			result.Message = e.getMessage();
+			result.Message = "请检查本地任务勘察表";
 		}
 		DataLogOperator.taskDataMatching(serverTaskInfo, locTaskInfo,
 				result.Message);
@@ -3539,7 +3554,7 @@ public class TaskOperator {
 				}
 			} catch (Exception e) {
 				result.Data = false;
-				result.Message = "服务器返回数据异常";
+				result.Message = "请检查网络！";
 				DataLogWorker.createDataLog(EIASApplication.getCurrentUser(),
 						"获取用户任务信息的勘察表数据错误", OperatorTypeEnum.Other,
 						LogType.Exection);
@@ -3591,7 +3606,7 @@ public class TaskOperator {
 	 * @param sortType
 	 */
 	public static void saveSortStatus(TaskStatus taskStatus, SortType sortType) {
-		SpUtil sp = SpUtil.getInstance(SORT_STATUS_SP);
+		SpUtil sp = SpUtil.getInstance(EIASApplication.SORT_STATUS_SP);
 		// 保存状态
 		sp.putString(taskStatus.getName(), sortType.getFieldName() + ","
 				+ sortType.isAsc());
@@ -3606,7 +3621,7 @@ public class TaskOperator {
 	 */
 	public static SortType getSortStatus(TaskStatus taskStatus) {
 		SortType sortType = null;
-		SpUtil sp = SpUtil.getInstance(SORT_STATUS_SP);
+		SpUtil sp = SpUtil.getInstance(EIASApplication.SORT_STATUS_SP);
 		String sortStr = sp.getString(taskStatus.getName(), "");
 		if (!sortStr.equals("")) {
 			String temp[] = sortStr.split(",");

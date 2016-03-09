@@ -328,9 +328,6 @@ public class HomeActivity extends BaseWorkerFragmentActivity implements
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.homeactivity);
 
-		/*
-		 * 注释，先不处理 getSubmitWaitTask();
-		 */
 		radioGroup = (RadioGroup) findViewById(R.id.radioGroup);
 		homeLayout = (LinearLayout) findViewById(R.id.home_Layout);
 
@@ -353,21 +350,13 @@ public class HomeActivity extends BaseWorkerFragmentActivity implements
 		mBackgroundHandler.sendMessage(msg);
 	}
 
-	/***
-	 * @author kevin
-	 * @date 2015-9-23 下午2:25:12
-	 * @Description: 获取当前用户待提交任务，加入后台任务队列
-	 */
-	@SuppressWarnings("unused")
-	private void getSubmitWaitTask() {
-		mBackgroundHandler.sendEmptyMessage(TASK_GET_WAITING_SUBMIT_TASK);
-	}
-
 	/**
 	 * 
 	 */
 	private void initView() {
 		appHeader = new AppHeader(this, R.id.home_title);
+		String title=this.getString(R.string.app_title)+" v"+EIASApplication.version.LocalVersionName;
+		appHeader.setTitle(title);
 		checkVersion();
 	}
 
@@ -467,7 +456,6 @@ public class HomeActivity extends BaseWorkerFragmentActivity implements
 		}
 		ft.commitAllowingStateLoss();
 		((HomeFragment) currentFragment).loadData();
-		ToastUtil.longShow(this, "有勘察表需要更新，请更新勘察表");
 		((RadioButton) this.findViewById(touchIdArray[0])).setChecked(true);
 
 	}

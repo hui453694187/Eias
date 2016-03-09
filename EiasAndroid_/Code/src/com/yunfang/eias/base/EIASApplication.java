@@ -1,4 +1,4 @@
-package com.yunfang.eias.base;
+﻿package com.yunfang.eias.base;
 
 import java.io.File;
 import java.io.IOException;
@@ -61,7 +61,7 @@ public class EIASApplication extends BaseApplication {
 	/**
 	 * 是否捕获全局异常
 	 */
-	public final boolean isCrashGlobalExce = true;
+	public final boolean isCrashGlobalExce = false;
 
 	/** 当前定位城市名，默认北京 */
 	public static String currentCity = "北京";
@@ -95,6 +95,13 @@ public class EIASApplication extends BaseApplication {
 	 * 视频
 	 */
 	public final static String video = "video";
+
+	/***
+	 * 任务排序状态等信息
+	 */
+	public static final String SORT_STATUS_SP = "sort_status";
+	/** 更新提示不提示日期 */
+	public static final String UPDATE_TIPS = "update_tips_time";
 
 	/**
 	 * 百度地图按钮默认值 定位坐标
@@ -213,12 +220,12 @@ public class EIASApplication extends BaseApplication {
 	 * 设备信息
 	 */
 	public static DeviceInfo deviceInfo;
-	
+
 	/**
 	 * 登录信息中报告的任务信息
 	 */
 	public static LoginEasyDto loginEasy = new LoginEasyDto();
-	
+
 	/**
 	 * 本地版本信息
 	 */
@@ -321,7 +328,7 @@ public class EIASApplication extends BaseApplication {
 		receiverMainServerCreated();
 
 		initImageLoader();
-		
+
 		/** 异常捕捉处理类 */
 		if (isCrashGlobalExce) {
 			CrashHandler crashHandler = CrashHandler.getInstance();
@@ -350,9 +357,11 @@ public class EIASApplication extends BaseApplication {
 		 * Services.put("大连服务器", "http://124.93.240.144:18099");
 		 * Services.put("外业测试服务器", "http://182.92.219.161:18098");
 		 */
-		Services.put("邵庄服务器", "http://192.168.3.73:9000");
+
+		
 		Services.put("外业测试服务器", "http://eiastest.yunfangdata.com");
 		Services.put("采图测试服务器", "http://182.92.161.16:18099");
+		
 		Services.put("外业正式服务器", "http://waicai.yunfangdata.com");
 
 		company = getString(R.string.app_name_company);
@@ -435,7 +444,8 @@ public class EIASApplication extends BaseApplication {
 	 */
 	public void getAndroidVersionInfo() {
 		try {
-			PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), 0);
+			PackageInfo info = getPackageManager().getPackageInfo(
+					getPackageName(), 0);
 			version.LocalPackageName = info.packageName;
 			version.LocalVersionCode = String.valueOf(info.versionCode);
 			version.LocalVersionName = info.versionName;

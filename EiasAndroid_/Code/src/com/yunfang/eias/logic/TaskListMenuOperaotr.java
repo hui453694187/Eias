@@ -333,16 +333,17 @@ public class TaskListMenuOperaotr {
 				break;
 			}
 
-			 
 			// 对比被复制任务的勘察表ID 和被粘贴的任务勘察表ID 是否一致，才可以被复制粘贴
 			if (taskListFragment.viewModel.currentCopiedTask != null
 					&& taskListFragment.viewModel.currentSelectedTask != null
-					/*&& taskListFragment.viewModel.currentSelectedTask.DDID == //修改 为计算勘察表ID 不同，也可以出现粘贴按钮
-					taskListFragment.viewModel.currentCopiedTask.DDID*/) {
-				
+			/*
+			 * && taskListFragment.viewModel.currentSelectedTask.DDID == //修改
+			 * 为计算勘察表ID 不同，也可以出现粘贴按钮
+			 * taskListFragment.viewModel.currentCopiedTask.DDID
+			 */) {
+
 				tempItems.add(TaskMenuEnum.粘贴创建新任务.toString());
-				if (taskListFragment.viewModel.currentSelectedTask.ID !=
-				taskListFragment.viewModel.currentCopiedTask.ID) {
+				if (taskListFragment.viewModel.currentSelectedTask.ID != taskListFragment.viewModel.currentCopiedTask.ID) {
 					tempItems.add(TaskMenuEnum.粘贴.toString());
 				}
 			}
@@ -378,12 +379,18 @@ public class TaskListMenuOperaotr {
 		case 删除已选中本地任务:
 			/** 所有的任务信息， 找出选中的任务 */
 			ArrayList<TaskInfo> deletTaskInfos = new ArrayList<TaskInfo>();
+			/** 远程任务，非本地自建 */
+			ArrayList<TaskInfo> remoteTasks = new ArrayList<TaskInfo>();
 			/** 是否可以执行批量删除 */
 			boolean canCommit = true;
 			for (TaskInfo taskInfo : taskListFragment.viewModel.taskInfoes) {
 				if (taskInfo.isChecked) {
 					if (!TaskOperator.submiting(taskInfo.TaskNum)) {// 判断选中的任务中是否有提交中的任务，
-						deletTaskInfos.add(taskInfo);// 选中的任务， 加入删除列表
+						if (taskInfo.IsNew) {// 是本地自建任务，添加进删除列表
+							deletTaskInfos.add(taskInfo);// 选中的任务， 加入删除列表
+						} else {
+							remoteTasks.add(taskInfo);
+						}
 					} else {// 跳出
 						ToastUtil.longShow(taskListFragment.getActivity(),
 								"当前任务正在提交中，将不会清空当前任务!");
@@ -397,6 +404,11 @@ public class TaskListMenuOperaotr {
 				/** 批量删除任务 */
 				deleteTadkInfoDialog("您确认要删除选中的这些任务？",
 						taskListFragment.TASK_BATCH_DELETE, deletTaskInfos);// 发出批量删除任务的通知给后台执行
+			}
+			// 只选中了远程任务
+			if (remoteTasks.size() > 0 && deletTaskInfos.size() <= 0) {
+				ToastUtil.longShow(taskListFragment.getActivity(),
+						"选中任务中没有本地任务");
 			}
 
 			break;
@@ -487,7 +499,11 @@ public class TaskListMenuOperaotr {
 			if (isSubmit) {
 				for (int i = 0; i < allTaskInfo.size(); i++) {
 					TaskInfo taskInfo = allTaskInfo.get(i);
-					if (taskInfo.isChecked) {
+					// 不是提交中
+					boolean unSubmitiong = !TaskOperator
+							.submiting(taskInfo.TaskNum)
+							&& taskInfo.Status != TaskStatus.Submiting;
+					if (taskInfo.isChecked && unSubmitiong) {
 						needSubmitTaskInfo.add(taskInfo);
 					}
 				}
@@ -1002,28 +1018,28 @@ public class TaskListMenuOperaotr {
 							.equals(//
 							taskListFragment.viewModel.currentSelectedTask.TaskNum)) {
 				ToastUtil.longShow(currentContext, "不能把任务粘贴给自己");
-			}/* 
-			// 2016/1/6 调整， 不再对比勘察表是否一致， 不一致同样可以粘贴
-			else if (!isCopyToNewTask
-					&& taskListFragment.viewModel.currentCopiedTask.DDID !=
-
-					taskListFragment.viewModel.currentSelectedTask.DDID) {
-				ToastUtil.longShow(currentContext, "任务所属勘察表不一致，无法继续");
-			} */else {
-				StringBuilder titleString=new StringBuilder();
+			}/*
+			 * // 2016/1/6 调整， 不再对比勘察表是否一致， 不一致同样可以粘贴 else if (!isCopyToNewTask
+			 * && taskListFragment.viewModel.currentCopiedTask.DDID !=
+			 * 
+			 * taskListFragment.viewModel.currentSelectedTask.DDID) {
+			 * ToastUtil.longShow(currentContext, "任务所属勘察表不一致，无法继续"); }
+			 */else {
+				StringBuilder titleString = new StringBuilder();
 				if (isCopyToNewTask) {
 					titleString.append("您确认把复制的勘察数据粘贴到新建任务中吗?");
 				} else {
 					// 被复制任务和被粘贴任务不属于同一个勘察表， 的提示信息
-					if(taskListFragment.viewModel.currentSelectedTask.DDID != 
-							taskListFragment.viewModel.currentCopiedTask.DDID){
+					if (taskListFragment.viewModel.currentSelectedTask.DDID != taskListFragment.viewModel.currentCopiedTask.DDID) {
 						titleString.append("你复制的任务和正在被粘贴的任务勘察表不一致，部分数据可能无法赋值，");
 					}
-					titleString.append("您确认继续粘贴到编号为["
-							+ taskListFragment.viewModel.currentSelectedTask.TaskNum
-							+ "]任务中吗");
+					titleString
+							.append("您确认继续粘贴到编号为["
+									+ taskListFragment.viewModel.currentSelectedTask.TaskNum
+									+ "]任务中吗");
 				}
-				DialogUtil.showConfirmationDialog(currentContext, titleString.toString(),
+				DialogUtil.showConfirmationDialog(currentContext,
+						titleString.toString(),
 						new DialogInterface.OnClickListener() {
 							@Override
 							public void onClick(DialogInterface dialog,
@@ -1095,8 +1111,9 @@ public class TaskListMenuOperaotr {
 				.findViewById(R.id.btn_confirm);
 		TextView definename_tv = (TextView) dialog_view_detail
 				.findViewById(R.id.definename_tv);
-		//新加字段，任务来源
-		TextView customer_source_tv=(TextView) dialog_view_detail.findViewById(R.id.customer_source_tv);
+		// 新加字段，任务来源
+		TextView customer_source_tv = (TextView) dialog_view_detail
+				.findViewById(R.id.customer_source_tv);
 
 		setTaskTextView(taskNum_txt, taskInfo.TaskNum);
 		/*
@@ -1182,8 +1199,8 @@ public class TaskListMenuOperaotr {
 		 * if (remark_txt != null && taskInfo.Remark.length() > 0) {
 		 * remark_txt.setText("标注：" + taskInfo.Remark); }
 		 */
-		//用户来源：
-		setTaskTextView(customer_source_tv,taskInfo.CustomerSource);
+		// 用户来源：
+		setTaskTextView(customer_source_tv, taskInfo.CustomerSource);
 
 		DataDefine dataDefine = taskInfo.DDID > 0 ? getTaskDataDefine(taskInfo.DDID)
 				: null;
@@ -1236,7 +1253,7 @@ public class TaskListMenuOperaotr {
 	 */
 	private void setTaskTextView(TextView textView, String value) {
 		if (textView != null && value != null
-				&& !TextUtils.isEmpty(value.trim())&&!value.equals("null")) {
+				&& !TextUtils.isEmpty(value.trim()) && !value.equals("null")) {
 			textView.setText(textView.getText() + value);
 		} else {
 			textView.setVisibility(View.GONE);

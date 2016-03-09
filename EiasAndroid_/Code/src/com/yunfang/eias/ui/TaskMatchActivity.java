@@ -2,6 +2,7 @@ package com.yunfang.eias.ui;
 
 import java.util.ArrayList;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Message;
@@ -189,7 +190,8 @@ public class TaskMatchActivity extends BaseWorkerFragmentActivity {
 		// 取得页码
 		if (txt_pageSize.getText().toString().trim() != "") {
 			try {
-				viewModel.pageSize = Integer.parseInt(txt_pageSize.getText().toString().trim());
+				viewModel.pageSize = Integer.parseInt(txt_pageSize.getText()
+						.toString().trim());
 			} catch (Exception e) {
 				showToast("请输入正确页码!");
 				result = false;
@@ -254,7 +256,8 @@ public class TaskMatchActivity extends BaseWorkerFragmentActivity {
 			if (viewModel.serverTaskInfo != null) {
 				viewModel.locTaskInfo = new TaskInfo();
 				viewModel.locTaskInfo.TaskNum = viewModel.taskNum;
-				result = TaskOperator.copyTaskInfoByServerData(viewModel.serverTaskInfo, viewModel.locTaskInfo);
+				result = TaskOperator.copyTaskInfoByServerData(
+						viewModel.serverTaskInfo, viewModel.locTaskInfo);
 			} else {
 				result.Message = "请选择一个任务";
 			}
@@ -316,7 +319,9 @@ public class TaskMatchActivity extends BaseWorkerFragmentActivity {
 					previouspageBtn.setTextColor(Color.parseColor("#000000"));
 				}
 				refershUiTaskinfoData();
-				if (nextData.Message != null && !nextData.Message.equals("null") && nextData.Message.length() > 0) {
+				if (nextData.Message != null
+						&& !nextData.Message.equals("null")
+						&& nextData.Message.length() > 0) {
 					showToast(nextData.Message);
 				}
 			} else {
@@ -334,13 +339,20 @@ public class TaskMatchActivity extends BaseWorkerFragmentActivity {
 				previouspageBtn.setTextColor(Color.parseColor("#9A9A9A"));
 			}
 			refershUiTaskinfoData();
-			if (preData.Message != null && !preData.Message.equals("null") && preData.Message.length() > 0) {
+			if (preData.Message != null && !preData.Message.equals("null")
+					&& preData.Message.length() > 0) {
 				showToast(preData.Message);
 			}
 			break;
 		// 查询提交选中任务UI事件
 		case TASK_MATCHDATA:
 			ResultInfo<Boolean> result = (ResultInfo<Boolean>) msg.obj;
+			if (result.Success && result.Data) {
+				startTaskInfo(viewModel.locTaskInfo.TaskID,
+						viewModel.locTaskInfo.ID, viewModel.locTaskInfo.TaskNum);
+				this.finish();
+
+			}
 			showToast(result.Message);
 			break;
 		default:
@@ -348,6 +360,38 @@ public class TaskMatchActivity extends BaseWorkerFragmentActivity {
 			break;
 		}
 		loadingWorker.closeLoading();
+	}
+
+	/***
+	 * 进入任务分类项
+	 * 
+	 * @param taskId
+	 * @param identityId
+	 * @param taskNum
+	 */
+	private void startTaskInfo(int taskId, int identityId, String taskNum) {
+		Intent intent = new Intent(this, TaskInfoActivity.class);
+		Bundle bundle = new Bundle();
+		bundle.putString("taskNum", taskNum);
+		bundle.putInt("taskId", taskId);
+		bundle.putInt("identityId", identityId);
+		intent.putExtras(bundle);
+		this.startActivity(intent);
+	}
+
+	/***
+	 * 是否正在提交中
+	 * 
+	 * @param taskNum
+	 * @return
+	 */
+	public static Boolean submiting(String taskNum) {
+		Boolean result = false;
+		if (taskNum.equals(EIASApplication.SubmitingTaskNum)
+				&& EIASApplication.SubmitingTaskNum.length() > 0) {
+			result = true;
+		}
+		return result;
 	}
 
 	/**
@@ -360,17 +404,19 @@ public class TaskMatchActivity extends BaseWorkerFragmentActivity {
 		UserInfo user = EIASApplication.getCurrentUser();
 		String searchTxt = txt_taskinfo_inquiry.getText().toString().trim();
 		GetTaskSearchListTask task = new GetTaskSearchListTask();
-		ResultInfo<ArrayList<TaskInfo>> resultTaskInfos = task.request(user, searchTxt, viewModel.ddId, viewModel.pageIndex, viewModel.pageSize);
+		result = task.request(user, searchTxt, viewModel.ddId,
+				viewModel.pageIndex, viewModel.pageSize);
 		// 得到数据总条数
-		if (resultTaskInfos != null && resultTaskInfos.Others != null) {
-			viewModel.total = Integer.parseInt(String.valueOf(resultTaskInfos.Others));
+		if (result != null && result.Others != null) {
+			viewModel.total = Integer.parseInt(String.valueOf(result.Others));
 		}
-		result.Message = resultTaskInfos.Message;
-		if (resultTaskInfos.Data != null) {
-			result.Data = resultTaskInfos.Data;
+		if (result.Data != null) {
 			if (!ListUtil.hasData(result.Data)) {
 				result.Message = "查询不到数据";
 			}
+		} else {
+			result.Data = new ArrayList<TaskInfo>();
+			result.Message = "查询不到数据";
 		}
 
 		return result;

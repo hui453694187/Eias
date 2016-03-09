@@ -98,6 +98,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/finish_layout"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -116,6 +117,32 @@
 
                 <ImageView
                     android:id="@+id/finish_img"
+                    android:layout_width="10dp"
+                    android:layout_height="15dp"
+                    android:layout_marginLeft="1dp"
+                    android:src="@drawable/radiobutton_drawable" />
+            </LinearLayout>
+            
+            <LinearLayout
+                android:id="@+id/booktime_layout"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:orientation="horizontal" >
+
+                <RadioButton
+                    android:id="@+id/order_by_booktime"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:button="@null"
+                    android:gravity="center"
+                    android:tag="0"
+                    android:text="预约时间"
+                    android:textColor="@color/color_radiobutton" />
+
+                <ImageView
+                    android:id="@+id/booktime_img"
                     android:layout_width="10dp"
                     android:layout_height="15dp"
                     android:layout_marginLeft="1dp"

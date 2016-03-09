@@ -1,6 +1,7 @@
 package com.yunfang.eias.utils;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +19,15 @@ public class DensityHelper {
 
     }
     
+    /**
+     * 判断当前设备是手机还是平板，代码来自 Google I/O App for Android
+     * @param context
+     * @return 平板返回 True，手机返回 False
+     */
+    public static boolean isTablet(Context context) {
+        return (context.getResources().getConfiguration().screenLayout & Configuration.SCREENLAYOUT_SIZE_MASK) >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+    }
+    
    
 
     /***
@@ -32,6 +42,19 @@ public class DensityHelper {
 	public int dip2px(Context context, float dpValue) {
 		final float scale = context.getResources().getDisplayMetrics().density;
 		return (int) (dpValue * scale + 0.5f);
+	}
+	
+	/**
+	 * dp转px
+	 * 
+	 * @param context
+	 * @param val
+	 * @return
+	 */
+	public static int dp2px(Context context, float dpVal)
+	{
+		return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+				dpVal, context.getResources().getDisplayMetrics());
 	}
 
     /**

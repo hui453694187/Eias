@@ -6,6 +6,7 @@ import java.util.Hashtable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.yunfang.eias.base.EIASApplication;
 import com.yunfang.eias.logic.DataLogOperator;
 import com.yunfang.framework.httpClient.CommonRequestPackage;
 import com.yunfang.framework.httpClient.IRequestTask;
@@ -27,7 +28,7 @@ public class CheckTaskStatusTask implements IRequestTask{
 	}
 
 	/**
-	 * 获取指定勘察任务表完整信息
+	 * 同步服务器任务状态
 	 * 
 	 * @param currentUser:当前用户信息
 	 * @param dataDefine：任务主表信息
@@ -35,7 +36,7 @@ public class CheckTaskStatusTask implements IRequestTask{
 	 */
 	public ResultInfo<HashMap<String, Integer>> request(String taskNums) {
 		ResultInfo<HashMap<String, Integer>> result = new ResultInfo<HashMap<String, Integer>>();
-		String url = "http://123.57.152.44:8100/apis/CheckTaskStatus";//EIASApplication.getCurrentUser().LatestServer + "/apis/ReceiveTask";
+		String url =EIASApplication.getCurrentUser().LatestServer + "/apis/CheckTaskStatus";// "http://123.57.152.44:8100/apis/CheckTaskStatus";//
 		// 填充参数，key-value。key是接口要求传的变量名称
 		Hashtable<String, Object> params = new Hashtable<String, Object>(1);
 		params.put("pidstring", taskNums);

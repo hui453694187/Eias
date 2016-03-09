@@ -39,8 +39,8 @@
                 android:id="@+id/dialog_view_fee_txtReceiptNo"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+				android:digits="0123456789abcdefghigklmnopqrstuvwxyzABCDEFGHIGKLMNOPQRSTUVWXYZ"
                 android:hint="请输入收费编号" >
-
                 <requestFocus />
             </EditText>
         </LinearLayout>

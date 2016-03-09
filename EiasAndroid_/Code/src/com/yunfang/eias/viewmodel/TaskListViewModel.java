@@ -87,6 +87,8 @@ public class TaskListViewModel extends ViewModelBase {
 	 * 是否重新加载
 	 */
 	public boolean reload = true;
+	/** 上拉加载后，列表不滚动到顶部*/
+	public boolean onPullup=false;
 
 	/**
 	 * 选中的复制项
@@ -140,10 +142,14 @@ public class TaskListViewModel extends ViewModelBase {
 	 */
 	public RadioButton order_by_finish;
 	
+	/** 预约时间排序*/
+	public RadioButton order_by_booktime;
+	
 	public ImageView create_img;
 	public ImageView receive_img;
 	public ImageView status_img;
 	public ImageView finish_img;
+	public ImageView booktime_img;
 	
 	
 	

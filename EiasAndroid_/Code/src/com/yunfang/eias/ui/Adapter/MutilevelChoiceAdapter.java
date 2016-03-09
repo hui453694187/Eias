@@ -84,10 +84,20 @@ public class MutilevelChoiceAdapter extends BaseAdapter {
 		for (int i = 0; i < this.getCount(); i++) {
 			isSelects.put(i, isSelect);
 			SparseBooleanArray childSelect = isChildSeleccts.get(i, null);
-			if (childSelect != null) {
-				for (int j = 0; j < childSelect.size(); j++) {
-					childSelect.put(j, isSelect);
-				}
+			changChildSelect(childSelect,isSelect);
+		}
+		this.notifyDataSetChanged();
+	}
+	
+	/***
+	 * 改变子分类项选中状态
+	 * @param childSelect
+	 * @param isSelect
+	 */
+	private void changChildSelect(SparseBooleanArray childSelect,boolean isSelect){
+		if (childSelect != null) {
+			for (int j = 0; j < childSelect.size(); j++) {
+				childSelect.put(j, isSelect);
 			}
 		}
 	}
@@ -136,6 +146,12 @@ public class MutilevelChoiceAdapter extends BaseAdapter {
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 				int cbPostion = (int) buttonView.getTag();
 				isSelects.put(cbPostion, isChecked);
+				SparseBooleanArray childSelect=null;
+				childSelect=isChildSeleccts.get(cbPostion, null);
+				if(childSelect!=null){
+					changChildSelect(childSelect,isChecked);
+					MutilevelChoiceAdapter.this.notifyDataSetChanged();
+				}
 			}
 		});
 

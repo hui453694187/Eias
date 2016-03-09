@@ -764,12 +764,14 @@ public class TaskDataWorker {
 				}
 			}
 			String sortStr = setSortStr(sortType);
-
+			if (sortType != null && sortType == SortType.预约时间) {
+				sqlBuilder = setBookTimeSql(sqlBuilder);
+			}
 			sqlBuilder.append(sortStr);
-			if (sortType == null) {// 有排序条件，则不分页查询
+			//if (sortType == null) {// 有排序条件，则不分页查询
 				sqlBuilder.append(" limit " + ((pageIndex - 1) * pageSize)
 						+ "," + (pageSize));
-			}
+			//}
 			cursor = db.rawQuery("select * " + sqlBuilder.toString(), null);
 			if (cursor != null) {
 				TaskInfo taskInfo;
@@ -791,6 +793,74 @@ public class TaskDataWorker {
 	}
 
 	/***
+	 * 预约时间排序SQL语句
+	 * 
+	 * @param sqlBuilder
+	 * @return
+	 */
+	private static StringBuilder setBookTimeSql(StringBuilder sqlBuilder) {
+
+		StringBuilder sqlBuider = new StringBuilder("Select ");
+		sqlBuider.append("ID");
+		sqlBuider.append(",TaskNum");// 任务编号
+		sqlBuider.append(",TaskID");// 任务ID，后台管理系统中对应任务编号的任务ID
+		sqlBuider.append(",DDID");// 任务勘察类型
+		sqlBuider.append(",ReceiveDate");// 领取时间（自建任务时，需要客户端自动填入当前时间）
+		sqlBuider.append(",DoneDate");// 完成时间
+		sqlBuider.append(",Status");// 项目状态TaskStatus:待领取=0，待提交=1，已完成=2（自建任务时，状态默认为待提交，状态值为1）
+		sqlBuider.append(",TargetNumber");// 估价物编号
+		sqlBuider.append(",UrgentStatus");// 紧急程度UrgentStatus:Normal=0，Urgent=1
+		sqlBuider.append(",TargetAddress");// 地址
+		sqlBuider.append(",Owner");// 业主
+		sqlBuider.append(",OwnerTel");// 业主电话
+		sqlBuider.append(",ResidentialArea");// 小区名称
+		sqlBuider.append(",Building");// 楼栋名称
+		sqlBuider.append(",Floor");// 所在楼层
+		sqlBuider.append(",TargetName");// 目标名称
+		sqlBuider.append(",TargetType");// 用途
+		sqlBuider.append(",TargetArea");// 建筑面积
+		sqlBuider.append(",ClientUnit");// 委托人单位
+		sqlBuider.append(",ClientDep");// 委托人部门
+		sqlBuider.append(",ClientName");// 委托人名称
+		sqlBuider.append(",ClientTel");// 委托人联系电话
+		sqlBuider.append(",User");// 领取人
+		sqlBuider.append(",Fee");// 收费金额
+		sqlBuider.append(",ReceiptNo");// 收据号
+		sqlBuider.append(",CreatedDate");// 创建时间
+		sqlBuider.append(",Remark");// 标注
+		sqlBuider.append(",IsNew");// 是否为新建，BooleanEnum,Ture=0，False=1，标记是否为用户自建任务，0为非自建，1为自建
+		sqlBuider.append(",DataDefineVersion");// 需要的勘察表分类信息版本号
+		sqlBuider.append(",CreateType");// 创建方式TaskCreateType，用户自建=0、系统界面创建=1、批量创建=2、第三方系统创建=3
+		sqlBuider.append(",UploadStatus");// 上传状态：UploadStatus:未上传=0,上传成功=1，上传失败=2
+		sqlBuider.append(",UploadTimes");// 上传次数，默认值为：0
+		sqlBuider.append(",LatestUploadDate");// 最后上传时间(默认当前系统的时间)
+		sqlBuider.append(",BookedDate");// 预约日式(默认当前系统的时间)
+		sqlBuider.append(",BookedTime");// 预约时间(默认当前系统的时间)
+		// 用于排序 合并两个字段
+		sqlBuider.append(",datetime(BookedDate||' '||BookedTime) as BookDate");// 预约日期(默认当前系统的日期)
+		sqlBuider.append(",ContactPerson");// 联系人
+		sqlBuider.append(",ContactTel");// 联系人电话
+		sqlBuider.append(",BookedRemark");// 备注
+		sqlBuider.append(",InworkReportFinish");// 任务对应的内页报告是否完成
+		sqlBuider.append(",InworkReportFinishDate");// 任务对应的内页报告完成时间
+		sqlBuider.append(",HasResource");// 是否有资源
+		sqlBuider.append(",UrgentFee");// 加急金额
+		sqlBuider.append(",AdjustFee");// 应收费用
+		sqlBuider.append(",LiveSearchCharge");// 预收费用
+		sqlBuider.append(",CompanyId");// 公司编号
+		sqlBuider.append(",TaskRemark");// 任务备注
+		sqlBuider.append(",CustomerSource ");// 客户来源字段
+
+		sqlBuider.append(sqlBuilder.toString());
+
+		StringBuilder str = new StringBuilder();
+		str.append("from (");
+		str.append(sqlBuider.toString() + ")");
+
+		return str;
+	}
+
+	/***
 	 * 拼接排序SQL语句
 	 * 
 	 * @param sqlBuilder
@@ -803,7 +873,7 @@ public class TaskDataWorker {
 		StringBuilder sortStr = new StringBuilder();
 		String isAsc = sortType.isAsc() ? "asc" : "desc";
 		sortStr.append(" order by " + sortType.getFieldName() + " " + isAsc);
-		
+
 		return sortStr.toString();
 	}
 
@@ -944,16 +1014,12 @@ public class TaskDataWorker {
 						"TaskID=?", new String[] { String.valueOf(taskID) },
 						null, null, null);
 			} else {
-				// cursor = db.query(taskDataItem.getTableName(), null,
-				// "TaskID=? AND baseCategoryID=? AND CategoryID=?",
-				// new String[] { String.valueOf(taskID),
-				// String.valueOf(baseCategoryID), String.valueOf(categoryID) },
-				// null, null, null);
 				cursor = db.query(
 						taskDataItem.getTableName(),
 						null,
-						"TaskID=? AND CategoryID=?",
+						"TaskID=? AND baseCategoryID=? AND CategoryID=?",
 						new String[] { String.valueOf(taskID),
+								String.valueOf(baseCategoryID),
 								String.valueOf(categoryID) }, null, null, null);
 				/*
 				 * 自建任务 baseCategoryID 是-1 导致查不出数据，清除不了子项，修改为 CategoryID 查。
@@ -1130,7 +1196,8 @@ public class TaskDataWorker {
 	 */
 	public static ResultInfo<ArrayList<TaskInfo>> queryTaskInfoes(
 			int pageIndex, int pageSize, String selectStr,
-			UserInfo currentUser, TaskStatus status, Boolean onlyReportTask,SortType sortType) {
+			UserInfo currentUser, TaskStatus status, Boolean onlyReportTask,
+			SortType sortType) {
 		ResultInfo<ArrayList<TaskInfo>> resultInfo = new ResultInfo<ArrayList<TaskInfo>>();
 		ArrayList<TaskInfo> data = null;
 		TaskInfo taskInfo = null;
@@ -1153,10 +1220,7 @@ public class TaskDataWorker {
 			if (onlyReportTask) {
 				sqlBuilder.append(" and InworkReportFinish=1");
 			}
-			/*String descString = "";
-			if (status == TaskStatus.Done) {
-				descString = "desc";
-			}*/
+
 			Cursor cursor = db.rawQuery(
 					"select count(1) " + sqlBuilder.toString(), null);
 			if (cursor != null) {
@@ -1164,17 +1228,15 @@ public class TaskDataWorker {
 					resultInfo.Others = cursor.getInt(0) + ",0";
 				}
 			}
-			
-			String sortStr="";
-			
-			sortStr=setSortStr(sortType);
-			if(sortType==null){
-				sortStr=sortStr+" desc";
+
+			String sortStr = "";
+
+			sortStr = setSortStr(sortType);
+			if (sortType == null) {
+				sortStr = sortStr + " desc";
 			}
-			sqlBuilder.append(sortStr
-							+ "  limit "
-							+ (pageIndex - 1)
-							* pageSize + "," + pageSize);
+			sqlBuilder.append(sortStr + "  limit " + (pageIndex - 1) * pageSize
+					+ "," + pageSize);
 			cursor = db.rawQuery("select * " + sqlBuilder.toString(), null);
 			if (cursor != null) {
 				while (cursor.moveToNext()) {
@@ -2205,25 +2267,25 @@ public class TaskDataWorker {
 			db.beginTransaction();
 
 			TaskInfo taskInfo = new TaskInfo(taskInfoDto, false);
-			//if (taskInfoDto.Categories.size() > 0) {
-				taskInfo.IsNew = false;
-				taskInfo.ID = (int) taskInfo.onInsert();
-				for (TaskCategoryInfoDTO categoryItem : taskInfoDto.Categories) {
-					TaskCategoryInfo category = new TaskCategoryInfo(
-							categoryItem, false);
-					category.CategoryID = (int) categoryItem.CategoryID;
-					category.BaseCategoryID = (int) categoryItem.ID;
-					category.ID = (int) category.onInsert();
-					for (TaskDataItemDTO item : categoryItem.Items) {
-						TaskDataItem taskDataItem = new TaskDataItem(item);
-						taskDataItem.TaskID = taskInfo.TaskID;
-						taskDataItem.BaseCategoryID = (int) categoryItem.ID;
-						taskDataItem.BaseID = Integer.parseInt(item.TID);
-						taskDataItem.CategoryID = (int) categoryItem.CategoryID;
-						taskDataItem.ID = (int) taskDataItem.onInsert();
-					}
+			// if (taskInfoDto.Categories.size() > 0) {
+			taskInfo.IsNew = false;
+			taskInfo.ID = (int) taskInfo.onInsert();
+			for (TaskCategoryInfoDTO categoryItem : taskInfoDto.Categories) {
+				TaskCategoryInfo category = new TaskCategoryInfo(categoryItem,
+						false);
+				category.CategoryID = (int) categoryItem.CategoryID;
+				category.BaseCategoryID = (int) categoryItem.ID;
+				category.ID = (int) category.onInsert();
+				for (TaskDataItemDTO item : categoryItem.Items) {
+					TaskDataItem taskDataItem = new TaskDataItem(item);
+					taskDataItem.TaskID = taskInfo.TaskID;
+					taskDataItem.BaseCategoryID = (int) categoryItem.ID;
+					taskDataItem.BaseID = Integer.parseInt(item.TID);
+					taskDataItem.CategoryID = (int) categoryItem.CategoryID;
+					taskDataItem.ID = (int) taskDataItem.onInsert();
 				}
-			//}
+			}
+			// }
 
 			// 设置事务操作成功的标志
 			db.setTransactionSuccessful();
@@ -2249,14 +2311,15 @@ public class TaskDataWorker {
 	 *            任务信息
 	 * @param currentUser
 	 *            当前用户
-	 * @param status 需要修改成的状态           
+	 * @param status
+	 *            需要修改成的状态
 	 * @return
 	 */
 	public static ResultInfo<Long> upDateLocTask(String[] taskNums,
 			UserInfo currentUser) {
 		ResultInfo<Long> result = new ResultInfo<Long>();
 		SQLiteDatabase db = null;
-		result.Data=-1l;
+		result.Data = -1l;
 		try {
 			db = SQLiteHelper.getWritableDB();
 			// 开启事务
@@ -2269,11 +2332,12 @@ public class TaskDataWorker {
 				taskNum.append(set);
 				taskNum.append("',");
 			}
-			String taskStr=taskNum.toString();
-			taskStr=taskStr.substring(0, taskStr.length()-1);
+			String taskStr = taskNum.toString();
+			taskStr = taskStr.substring(0, taskStr.length() - 1);
 			values.put("Status", "0");
 			int cursor = db.update(new TaskInfo().getTableName(), values,
-					"TaskNum in (" + taskStr + ") and Status = 1", new String[] {});
+					"TaskNum in (" + taskStr + ") and Status = 1",
+					new String[] {});
 			// 设置事务操作成功的标志
 			db.setTransactionSuccessful();
 			db.endTransaction();

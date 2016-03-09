@@ -264,7 +264,7 @@ public class TaskItemControlOperator {
 				break;
 			case Coordinate:
 				createBaiduPositionEditText(item, l, value);
-				//createBaiduPositionTextBox(item, l, value);
+				// createBaiduPositionTextBox(item, l, value);
 				break;
 			case Map:
 				createBaiduMapImgBox(item, l, value);
@@ -323,6 +323,8 @@ public class TaskItemControlOperator {
 			String inputKey = et.getTag().toString();
 			if (!inputValue.equals(EIASApplication.DefaultDropDownListValue)) {
 				changeValueEvent(inputValue, inputKey);
+			} else {
+				changeValueEvent("", inputKey);
 			}
 			hasChanged = true;
 		}
@@ -344,26 +346,31 @@ public class TaskItemControlOperator {
 			LinearLayout parentLinearLayout, final String value) {
 		final Spinner sp = new Spinner(this.mActivity);
 		final EditText et = new EditText(this.mActivity);
-		et.setBackgroundColor(Color.BLUE);
+		// et.setBackgroundColor(Color.BLUE);
 		et.setGravity(Gravity.CENTER);
 		sp.setTag(et);
 		et.setTag(f.Name);
 		sp.setLayoutParams(FILL_PARENT);
 		// sp.setGravity(Gravity.CENTER_HORIZONTAL);
 		sp.setPrompt(" 请选择 ： ");
-
+		boolean valueIsEmpty = !(value != null && !value.equals(""));
 		final String[] arr = (EIASApplication.DefaultDropDownListValue + "|#|" + f.Content)
 				.split("\\|#\\|");
-		ArrayAdapter<Object> ad = new ArrayAdapter<Object>(this.mActivity,
-				android.R.layout.simple_spinner_item, arr);
+		if (!valueIsEmpty && value.endsWith("}")) {
+			arr[arr.length - 1] = value;
+		}
+		final ArrayAdapter<Object> ad = new ArrayAdapter<Object>(
+				this.mActivity, android.R.layout.simple_spinner_item, arr);
 		ad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		sp.setAdapter(ad);
 
 		if (value != null && !value.equals("")
 				&& !value.equals(EIASApplication.DefaultDropDownListValue)) {
-			String tmp = value.endsWith("}") ? value.substring(0,
-					value.indexOf("{")) : value;
-			int position = StringUtil.getIndexForArray(arr, tmp);
+			/*
+			 * String tmp = value.endsWith("}") ? value.substring(0,
+			 * value.indexOf("{")) : value;
+			 */
+			int position = getIndexForArray(arr, value);
 			if (position >= 0) {
 				sp.setSelection(position);
 			}
@@ -393,7 +400,25 @@ public class TaskItemControlOperator {
 							.substring(0, tmp.indexOf("{"))
 							+ "{"
 							+ et.getText().toString().trim() + "}");
+					ad.notifyDataSetChanged();
 				}
+			}
+		});
+
+		et.setOnFocusChangeListener(new OnFocusChangeListener() {
+
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				if (!hasFocus) {
+					// 此处为失去焦点时的处理内容
+					if (v instanceof EditText) {
+						EditText et = (EditText) v;
+						String inputValue = et.getText().toString().trim();
+						String inputKey = et.getTag().toString();
+						changeValueEvent("其它{" + inputValue + "}", inputKey);
+					}
+				}
+
 			}
 		});
 
@@ -447,6 +472,8 @@ public class TaskItemControlOperator {
 						}
 					}
 					checkedItems[i] = selectedItems.contains(tmp);
+					// TODO bug 比对有问题
+					// checkedItems[i] = selectedItems.equals(tmp);
 				}
 				AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
 				builder.setTitle("请选择");
@@ -815,20 +842,20 @@ public class TaskItemControlOperator {
 		TimeEditText et = new TimeEditText(this.mActivity);
 		et.setFocusable(false);
 		et.setLayoutParams(FILL_PARENT);
-		if(TextUtils.isEmpty(value)){// 第一次如果没有值，则自动定位
-			//创建完后定位一次
+		if (TextUtils.isEmpty(value)) {// 第一次如果没有值，则自动定位
+			// 创建完后定位一次
 			setLatLonOnLocationSucceed(et);
-		}else{
+		} else {
 			et.setText(value);
 		}
-		//et.addTextChangedListener(watcher);
+		// et.addTextChangedListener(watcher);
 		et.setOnIconClickListener(new OnIconClickListener() {
 			@Override
 			public void OnIconClick(Drawable iconDrawable, EditText edt) {
 				setLatLonOnLocationSucceed(edt);
 			}
 		});
-		
+
 		l.addView(et);
 		inputMap.put(f.Name, et);
 		et.setTag(f.Name);
@@ -1043,58 +1070,19 @@ public class TaskItemControlOperator {
 				if (!latlngString.contains(",")) {
 					latlngString = "";
 				}
-				BaibuMapView baiduMap = new BaibuMapView(mActivity,
-						latlngString);
-				baiduMap.setAddressControl(true);
-				FrameLayout frameLayout = new FrameLayout(mActivity);
-				frameLayout.setLayoutParams(FILL_PARENT);
-				frameLayout.addView(baiduMap.mView);
-				final Dialog dialog = DialogUtil.getAboutDialog(mActivity,
-						frameLayout);
-				dialog.getWindow().setLayout(LayoutParams.MATCH_PARENT,
-						LayoutParams.MATCH_PARENT);
-				baiduMap.setOperatorListener(new OperatorListener() {
-					@Override
-					public void onSelected(BDLocation location) {
-						if (location != null) {
-							String loglat = location.getLatitude() + ","
-									+ location.getLongitude();
-							et.setText(loglat);
-							String inputValue = loglat;
-							String inputKey = finalF.Name.toString();
-							if (!inputValue
-									.equals(EIASApplication.DefaultDropDownListValue)) {
-								changeValueEvent(inputValue, inputKey);
-							}
+				showMapView(latlngString, tempView, finalF);
+			}
+		});
+		mappImg.setOnClickListener(new View.OnClickListener() {
 
-							if (tempView.getTag() != null) {
-								ImageView mapImg = (ImageView) tempView
-										.getTag();
-								mapImg.setVisibility(View.VISIBLE);
-								String mapPaht = getMapPath(loglat);
-								imageLoader.displayImage(mapPaht, mapImg,
-										option);
-							}
-						}
-						dialog.dismiss();
-					}
+			@Override
+			public void onClick(View v) {
+				String latlngString = et.getText().toString();
+				if (!latlngString.contains(",")) {
+					latlngString = "";
+				}
+				showMapView(latlngString, et, finalF);
 
-					@Override
-					public void onCancel() {
-						dialog.dismiss();
-					}
-
-					@Override
-					public void onGetGeoCodeResult(GeoCodeResult result) {
-
-					}
-
-					@Override
-					public void onMapStatusChange(MapStatus arg0) {
-
-					}
-				});
-				dialog.show();
 			}
 		});
 
@@ -1103,6 +1091,68 @@ public class TaskItemControlOperator {
 
 		inputMap.put(f.Name, et);
 		et.setOnFocusChangeListener(focusListenter);
+	}
+
+	/***
+	 * 显示地图
+	 * 
+	 * @param latlngString
+	 *            坐标字串
+	 * @param et
+	 *            显示坐标的输入框
+	 * @param tempView
+	 * @param finalF
+	 */
+	private void showMapView(String latlngString, final Button tempView,
+			final DataFieldDefine finalF) {
+		BaibuMapView baiduMap = new BaibuMapView(mActivity, latlngString);
+		baiduMap.setAddressControl(true);
+		FrameLayout frameLayout = new FrameLayout(mActivity);
+		frameLayout.setLayoutParams(FILL_PARENT);
+		frameLayout.addView(baiduMap.mView);
+		final Dialog dialog = DialogUtil.getAboutDialog(mActivity, frameLayout);
+		dialog.getWindow().setLayout(LayoutParams.MATCH_PARENT,
+				LayoutParams.MATCH_PARENT);
+		baiduMap.setOperatorListener(new OperatorListener() {
+			@Override
+			public void onSelected(BDLocation location) {
+				if (location != null) {
+					String loglat = location.getLatitude() + ","
+							+ location.getLongitude();
+					tempView.setText(loglat);
+					String inputValue = loglat;
+					String inputKey = finalF.Name.toString();
+					if (!inputValue
+							.equals(EIASApplication.DefaultDropDownListValue)) {
+						changeValueEvent(inputValue, inputKey);
+					}
+
+					if (tempView.getTag() != null) {
+						ImageView mapImg = (ImageView) tempView.getTag();
+						mapImg.setVisibility(View.VISIBLE);
+						String mapPaht = getMapPath(loglat);
+						imageLoader.displayImage(mapPaht, mapImg, option);
+					}
+				}
+				dialog.dismiss();
+			}
+
+			@Override
+			public void onCancel() {
+				dialog.dismiss();
+			}
+
+			@Override
+			public void onGetGeoCodeResult(GeoCodeResult result) {
+
+			}
+
+			@Override
+			public void onMapStatusChange(MapStatus arg0) {
+
+			}
+		});
+		dialog.show();
 	}
 
 	/***
@@ -1182,14 +1232,16 @@ public class TaskItemControlOperator {
 			public void onFocusChange(View v, boolean hasFocus) {
 				EditText temp = (EditText) v;
 				if (hasFocus) {
-					if (temp.getText().length() == 0|| temp.getText().equals("null")) {
+					if (temp.getText().length() == 0
+							|| temp.getText().equals("null")) {
 						if (EIASApplication.getCurrentUser().Mobile.length() == 0
-								|| EIASApplication.getCurrentUser().Mobile.equals("null")) {
+								|| EIASApplication.getCurrentUser().Mobile
+										.equals("null")) {
 							temp.setText("");
 						} else {
 							temp.setText(EIASApplication.getCurrentUser().Mobile);
 						}
-						
+
 					}
 				}
 				changeValueEvent(temp.getText().toString(), f.Name);
@@ -1335,6 +1387,25 @@ public class TaskItemControlOperator {
 		result.Message = showMsg;
 		result.Data = showMsgs.size() == 0;
 		return result;
+	}
+
+	/**
+	 * 获取指定值在数组中的位置
+	 * 
+	 * @param srcArray
+	 * @param compareValue
+	 * @return
+	 */
+	private int getIndexForArray(String[] srcArray, String compareValue) {
+		int index = -1;
+		for (int i = 0; i < srcArray.length; i++) {
+			String tmp = srcArray[i];
+			if (tmp.equals(compareValue)) {
+				index = i;
+				break;
+			}
+		}
+		return index;
 	}
 
 	// }}

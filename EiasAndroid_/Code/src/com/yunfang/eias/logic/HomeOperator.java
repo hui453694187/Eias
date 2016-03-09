@@ -151,11 +151,13 @@ public class HomeOperator {
 	public static ResultInfo<UserTaskInfo> getHomeData(UserInfo userInfo) {
 		ResultInfo<UserTaskInfo> result = new ResultInfo<UserTaskInfo>();
 		try {
-			if (!EIASApplication.IsOffline) {
+			if (!EIASApplication.IsOffline&&EIASApplication.IsNetworking) {
 				GetHomeInfoTask task = new GetHomeInfoTask();
 				result = task.request(userInfo);
 				if (result.Success && result.Others != null) {
+					//服务端勘察表
 					ArrayList<DataDefine> returnDefines = (ArrayList<DataDefine>) result.Others;
+					//本地服务器勘察表
 					ResultInfo<ArrayList<DataDefine>> localDefines = DataDefineWorker
 							.queryDataDefineByCompanyID(userInfo.CompanyID);
 					ArrayList<DataDefine> defines = new ArrayList<DataDefine>();
@@ -179,16 +181,18 @@ public class HomeOperator {
 								}
 							}
 							result.Others = defines;
+							//2016-2-19 删除服务器返回的勘察表中不存在的勘察表
+							DatadefinesOperator.deleteUnDealDefines(localDefines.Data,returnDefines);
 						}
 					}
 				}
 			} else {
 				result = TaskDataWorker.queryUserInfo(userInfo);
+				result.Others=new ArrayList<DataDefine>();
 			}
 		} catch (Exception e) {
 			result.Success = false;
-			result.Message = result.Message.length() > 0 ? result.Message : e
-					.getMessage();
+			result.Message = result.Message.length() > 0 ? result.Message : "获取失败！";
 		}
 		return result;
 	}

@@ -18,7 +18,6 @@ import android.widget.TextView;
 import com.yunfang.eias.R;
 import com.yunfang.eias.base.EIASApplication;
 import com.yunfang.eias.base.MainService;
-import com.yunfang.eias.logic.DatadefinesOperator;
 import com.yunfang.eias.logic.LoginInfoOperator;
 import com.yunfang.framework.base.BaseWorkerActivity;
 import com.yunfang.framework.maps.BaiduLocationHelper;
@@ -60,10 +59,6 @@ public class LoginActivity extends BaseWorkerActivity {
 	 * 离线登录
 	 */
 	private final int TASK_OFFLINE_LOGIN = 2;
-	/***
-	 * 获取最新勘察配置信息
-	 */
-	private final int TASK_ONLINE_GET_NEWEST_DATADEFINES = 3;
 
 	// }}
 
@@ -177,17 +172,6 @@ public class LoginActivity extends BaseWorkerActivity {
 		mBackgroundHandler.sendMessage(loginMsg);
 	}
 
-	/***
-	 * 获取最新配置表， 同步本地数据库配置信息
-	 */
-	@SuppressWarnings("unused")
-	private void getNewesDatadefines() {
-		// loadingWorker.showLoading("检查勘察配置信息中...");
-		Message getDatadefinde = new Message();
-		getDatadefinde.what = TASK_ONLINE_GET_NEWEST_DATADEFINES;
-		mBackgroundHandler.sendMessage(getDatadefinde);
-	}
-
 	// {{ 进程调用重载类
 	/**
 	 * 
@@ -210,10 +194,6 @@ public class LoginActivity extends BaseWorkerActivity {
 					comboboxServer.getText().trim(), cbIsAuto.isChecked(),
 					cbRemeberPwd.isChecked());
 			break;
-		case TASK_ONLINE_GET_NEWEST_DATADEFINES:// 获取最新勘察配置表
-			DatadefinesOperator.getNewestDatadefine(LoginInfoOperator
-					.getCurrentUser());
-			break;
 		default:
 			result = new ResultInfo<UserInfo>(false);
 			result.Data = null;
@@ -228,27 +208,19 @@ public class LoginActivity extends BaseWorkerActivity {
 	@Override
 	protected void handleUiMessage(Message msg) {
 		super.handleUiMessage(msg);
-		boolean doNotClose = false;
 		switch (msg.what) {
 		case TASK_ONLINE_LOGIN:// 在线登录
-			doNotClose = afterLogined((ResultInfo<UserInfo>) msg.obj,
+			afterLogined((ResultInfo<UserInfo>) msg.obj,
 					TASK_ONLINE_LOGIN);
 			break;
 		case TASK_OFFLINE_LOGIN:// 离线登录
 			afterLogined((ResultInfo<UserInfo>) msg.obj, TASK_OFFLINE_LOGIN);
 			break;
-		case TASK_ONLINE_GET_NEWEST_DATADEFINES:// 删除不存在勘察表数据完成了 执行跳转
-			Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-			startActivity(intent);
-			LoginActivity.this.finish();
-			break;
 		default:
 			showToast("没有找到任务执行的操作函数");
 			break;
 		}
-		if (!doNotClose) {
-			loadingWorker.closeLoading();
-		}
+		loadingWorker.closeLoading();
 
 	}
 
@@ -267,7 +239,6 @@ public class LoginActivity extends BaseWorkerActivity {
 			if (result.Data != null && result.Data.Token != null
 					&& result.Data.Token.length() > 0
 					&& !result.Data.Token.equals("null")) {
-				//getNewesDatadefines();
 				Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
 				startActivity(intent);
 				LoginActivity.this.finish();

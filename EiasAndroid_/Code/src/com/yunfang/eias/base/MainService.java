@@ -1,6 +1,7 @@
 package com.yunfang.eias.base;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -268,7 +269,7 @@ public class MainService extends BaseBackgroundService {
 		// 没有在执行上传过程时，才重新跳入上传任务的循环，否则不跳入循环。
 		if (!THREADRUNING) {
 			boolean newResourceLibrary = getResUrl();
-			
+
 			while (uploadTasks.size() > 0) {
 				THREADRUNING = true;
 				TaskInfo tempTask = null;
@@ -306,6 +307,7 @@ public class MainService extends BaseBackgroundService {
 
 						// 直接上传图片到资源库
 						ResultInfo<Map<String, String>> fileUploadSuccess = new ResultInfo<Map<String, String>>();
+						fileUploadSuccess.Data = new HashMap<String, String>();
 						UploadFile2ResourceTask taskHttpRes = new UploadFile2ResourceTask(
 								EIASApplication.getCurrentUser().ResourceLibraryDomainName,
 								newResourceLibrary);
@@ -356,10 +358,9 @@ public class MainService extends BaseBackgroundService {
 								// additional);
 							}
 						}
-						// 图片上传成功或者没有文件
+						// 图片上传成功或者没有文件 ，可以提交任务
 						if (fileUploadSuccess.Success
-								|| !ListUtil.hasData(taskDataItems.Data)
-								&& !fileUploadSuccess.Data.isEmpty()) {// &&!fileUploadSuccess.Data.isEmpty()
+								|| !ListUtil.hasData(taskDataItems.Data)) {
 
 							// 资源上成功， 替换 分类项子项Value
 							setDataItemValue(getInfo.Data,
@@ -390,6 +391,7 @@ public class MainService extends BaseBackgroundService {
 									TaskOperator
 											.removeAdditional(tempTask.TaskNum);
 								}
+								isResubmit=false;
 							} else {
 								// 若网络连接断开则直接提示并返回
 								if (isContinue(tempTask))
@@ -464,6 +466,7 @@ public class MainService extends BaseBackgroundService {
 							// 去除已经执行提交的任务
 							uploadTasks
 									.remove(uploadTasks.keySet().toArray()[0]);
+							uploadTasks.remove(tempTask.TaskNum);
 							// 添加需要重新提交的任务
 							if (isResubmit) {
 								putFailTasksMap(tempTask);
@@ -490,7 +493,7 @@ public class MainService extends BaseBackgroundService {
 	 * @author kevin
 	 * @date 2016-02-03 下午3:39:18
 	 * @Description: 获取资源库url
-	 * @return isNewRes 
+	 * @return isNewRes
 	 */
 	private boolean getResUrl() {
 		boolean isNewRes = false;
@@ -525,6 +528,9 @@ public class MainService extends BaseBackgroundService {
 	 */
 	private TaskInfo setDataItemValue(TaskInfo taskInfo,
 			Map<String, String> resIdMap) {
+		if (resIdMap == null) {
+			return taskInfo;
+		}
 		Set<String> keySet = resIdMap.keySet();
 
 		for (String key : keySet) {
