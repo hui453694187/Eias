@@ -456,7 +456,7 @@ public class TaskListViewAdapter extends ArrayAdapter<TaskInfo> {
 					holder.task_list_view_linelayout.setVisibility(View.GONE);
 				} else if(item.Status == TaskStatus.Unbelong){//非当前用户的任务
 					holder.txt_submiting.setVisibility(View.VISIBLE);
-					holder.txt_submiting.setText("该任务不属于当前用户");
+					holder.txt_submiting.setText("此任务已分配给其他用户");
 					holder.task_list_view_linelayout.setVisibility(View.GONE);
 				}
 			}
