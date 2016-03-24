@@ -192,7 +192,7 @@ public class UploadFile2ResourceTask {
 						+ URLEncoder.encode(fileInfo.getFileTypeName()) + // 标题
 						"&systemName=" + URLEncoder.encode("外采系统") + // 系统名
 						"&belongID=" + taskInfo.TaskID + // 任务ID 对应后台任务ID
-						"&belongPID=" + taskInfo.ID + // 任务ID 客户段任务ID
+						"&belongPID=" + taskInfo.ID + // 任务ID 客户端任务ID
 						// "&format="+format+
 						"&belongDesc=" + taskInfo.TaskNum;// 任务编号//
 				File file = new File(fileInfo.getFilePath());

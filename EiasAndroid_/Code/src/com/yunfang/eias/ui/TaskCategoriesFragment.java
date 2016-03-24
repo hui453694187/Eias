@@ -31,7 +31,7 @@ import com.yunfang.framework.base.BaseWorkerFragment;
 import com.yunfang.framework.model.ResultInfo;
 import com.yunfang.framework.utils.ListUtil;
 
-@SuppressLint("ValidFragment")
+@SuppressLint({ "ValidFragment", "InflateParams", "ClickableViewAccessibility" })
 public class TaskCategoriesFragment extends BaseWorkerFragment {
 	// {{ 属性
 
@@ -144,14 +144,42 @@ public class TaskCategoriesFragment extends BaseWorkerFragment {
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+		//寻找控件放到这里
+		getControls();
+
+		//初始化数据
 		intView();
+		
+		refreshView();
 	}
 
+	
+	/**
+	 * Return true if the fragment has been hidden.
+	 */
+	@Override
+	public void onHiddenChanged(boolean hidden) {
+		super.onHiddenChanged(hidden);
+		if (!hidden) {
+			refreshView();
+		}
+	}
+	
 	/**
 	 * 初始化控件
 	 * */
 	public void intView() {
-		getControls();
+//		getControls();
+//		setView();
+	}
+	
+
+	/**
+	 * 刷新ListView的数据
+	 */
+	public void refreshView(){
+		viewModel.taskInfoActivity.refreshTaskCategory();
+		refreshListView();
 		setView();
 	}
 
@@ -227,8 +255,6 @@ public class TaskCategoriesFragment extends BaseWorkerFragment {
 		});
 
 		initTaskList();
-		viewModel.taskInfoActivity.refreshTaskCategory();
-		refreshListView();
 	}
 
 	/**

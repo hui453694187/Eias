@@ -89,7 +89,7 @@ public class SubmitTaskInfoTask implements IRequestTask {
 				}
 			} catch (Exception e) {
 				result.Success = false;
-				result.Message = e.getMessage();
+				result.Message = "服务器返回数据异常";
 				DataLogOperator.taskHttp("SubmitTaskInfoTask=>提交任务失败(getResponseData)", e.getMessage());
 			}
 		} else {

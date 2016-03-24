@@ -358,7 +358,7 @@ public class EIASApplication extends BaseApplication {
 		 * Services.put("外业测试服务器", "http://182.92.219.161:18098");
 		 */
 
-		
+		Services.put("贺隽服务器", "http://192.168.3.66:12000");
 		Services.put("外业测试服务器", "http://eiastest.yunfangdata.com");
 		Services.put("采图测试服务器", "http://182.92.161.16:18099");
 		

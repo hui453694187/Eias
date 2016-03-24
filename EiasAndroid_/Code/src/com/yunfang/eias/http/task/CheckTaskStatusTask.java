@@ -80,7 +80,9 @@ public class CheckTaskStatusTask implements IRequestTask{
 								JSONObject jsonObj=(JSONObject) jsonArray.get(i);
 								String taskNumb=jsonObj.getString("PID");
 								int status=jsonObj.getInt("Status");
-								map.put(taskNumb, status);
+								//该任务的所有者ID
+								int taskUserId=jsonObj.getInt("InquirerNumber");
+								map.put(taskNumb+','+taskUserId, status);
 							}
 							result.Data=map;
 						}

@@ -42,6 +42,7 @@
                 android:layout_height="100dp"
                 android:gravity="top"
                 android:maxLines="3"
+                android:maxLength="200"
                 android:singleLine="false" >
 
                 <requestFocus />

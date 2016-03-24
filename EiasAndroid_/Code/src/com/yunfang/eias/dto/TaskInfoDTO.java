@@ -70,9 +70,6 @@ public class TaskInfoDTO {
 	/** 任务备注 */
 	public String TaskRemark="";
 
-	/**暂停原因*/
-	public String Reason="";
-	
 	/**
 	 * 领取时间
 	 */
@@ -302,7 +299,7 @@ public class TaskInfoDTO {
 		Fee = task.Fee;
 		ReceiptNo = task.ReceiptNo;
 		CreatedDate = task.CreatedDate;
-		Reason = task.Remark;
+		Remark = task.Remark;
 		TaskRemark=task.TaskRemark;
 		DataDefineVersion = task.DataDefineVersion;
 		CreateType = task.CreateType.getIndex();
@@ -401,7 +398,7 @@ public class TaskInfoDTO {
 		result.Fee = this.Fee;
 		result.ReceiptNo = this.ReceiptNo;
 		result.CreatedDate = this.CreatedDate;
-		result.Remark = this.Reason;
+		result.Remark = this.Remark;
 		result.TaskRemark=this.TaskRemark;
 		result.DataDefineVersion = this.DataDefineVersion;
 		result.CreateType = TaskCreateType.getEnumByValue(this.CreateType);
@@ -466,8 +463,8 @@ public class TaskInfoDTO {
 		Fee = obj.optString("Fee");
 		ReceiptNo = obj.optString("ReceiptNo");
 		CreatedDate = obj.optString("CreatedDate");
-		Remark = obj.optString("Remark");
-		Reason = obj.optString("Reason");
+		//Remark = obj.optString("Remark"); 后台这个字段没用 16-3-11
+		Remark = obj.optString("Reason");//暂停备注使用这个字段
 		TaskRemark=obj.optString("TaskRemark");
 		DataDefineVersion = obj.optInt("DataDefineVersion");
 		if (obj.has("Categories")) {

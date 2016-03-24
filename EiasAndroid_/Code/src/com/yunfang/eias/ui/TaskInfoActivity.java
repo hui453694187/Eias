@@ -197,8 +197,8 @@ public class TaskInfoActivity extends BaseWorkerFragmentActivity implements OnSc
 			Integer identityId = bundle.getInt("identityId");//任务在客户端的自增ID
 			ResultInfo<TaskInfo> temp = TaskOperator.getTaskInfo(taskId, identityId);
 			if (temp != null && temp.Data != null && temp.Data.ID > 0) {
-				// 如果任务所属报告完成就删除资源文件
-				TaskOperator.removeTaskResource(temp.Data);
+				/*// 如果任务所属报告完成就删除资源文件 2016-3-18：改到刷新列表时删除
+				TaskOperator.removeTaskResource(temp.Data);*/
 				// 如果当前任务没有默认值就添加默认值
 				TaskOperator.setItemDefaultValue(temp.Data);
 

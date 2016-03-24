@@ -8,7 +8,6 @@ import com.yunfang.eias.base.EIASApplication;
 import com.yunfang.eias.dto.VersionDTO;
 import com.yunfang.eias.http.task.CheckVersionTask;
 import com.yunfang.eias.http.task.GetDataDefineDataTask;
-import com.yunfang.eias.http.task.GetFinishInworkReportTask;
 import com.yunfang.eias.http.task.GetHomeInfoTask;
 import com.yunfang.eias.http.task.GetReturnTask;
 import com.yunfang.eias.model.DataDefine;
@@ -198,8 +197,9 @@ public class HomeOperator {
 	}
 
 	/**
+	 * 未使用方法 2016-3-18
 	 * 同步已经完成报告的任务信息　
-	 */
+	 *//*
 	public static void synchroReportInfo(final UserInfo userInfo) {
 		if (!EIASApplication.IsOffline) {
 			new Thread() {
@@ -231,7 +231,7 @@ public class HomeOperator {
 				}
 			}.start();
 		}
-	}
+	}*/
 
 	/***
 	 * 刷新待提交列表同时，获取服务器最新版本号

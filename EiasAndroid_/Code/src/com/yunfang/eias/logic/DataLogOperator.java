@@ -620,6 +620,21 @@ public class DataLogOperator {
 		}
 		DataLogWorker.createDataLog(EIASApplication.getCurrentUser(), concent, OperatorTypeEnum.UserLogout,LogType.UserOperation);
 	}
+	
+	/***
+	 * 
+	 * @param context 日志内容
+	 */
+	public static void taskReportFinalsh(String context){
+		String logStr="";
+		if(context!=null){
+			logStr="任务报告完成："+context;
+		}else{
+			logStr="同步任务报告完成状态 ";
+		}
+		
+		DataLogWorker.createDataLog(EIASApplication.getCurrentUser(), logStr, OperatorTypeEnum.Other,LogType.UserOperation);
+	}
 
 	// }}
 

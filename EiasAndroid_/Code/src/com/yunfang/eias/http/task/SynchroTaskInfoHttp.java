@@ -88,7 +88,7 @@ public class SynchroTaskInfoHttp implements IRequestTask {
 	 *            :当前所在页码，从1开始
 	 * @param pageSize
 	 *            ：页行数
-	 * @return
+	 * @return 本地不存在的任务数据
 	 */
 	public ResultInfo<ArrayList<TaskInfoDTO>> request(UserInfo currentUser, TaskStatus taskStatus, String serverTask, String queryStr, int pageIndex, int pageSize) {
 		ResultInfo<ArrayList<TaskInfoDTO>> result = new ResultInfo<ArrayList<TaskInfoDTO>>();

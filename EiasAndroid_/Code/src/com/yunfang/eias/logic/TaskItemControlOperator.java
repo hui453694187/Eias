@@ -451,6 +451,8 @@ public class TaskItemControlOperator {
 
 		selectBtn.setTag(f.Name);
 		selectBtn.setText(value);
+		//默认值保存一次
+		changeValueEvent(value, f.Name);
 		selectBtn.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(final View arg0) {

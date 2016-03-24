@@ -43,6 +43,7 @@ import com.yunfang.eias.enumObj.TaskUploadStatusEnum;
 import com.yunfang.eias.http.task.BackgroundServiceTask;
 import com.yunfang.eias.http.task.CheckTaskStatusTask;
 import com.yunfang.eias.http.task.DeleteRelationResourceTask;
+import com.yunfang.eias.http.task.GetFinishInworkReportTask;
 import com.yunfang.eias.http.task.GetFinishTaskInfo;
 import com.yunfang.eias.http.task.GetHomeInfoTask;
 import com.yunfang.eias.http.task.GetTaskInfoTask;
@@ -390,21 +391,24 @@ public class TaskOperator {
 					String numS[] = reBackNum.split(",");
 					TaskDataWorker.upDateLocTask(numS, currentUser);
 				}
-
-				// 检查服务器任务状态，同步到本地
-				// 获取本地的服务器任务
-				ResultInfo<String> locTask = TaskDataWorker
-						.getServerTaskByLoc(currentUser);
-				if (locTask.Success) {
-					checkTaskStatus(locTask.Data);
-				}
-
+			}
+			// 检查服务器任务状态，同步到本地
+			// 获取本地的服务器任务
+			ResultInfo<String> locTask = TaskDataWorker
+					.getServerTaskByLoc(currentUser);
+			if (locTask.Success) {
+				checkTaskStatus(locTask.Data);
 			}
 
 		}
 		return result;
 	}
 
+	/***
+	 * 检查本地任务在服务器的任务状态
+	 * 
+	 * @param taskNums
+	 */
 	private static void checkTaskStatus(String taskNums) {
 		CheckTaskStatusTask tasks = new CheckTaskStatusTask();
 		ResultInfo<HashMap<String, Integer>> result = tasks.request(taskNums);
@@ -413,9 +417,20 @@ public class TaskOperator {
 			for (String key : keySet) {
 				int status = result.Data.get(key);
 				// 修改本地任务状态
-				TaskStatus taskStatus = TaskStatus.getEnumByValue(status);
-				if (taskStatus != null) {
-					saveTaskUStatus(taskStatus, key);
+				String taskNumber[] = key.split(",");
+				if (taskNumber.length == 2) {// 检查本任务是否属于自己
+					String taskUserId = taskNumber[1];
+					String userId = EIASApplication.getCurrentUser().ID;
+					if (!taskUserId.equals(userId)) {// 任务不属于当前用户，修改任务状态为 404
+						status = 404;
+					}
+				}
+				if (status != TaskStatus.Doing.getIndex()// 待提交任务
+						&& status != TaskStatus.Pause.getIndex()) {// 暂停任务，则修改状态
+					TaskStatus taskStatus = TaskStatus.getEnumByValue(status);
+					if (taskStatus != null) {
+						saveTaskUStatus(taskStatus, taskNumber[0]);
+					}
 				}
 
 			}
@@ -678,7 +693,7 @@ public class TaskOperator {
 			if (!result.Success || !result.Data) {// 暂停任务失败，本地任务状态回滚
 				taskInfo.Status = status;
 				taskInfo.onUpdate("TaskNum='" + taskInfo.TaskNum + "'");
-				DataLogOperator.taskPause(taskInfo,result.Message);
+				DataLogOperator.taskPause(taskInfo, result.Message);
 			}
 		} catch (Exception e) {
 			result.Success = false;
@@ -2338,8 +2353,12 @@ public class TaskOperator {
 		// 找到数据库中需要清空的项
 		ArrayList<TaskDataItem> taskItems = TaskDataWorker
 				.queryTaskDataItemsByID(taskCategoryInfo.TaskID,
-						taskCategoryInfo.CategoryID,
-						taskCategoryInfo.BaseCategoryID, false).Data;
+						taskCategoryInfo.CategoryID).Data;
+		/*
+		 * .queryTaskDataItemsByID(taskCategoryInfo.TaskID,
+		 * taskCategoryInfo.CategoryID, taskCategoryInfo.BaseCategoryID,
+		 * false).Data;
+		 */
 		ArrayList<DataFieldDefine> defineFileds = DataDefineWorker
 				.queryDataFieldDefineByID(task.DDID,
 						taskCategoryInfo.CategoryID).Data;
@@ -2483,16 +2502,17 @@ public class TaskOperator {
 				// 获取勘察数据信息
 				ResultInfo<DataDefine> dataDefine = DataDefineWorker
 						.getCompleteDataDefine(locTaskInfo.DDID);
-				if(dataDefine.Success&&dataDefine.Data!=null){
+				if (dataDefine.Success && dataDefine.Data != null) {
 					// 复制分类项
-					pastedInfoes(serverTaskInfo.Categories, locTaskInfo.Categories,
-							dataDefine.Data, serverTaskInfo, locTaskInfo,
+					pastedInfoes(serverTaskInfo.Categories,
+							locTaskInfo.Categories, dataDefine.Data,
+							serverTaskInfo, locTaskInfo,
 							OperatorTypeEnum.TaskDataMatching);
 					// 修改返回结果
 					result.Data = true;
 					result.Success = true;
 					result.Message = "匹配成功";
-				}else{
+				} else {
 					// 修改返回结果
 					result.Data = false;
 					result.Success = false;
@@ -3632,5 +3652,42 @@ public class TaskOperator {
 			}
 		}
 		return sortType;
+	}
+
+	/***
+	 * 同步报告已完成任务状态 删除任务图片资源
+	 * 
+	 * @param currentUser
+	 */
+	public static void synchroReportIsFinish(UserInfo currentUser) {
+		// 获取最后的报告日期同步时间
+		ResultInfo<String> date = TaskDataWorker
+				.getLastDateByReport(currentUser);
+		if (date.Success) {
+			// 获取当前查询结果日期后的报告
+			GetFinishInworkReportTask task = new GetFinishInworkReportTask();
+			ResultInfo<ArrayList<String>> tasklst = task.request(currentUser,
+					date.Data);
+			if (tasklst.Success && tasklst.Data != null
+					&& tasklst.Data.size() > 0) {
+				for (String item : tasklst.Data) {
+					String[] temp = item.split(",");
+					if (temp.length == 2) {
+						// 修改数据库状态
+						ResultInfo<TaskInfo> result = TaskDataWorker
+								.synchroReportInfo(temp[0], temp[1]);
+						if (result.Success && result.Data != null) {
+							// 删除任务资源
+							removeTaskResource(result.Data);
+							DataLogOperator.taskReportFinalsh("删除任务（" + temp[0]
+									+ "）本地资源成功");
+						} else {
+							DataLogOperator.taskReportFinalsh("保存报告完成日期失败（"
+									+ temp[0] + "）->" + result.Message);
+						}
+					}
+				}
+			}
+		}
 	}
 }

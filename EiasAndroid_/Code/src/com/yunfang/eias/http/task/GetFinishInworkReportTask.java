@@ -55,7 +55,7 @@ public class GetFinishInworkReportTask implements IRequestTask {
 				} catch (JSONException e) {
 					result.Success = false;
 					result.Message = "服务器异常，获取数据失败";
-					DataLogOperator.taskHttp("GetTaskListTask=>" + result.Message + "(getResponseData)", e.getMessage());
+					DataLogOperator.taskHttp("GetTaskListTask=>" + "报告完成状态同步：" + "(getResponseData)", e.getMessage());
 				}
 			} else {
 				result.Success = false;
@@ -89,7 +89,7 @@ public class GetFinishInworkReportTask implements IRequestTask {
 		} catch (Exception e) {
 			result.Success = false;
 			result.Message = "服务器异常，获取任务数据失败";
-			DataLogOperator.taskHttp("GetTasksByFinishInworkReport=>获取任务数据失败(request)", e.getMessage());
+			DataLogOperator.taskHttp("GetTasksByFinishInworkReport=>获取任务数据失败(request)", "报告完成状态同步异常:"+e.getMessage());
 		}
 		return result;
 	}

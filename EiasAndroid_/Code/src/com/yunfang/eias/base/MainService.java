@@ -391,7 +391,7 @@ public class MainService extends BaseBackgroundService {
 									TaskOperator
 											.removeAdditional(tempTask.TaskNum);
 								}
-								isResubmit=false;
+								isResubmit = false;
 							} else {
 								// 若网络连接断开则直接提示并返回
 								if (isContinue(tempTask))
@@ -400,9 +400,10 @@ public class MainService extends BaseBackgroundService {
 								tempTask.Status = TaskStatus.Doing;
 								uploadTasks.put(tempTask.TaskNum, tempTask);
 								// 网络正常则提示任务提交失败
+								String errMsg = result.Message.trim().length() > 0 ? result.Message
+										: "提交失败:服务器繁忙";
 								showNotification(tempTask.ID, tempTask.TaskNum,
-										"提交失败:服务器繁忙", "地址："
-												+ tempTask.TargetAddress,
+										errMsg, "地址：" + tempTask.TargetAddress,
 										tempTask.TaskNum + "提交失败");
 								TaskOperator.saveTaskUploadStatus(
 										TaskUploadStatusEnum.SubmitFailure,

@@ -13,6 +13,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Point;
 import android.text.InputFilter;
+import android.text.InputFilter.LengthFilter;
 import android.text.TextUtils;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
@@ -271,7 +272,8 @@ public class TaskListMenuOperaotr {
 					tempItems.add(TaskMenuEnum.复制.toString());
 					tempItems.add(TaskMenuEnum.数据检查并导出.toString());
 					tempItems.add(TaskMenuEnum.任务数据导入.toString());
-					if (taskListFragment.viewModel.currentSelectedTask.IsNew) {
+					if (taskListFragment.viewModel.currentSelectedTask.IsNew||
+							taskListFragment.viewModel.currentSelectedTask.Status == TaskStatus.Unbelong) {
 						tempItems.add(TaskMenuEnum.删除本地任务.toString());
 					}
 				}
@@ -636,6 +638,8 @@ public class TaskListMenuOperaotr {
 					.findViewById(R.id.dialog_button_cancel);
 			final EditText txtReason = (EditText) pauseDialog
 					.findViewById(R.id.dialog_view_pause_reason);
+			InputFilter[] filters = {new LengthFilter(200)};  
+			txtReason.setFilters(filters); 
 			txtReason
 					.setText(taskListFragment.viewModel.currentSelectedTask.Remark);
 			btnConfirm.setOnClickListener(new View.OnClickListener() {

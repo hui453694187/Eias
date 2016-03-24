@@ -744,8 +744,10 @@ public class TaskDataWorker {
 			StringBuilder sqlBuilder = new StringBuilder(
 					"from TaskInfo where User='");
 			sqlBuilder.append(currentUser.Name + "'");
+			// 查询获取待提交任务，和暂停任务，不属于当前用户的任务
 			sqlBuilder.append(" and Status in ('" + status.getIndex() + "','"
-					+ -99 + "')");
+					+ TaskStatus.Pause.getIndex() + "','"
+					+ TaskStatus.Unbelong.getIndex() + "')");
 			if (isNew.length() > 0) {
 				sqlBuilder.append(" and IsNew=1 ");
 			}
@@ -768,10 +770,10 @@ public class TaskDataWorker {
 				sqlBuilder = setBookTimeSql(sqlBuilder);
 			}
 			sqlBuilder.append(sortStr);
-			//if (sortType == null) {// 有排序条件，则不分页查询
-				sqlBuilder.append(" limit " + ((pageIndex - 1) * pageSize)
-						+ "," + (pageSize));
-			//}
+			// if (sortType == null) {// 有排序条件，则不分页查询
+			sqlBuilder.append(" limit " + ((pageIndex - 1) * pageSize) + ","
+					+ (pageSize));
+			// }
 			cursor = db.rawQuery("select * " + sqlBuilder.toString(), null);
 			if (cursor != null) {
 				TaskInfo taskInfo;
@@ -1030,6 +1032,54 @@ public class TaskDataWorker {
 				 */
 			}
 
+			if (cursor != null) {
+				while (cursor.moveToNext()) {
+					taskDataItem = new TaskDataItem();
+					taskDataItem.setValueByCursor(cursor);
+					data.add(taskDataItem);
+				}
+				resultInfo.Data = data;
+			}
+			cursor.close();
+		} catch (Exception e) {
+			resultInfo.Message = e.getMessage();
+			resultInfo.Data = null;// 如果失败，data为null
+			resultInfo.Success = false;
+		} finally {
+			// 关闭数据库
+			// db.close();
+		}
+		return resultInfo;
+	}
+
+	/**
+	 * 获取某个任务下某个分类项的的所有子项（TaskDataItem）的数据
+	 * 
+	 * @param taskID
+	 *            :任务ID值
+	 * @param categoryID
+	 *            :分类项标识，用于区分可重复项中的哪一个具体的重复值，对应TaskCategoryInfos表中的ID值
+	 * 
+	 * @return
+	 */
+	public static ResultInfo<ArrayList<TaskDataItem>> queryTaskDataItemsByID(
+			int taskID, int categoryID) {
+		ResultInfo<ArrayList<TaskDataItem>> resultInfo = new ResultInfo<ArrayList<TaskDataItem>>();
+		ArrayList<TaskDataItem> data = null;
+		TaskDataItem taskDataItem = null;
+		SQLiteDatabase db = null;
+		try {
+			taskDataItem = new TaskDataItem();
+			data = new ArrayList<TaskDataItem>();
+			db = SQLiteHelper.getReadableDB();
+			Cursor cursor;
+
+			cursor = db.query(
+					taskDataItem.getTableName(),
+					null,
+					"TaskID=? AND CategoryID=?",
+					new String[] { String.valueOf(taskID),
+							String.valueOf(categoryID) }, null, null, null);
 			if (cursor != null) {
 				while (cursor.moveToNext()) {
 					taskDataItem = new TaskDataItem();
@@ -2169,17 +2219,19 @@ public class TaskDataWorker {
 	/**
 	 * 同步完成任务时间点
 	 * 
-	 * @param currentUser
-	 *            当前用户
-	 * @return
+	 * @param tasknum
+	 *            任务编号
+	 * @param date
+	 *            报告完成日期
+	 * 
+	 * @return resultInfo 同步结果
 	 */
-	public static ResultInfo<Boolean> synchroReportInfo(String tasknum,
+	public static ResultInfo<TaskInfo> synchroReportInfo(String tasknum,
 			String date) {
-		ResultInfo<Boolean> resultInfo = new ResultInfo<Boolean>();
+		ResultInfo<TaskInfo> resultInfo = new ResultInfo<TaskInfo>();
 		TaskInfo taskInfo = null;
 		SQLiteDatabase db = null;
 		try {
-			taskInfo = null;
 			db = SQLiteHelper.getReadableDB();
 			StringBuilder sqlBuilder = new StringBuilder(
 					"from TaskInfo where TaskNum='");
@@ -2195,15 +2247,25 @@ public class TaskDataWorker {
 				if (taskInfo != null) {
 					taskInfo.InworkReportFinish = true;
 					taskInfo.InworkReportFinishDate = date;
-					resultInfo.Data = taskInfo.onUpdate("TaskNum = '" + tasknum
-							+ "'") > 0;
+					resultInfo.Success = taskInfo.onUpdate("TaskNum = '"
+							+ tasknum + "'") > 0;
+					resultInfo.Data = taskInfo;
+				} else {
+					resultInfo.Success = false;
+					resultInfo.Data = taskInfo;
+					resultInfo.Message = "无法获取到该任务（" + tasknum + "）";
 				}
 				cursor.close();
+			} else {
+				resultInfo.Success = false;
+				resultInfo.Data = taskInfo;
+				resultInfo.Message = "数据库查询任务（" + tasknum + "）失败";
 			}
 		} catch (Exception e) {
 			resultInfo.Message = e.getMessage();
 			resultInfo.Success = false;
-			resultInfo.Data = false;// 如果失败，data为null
+			resultInfo.Message = "查询数据库异常 " + e.getMessage();
+			resultInfo.Data = taskInfo;// 如果失败，data为null
 		} finally {
 			// 关闭数据库
 			// db.close();
@@ -2305,7 +2367,7 @@ public class TaskDataWorker {
 	}
 
 	/**
-	 * 修改制定任务的任务状态
+	 * 修改指定任务的任务状态
 	 * 
 	 * @param taskInfo
 	 *            任务信息

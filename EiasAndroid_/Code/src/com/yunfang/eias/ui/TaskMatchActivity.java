@@ -260,6 +260,8 @@ public class TaskMatchActivity extends BaseWorkerFragmentActivity {
 						viewModel.serverTaskInfo, viewModel.locTaskInfo);
 			} else {
 				result.Message = "请选择一个任务";
+				result.Success=false;
+				result.Data=false;
 			}
 			uiMsg.obj = result;
 			break;

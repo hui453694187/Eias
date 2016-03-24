@@ -334,7 +334,7 @@
                     android:id="@+id/doneReportFinish"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="内页报告已经完成"
+                    android:text="内业报告已经完成"
                     android:textAppearance="?android:attr/textAppearanceSmall"
                     android:textColor="@color/redblack" />
             </LinearLayout>

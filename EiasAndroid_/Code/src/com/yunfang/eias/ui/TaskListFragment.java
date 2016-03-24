@@ -48,7 +48,6 @@ import com.yunfang.eias.enumObj.OperatorTypeEnum;
 import com.yunfang.eias.enumObj.SortType;
 import com.yunfang.eias.enumObj.TaskMenuEnum;
 import com.yunfang.eias.enumObj.TaskStatus;
-import com.yunfang.eias.http.task.GetFinishInworkReportTask;
 import com.yunfang.eias.logic.DataLogOperator;
 import com.yunfang.eias.logic.HomeOperator;
 import com.yunfang.eias.logic.TaskListMenuOperaotr;
@@ -57,7 +56,6 @@ import com.yunfang.eias.model.DataDefine;
 import com.yunfang.eias.model.TaskInfo;
 import com.yunfang.eias.tables.DataDefineWorker;
 import com.yunfang.eias.tables.DataLogWorker;
-import com.yunfang.eias.tables.TaskDataWorker;
 import com.yunfang.eias.ui.Adapter.TaskListViewAdapter;
 import com.yunfang.eias.view.PullToRefreshLayout;
 import com.yunfang.eias.view.PullToRefreshLayout.OnRefreshListener;
@@ -1831,25 +1829,8 @@ public class TaskListFragment extends BaseWorkerFragment implements
 		if (EIASApplication.IsNetworking && !EIASApplication.IsOffline) {
 			try {
 				if (viewModel.taskStatus == TaskStatus.Done) {
-					// 获取最后的报告日期同步时间
-					ResultInfo<String> date = TaskDataWorker
-							.getLastDateByReport(viewModel.currentUser);
-					if (date.Success) {
-						// 获取当前查询结果日期后的报告
-						GetFinishInworkReportTask task = new GetFinishInworkReportTask();
-						ResultInfo<ArrayList<String>> tasklst = task.request(
-								viewModel.currentUser, date.Data);
-						if (tasklst.Success && tasklst.Data != null
-								&& tasklst.Data.size() > 0) {
-							for (String item : tasklst.Data) {
-								String[] temp = item.split(",");
-								if (temp.length == 2) {
-									TaskDataWorker.synchroReportInfo(temp[0],
-											temp[1]);
-								}
-							}
-						}
-					}
+					//同步报告已完成任务状态， 删除任务资源
+					TaskOperator.synchroReportIsFinish(viewModel.currentUser);
 				} else if (viewModel.taskStatus == TaskStatus.Doing) {
 					TaskOperator
 							.syncRemoteData(0, 0, "", viewModel.currentUser);
