@@ -192,4 +192,14 @@ public class MediaDataInfo {
 	}
 	// }}
 
+	@Override
+	public String toString() {
+		return "MediaDataInfo [ID=" + ID + ", Title=" + Title + ", Album=" + Album + ", Creator=" + Creator + ", Path=" + Path + ", ThumbnailPath=" + ThumbnailPath
+				+ ", DisplayName=" + DisplayName + ", MimeType=" + MimeType + ", Size=" + Size + ", Duration=" + Duration + ", CreatedTime=" + CreatedTime + ", ThumbnailPhoto="
+				+ ThumbnailPhoto + ", itemFileName=" + itemFileName + ", ItemName=" + ItemName + ", ItemValue=" + ItemValue + ", CategoryId=" + CategoryId + ", isLose=" + isLose
+				+ ", file=" + file + ", check=" + check + "]";
+	}
+	
+	
+
 }

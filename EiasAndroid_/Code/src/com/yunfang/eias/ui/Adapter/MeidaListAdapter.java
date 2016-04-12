@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -18,7 +17,9 @@ import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.yunfang.eias.R;
 import com.yunfang.eias.base.EIASApplication;
 import com.yunfang.eias.enumObj.CategoryType;
@@ -130,6 +131,7 @@ public class MeidaListAdapter extends BaseAdapter {
 		if (convertView == null) {
 			convertView = mInflater.inflate(R.layout.task_info_add_photo_item, null);
 			viewHolder = new ViewHolder();
+			viewHolder.ll_root = (LinearLayout) convertView.findViewById(R.id.ll_root);
 			viewHolder.mImageView = (FilterImageView) convertView.findViewById(R.id.photo_imageView);
 			viewHolder.mImageText = (TextView) convertView.findViewById(R.id.photoName_txt);
 			viewHolder.mAutoText = (AutoCompleteTextView) convertView.findViewById(R.id.media_auto);
@@ -144,13 +146,17 @@ public class MeidaListAdapter extends BaseAdapter {
 			viewHolder.mImageView.setImageResource(R.drawable.photo_select);
 		}
 		viewHolder.mAutoText.setAdapter(mTaskInfoActivity.viewModel.searchAdapter);
-
-		if (position == 0) {
-			if (mType == CategoryType.PictureCollection) {
-				viewHolder.mImageText.setText(Html.fromHtml("单击拍照/长按选取"));
-			} else {
-				viewHolder.mImageText.setText("添加");
-			}
+		
+		//当当前的媒体类型不是图片选择的时候，才有第一个按钮
+		if (position == 0 && mType != CategoryType.PictureCollection) {
+//			if (mType == CategoryType.PictureCollection) {
+////				viewHolder.ll_root.setVisibility(View.GONE);
+//				viewHolder.mImageText.setText(Html.fromHtml("单击拍照/长按选取"));
+//			} else {
+//				viewHolder.mImageText.setText("添加");
+//			}
+			
+			viewHolder.mImageText.setText("添加");
 			viewHolder.mImageView.setImageResource(R.drawable.photo_select);
 			viewHolder.mCheckBox.setVisibility(View.GONE);
 		} else {
@@ -238,6 +244,7 @@ public class MeidaListAdapter extends BaseAdapter {
 	 * 
 	 */
 	public static class ViewHolder {
+		public LinearLayout ll_root;
 		/**
 		 * 文件名称
 		 */

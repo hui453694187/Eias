@@ -402,7 +402,7 @@ public class TaskListViewAdapter extends ArrayAdapter<TaskInfo> {
 			}
 			// 是否被勾选
 			if (holder.checkTaskInfo != null && holder.itemLayout != null) {
-				// 选中Item 北京颜色颜色
+				// 选中Item 背景颜色
 				if (item.isChecked) {
 					holder.itemLayout.setBackgroundColor(EIASApplication
 							.getInstance().getResources()
@@ -458,6 +458,14 @@ public class TaskListViewAdapter extends ArrayAdapter<TaskInfo> {
 					holder.txt_submiting.setVisibility(View.VISIBLE);
 					holder.txt_submiting.setText("此任务已分配给其他用户");
 					holder.task_list_view_linelayout.setVisibility(View.GONE);
+				} else if(item.Status == TaskStatus.Revocation||item.Status == TaskStatus.DoneRevocation){// 待提交被撤销任务
+					holder.txt_submiting.setVisibility(View.VISIBLE);
+					holder.txt_submiting.setText("此任务已在内业撤销");
+					holder.task_list_view_linelayout.setVisibility(View.GONE);
+				}else{// 缺省
+					holder.txt_submiting.setVisibility(View.GONE);
+					holder.task_list_view_linelayout
+							.setVisibility(View.VISIBLE);
 				}
 			}
 			// 报告是否完成 资源是否清除 标记

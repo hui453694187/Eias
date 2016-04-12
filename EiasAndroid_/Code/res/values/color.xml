@@ -38,5 +38,6 @@
     <color name="black">#000000</color>
     <color name="light_blue">#6593cb</color>
     
-    
+       <color name="map_black">#000000</color>
+       <color name="map_gay">#20000000</color>
 </resources>

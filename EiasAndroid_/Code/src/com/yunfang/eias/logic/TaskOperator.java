@@ -13,9 +13,10 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
 
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import android.annotation.SuppressLint;
@@ -25,6 +26,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.os.StatFs;
+import android.text.TextUtils;
 
 import com.yunfang.eias.base.BroadRecordType;
 import com.yunfang.eias.base.EIASApplication;
@@ -367,8 +369,11 @@ public class TaskOperator {
 		// 声明返回结果
 		ResultInfo<Boolean> result = new ResultInfo<Boolean>();
 		// 获取本地的服务器任务
-		ResultInfo<String> serverTask = TaskDataWorker
-				.getServerTaskByLoc(currentUser);
+		int statuses[] = { TaskStatus.Doing.getIndex(),
+				TaskStatus.Pause.getIndex(), TaskStatus.Unbelong.getIndex(),
+				TaskStatus.Revocation.getIndex() };
+		ResultInfo<String> serverTask = TaskDataWorker.getServerTaskByLoc(
+				currentUser, statuses);
 		if (serverTask.Success) {
 
 			// 声明获取远程任务服务
@@ -394,8 +399,8 @@ public class TaskOperator {
 			}
 			// 检查服务器任务状态，同步到本地
 			// 获取本地的服务器任务
-			ResultInfo<String> locTask = TaskDataWorker
-					.getServerTaskByLoc(currentUser);
+			ResultInfo<String> locTask = TaskDataWorker.getServerTaskByLoc(
+					currentUser, statuses);
 			if (locTask.Success) {
 				checkTaskStatus(locTask.Data);
 			}
@@ -410,29 +415,41 @@ public class TaskOperator {
 	 * @param taskNums
 	 */
 	private static void checkTaskStatus(String taskNums) {
+		String taskNumber="";
 		CheckTaskStatusTask tasks = new CheckTaskStatusTask();
-		ResultInfo<HashMap<String, Integer>> result = tasks.request(taskNums);
+		ResultInfo<JSONArray> result = tasks.request(taskNums);
 		if (result != null && result.Success) {
-			Set<String> keySet = result.Data.keySet();
-			for (String key : keySet) {
-				int status = result.Data.get(key);
-				// 修改本地任务状态
-				String taskNumber[] = key.split(",");
-				if (taskNumber.length == 2) {// 检查本任务是否属于自己
-					String taskUserId = taskNumber[1];
+			try {
+				for (int i = 0; i < result.Data.length(); i++) {
+					JSONObject jsonObj = result.Data.getJSONObject(i);
+					String PID = jsonObj.getString("PID");// 任务编号
+					//获取后台的任务编号不为空是正确的任务编号则记录到LOG 中
+					if(PID!=null&&PID.trim().length()>0&&!TextUtils.isEmpty(PID)){
+						taskNumber=PID;
+					}else{
+						taskNumber="获取服务端PID失败";
+					}
+					taskNumber=PID;
+					int status = jsonObj.getInt("Status");// 任务状态
+					// 该任务的所有者ID
+					String taskUserId = jsonObj.getString("InquirerNumber");
 					String userId = EIASApplication.getCurrentUser().ID;
 					if (!taskUserId.equals(userId)) {// 任务不属于当前用户，修改任务状态为 404
 						status = 404;
 					}
-				}
-				if (status != TaskStatus.Doing.getIndex()// 待提交任务
-						&& status != TaskStatus.Pause.getIndex()) {// 暂停任务，则修改状态
-					TaskStatus taskStatus = TaskStatus.getEnumByValue(status);
-					if (taskStatus != null) {
-						saveTaskUStatus(taskStatus, taskNumber[0]);
+					if (status != TaskStatus.Doing.getIndex()// 待提交任务
+							&& status != TaskStatus.Pause.getIndex()) {// 暂停任务，则修改状态
+						TaskStatus taskStatus = TaskStatus
+								.getEnumByValue(status);
+						if (taskStatus != null) {
+							saveTaskUStatus(taskStatus, PID);
+						}
 					}
-				}
 
+				}
+			} catch (JSONException e) {
+				String msg="待提交任务同步状态解析返回JSON 出错：-->任务编号("+taskNumber+")"+e.toString();
+				DataLogWorker.createDataLog(EIASApplication.getCurrentUser(), msg, OperatorTypeEnum.Other,LogType.Exection);
 			}
 		}
 	}
@@ -3652,6 +3669,75 @@ public class TaskOperator {
 			}
 		}
 		return sortType;
+	}
+
+	/***
+	 * 同步已完成任务报告是否完成，同步已完成任务的状态 1.已完成撤单任务，2.已完成任务挂起...
+	 * 
+	 * @author kevin
+	 */
+	public static void synchroDoneTaskStatus(UserInfo currentUser) {
+		// 获取本地已完成任务，和已完成后撤销的任务编号
+		int statuses[] = { TaskStatus.Done.getIndex(),
+				TaskStatus.DoneRevocation.getIndex() };
+		ResultInfo<String> serverTask = TaskDataWorker.getServerTaskByLoc(
+				currentUser, statuses);
+		if (serverTask.Success && serverTask.Data != null) {
+			CheckTaskStatusTask task = new CheckTaskStatusTask();
+			ResultInfo<JSONArray> result = task.request(serverTask.Data);
+			try {
+				if (result.Success && result.Data != null) {
+					for (int i = 0; i < result.Data.length(); i++) {
+						JSONObject jsonObj = result.Data.getJSONObject(i);
+						String taskNumb = jsonObj.getString("PID");// 任务编号
+						int status = jsonObj.getInt("Status");// 任务状态
+						// 已完成任务不会再次重新分配，可能会撤单
+						
+						TaskStatus taskStatus = null;
+						if(status==-3){
+							taskStatus=TaskStatus.getEnumByValue(-33);
+						}
+						if (taskStatus != null) {
+							// 同步本地数据库任务状态
+							saveTaskUStatus(taskStatus, taskNumb);
+						}
+						boolean InworkReportFinish = jsonObj
+								.getBoolean("InworkReportFinish");//报告是否完成
+						String reportFinishDate = jsonObj
+								.getString("InworkReportFinishDate");
+						// 修改数据库状态 ,同步报告完成日志
+						if (InworkReportFinish) {
+							ResultInfo<TaskInfo> synchroResult = TaskDataWorker
+									.synchroReportInfo(taskNumb,
+											reportFinishDate);
+							if (synchroResult.Success
+									&& synchroResult.Data != null) {
+								// 删除任务资源
+								removeTaskResource(synchroResult.Data);
+								DataLogOperator.taskReportFinalsh("删除任务（"
+										+ taskNumb + "）本地资源成功");
+							} else {
+								DataLogOperator.taskReportFinalsh("保存报告完成日期失败（"
+										+ taskNumb + "）->" + result.Message);
+							}
+						}
+					}
+				} else {
+					String msg="已完成任务同步状态异常：-->"+result.Message;
+					DataLogWorker.createDataLog(EIASApplication.getCurrentUser(), msg, OperatorTypeEnum.Other,LogType.Exection);
+				}
+			} catch (JSONException e) {
+				String msg="已完成任务同步状态解析返回JSON 出错：-->"+e.toString();
+				DataLogWorker.createDataLog(EIASApplication.getCurrentUser(), msg, OperatorTypeEnum.Other,LogType.Exection);
+			} catch (Exception e) {
+				String msg="已完成任务同步状态出错：-->"+e.toString();
+				DataLogWorker.createDataLog(EIASApplication.getCurrentUser(), msg, OperatorTypeEnum.Other,LogType.Exection);
+			}
+		} else {
+			String msg="同步报告获取本地任务是失败";
+			DataLogWorker.createDataLog(EIASApplication.getCurrentUser(), msg, OperatorTypeEnum.Other,LogType.Exection);
+		}
+
 	}
 
 	/***

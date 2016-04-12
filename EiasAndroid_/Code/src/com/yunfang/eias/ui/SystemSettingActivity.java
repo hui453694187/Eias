@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -23,6 +24,7 @@ import com.yunfang.eias.base.EIASApplication;
 import com.yunfang.eias.logic.AppHeader;
 import com.yunfang.framework.base.BaseWorkerActivity;
 import com.yunfang.framework.model.ResultInfo;
+import com.yunfang.framework.utils.SpUtil;
 
 /**
  * @author chs 系统设置信息
@@ -74,6 +76,11 @@ public class SystemSettingActivity extends BaseWorkerActivity {
 	private RadioGroup rg_setting_photo;
 
 	/**
+	 * 是否是连拍模式
+	 */
+	private CheckBox checkBox_burst_mode;
+
+	/**
 	 * 拍照方式选择
 	 */
 	// private Spinner et_setting_photo;
@@ -114,13 +121,19 @@ public class SystemSettingActivity extends BaseWorkerActivity {
 		 */
 		rg_setting_copyOrPaste = (RadioGroup) this.findViewById(R.id.rg_setting_copyOrPaste);
 		rg_setting_photo = (RadioGroup) this.findViewById(R.id.rg_setting_photo);
-
+		
+		checkBox_burst_mode = (CheckBox) this.findViewById(R.id.checkBox_burst_mode);
+		
+		
 		/** 获取原来系统设置 */
 		String selectPaste = EIASApplication.getSystemSetting(BroadRecordType.KEY_SETTING_PICTURECOPYORPASTE);
 		String selectPhotoType = EIASApplication.getSystemSetting(BroadRecordType.KEY_SETTING_PHOTOTYPE);
 		setRadioButtonSelectedByValue(rg_setting_copyOrPaste, selectPaste);
 		setRadioButtonSelectedByValue(rg_setting_photo, selectPhotoType);
-
+		//设置是否是连拍模式
+		SpUtil sp = SpUtil.getInstance(BroadRecordType.KEY_SETTINGS);
+		boolean isBurstMode = sp.getBoolean(BroadRecordType.KEY_SETTING_BURST_MODE, false);
+		checkBox_burst_mode.setChecked(isBurstMode);
 		// 注释下拉列表功能
 		/*
 		 * ArrayAdapter copyTypeChooseAdapter = new ArrayAdapter(this,
@@ -261,6 +274,9 @@ public class SystemSettingActivity extends BaseWorkerActivity {
 				sp.edit().putString(BroadRecordType.KEY_SETTING_PICTURECOPYORPASTE, copyOrPaste).commit();
 				// 设置相机类型
 				sp.edit().putString(BroadRecordType.KEY_SETTING_PHOTOTYPE, photoType).commit();
+				//设置是否是连拍模式
+				sp.edit().putBoolean(BroadRecordType.KEY_SETTING_BURST_MODE, checkBox_burst_mode.isChecked()).commit();
+				
 				result.Success = true;
 				resultMsg.obj = result;
 			} else {

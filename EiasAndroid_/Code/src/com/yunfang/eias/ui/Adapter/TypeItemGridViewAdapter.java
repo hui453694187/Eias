@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.yunfang.eias.R;
@@ -20,6 +21,8 @@ import com.yunfang.eias.R;
  */
 public class TypeItemGridViewAdapter extends BaseAdapter implements OnItemClickListener {
 
+	@SuppressWarnings("unused")
+	private static final String TAG = "TypeItemGridViewAdapter";
 	/** 数据源 */
 	private List<ItemType> itemTypeList;
 	private LayoutInflater inflater;
@@ -80,12 +83,14 @@ public class TypeItemGridViewAdapter extends BaseAdapter implements OnItemClickL
 		if (convertView == null) {
 			childView = new ViewHolder();
 			convertView = inflater.inflate(R.layout.type_item_grid_item, null);
+			childView.ll_radio = (LinearLayout) convertView.findViewById(R.id.ll_radio);
 			childView.radioImg = (ImageView) convertView.findViewById(R.id.radio_img);
 			childView.typeTv = (TextView) convertView.findViewById(R.id.type_item_tv);
 			convertView.setTag(childView);
 		} else {
 			childView = (ViewHolder) convertView.getTag();
 		}
+//		Log.i(TAG,"position = " + position + " childView.ll_radio.getHeight() = " + childView.ll_radio.getHeight());
 
 		// 是否当前选中的
 		int backgroundId = currentSelectIndex == position ? select : unSelect;
@@ -104,6 +109,7 @@ public class TypeItemGridViewAdapter extends BaseAdapter implements OnItemClickL
 	}
 
 	class ViewHolder {
+		public LinearLayout ll_radio;
 		ImageView radioImg;
 		TextView typeTv;
 	}

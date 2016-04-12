@@ -255,6 +255,8 @@ public class CameraPreviewActivity extends BaseWorkerActivity implements View.On
 		switch (view.getId()) {
 		case R.id.camera_preview_confirm_img:
 			savePhoto();
+			//保存图片视为拍照完成
+			setResult(CameraActivity.intent_resultCode);
 			break;
 		default:
 			break;

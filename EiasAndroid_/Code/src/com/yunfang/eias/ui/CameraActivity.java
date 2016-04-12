@@ -15,6 +15,7 @@ import com.yunfang.eias.R;
 import com.yunfang.eias.base.BroadRecordType;
 import com.yunfang.eias.base.EIASApplication;
 import com.yunfang.framework.base.BaseWorkerActivity;
+import com.yunfang.framework.utils.SpUtil;
 import com.yunfang.framework.utils.ToastUtil;
 import com.yunfang.framework.view.album.FilterImageView;
 import com.yunfang.framework.view.camera.CameraContainer;
@@ -30,6 +31,16 @@ import com.yunfang.framework.view.camera.CameraView.FlashMode;
  */
 public class CameraActivity extends BaseWorkerActivity implements View.OnClickListener, TakePictureListener {
 	public final static String TAG = "CameraAty";
+	/**
+	 * 请求
+	 */
+	public static final int intent_requestCode = 110;
+	/**
+	 * 返回
+	 */
+	public static final int intent_resultCode = 111;
+	
+	
 	private boolean mIsRecordMode = false;
 	private String mSaveRoot;
 	private String mThumbnailRoot;
@@ -88,6 +99,12 @@ public class CameraActivity extends BaseWorkerActivity implements View.OnClickLi
 	 * ONANIMTIONEND 回调事件
 	 */
 	private final int TASK_EVENT_ONANIMTIONEND = 9;
+	
+	/**
+	 * 当前是否是连拍模式
+	 * 默认为否
+	 */
+	private boolean isBurstMode = false;
 
 	// }}
 
@@ -367,14 +384,43 @@ public class CameraActivity extends BaseWorkerActivity implements View.OnClickLi
 			Intent intent = new Intent();
 			intent.setClass(CameraActivity.this, CameraPreviewActivity.class);
 			intent.putExtras(bundle);
-			startActivity(intent);
+			startActivityForResult(intent, intent_requestCode);
 			break;
 		default:
 			break;
 		}
 		loadingWorker.closeLoading();
 	}
+	
+	@Override
+	public void onStart() {
+		super.onStart();
+		initData();
+	}
 
+	/**
+	 * 初始化数据
+	 */
+	private void initData() {
+		//设置是否是连拍模式
+		SpUtil sp = SpUtil.getInstance(BroadRecordType.KEY_SETTINGS);
+		isBurstMode = sp.getBoolean(BroadRecordType.KEY_SETTING_BURST_MODE, false);
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		//拍照成功返回
+		if (requestCode == intent_requestCode && resultCode ==intent_resultCode) {
+			//如果不是连拍模式 那么直接返回
+			if (!isBurstMode) {
+				// 设置返回数据
+				setResult(RESULT_OK, null);
+				finish();
+			}
+		}
+	}
+	
 	/**
 	 * 保存图片到任务子项中
 	 * 

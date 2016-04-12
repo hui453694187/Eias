@@ -11,7 +11,9 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Point;
+import android.net.Uri;
 import android.text.InputFilter;
 import android.text.InputFilter.LengthFilter;
 import android.text.TextUtils;
@@ -28,6 +30,7 @@ import android.widget.DatePicker;
 import android.widget.DatePicker.OnDateChangedListener;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.NumberPicker;
@@ -272,17 +275,19 @@ public class TaskListMenuOperaotr {
 					tempItems.add(TaskMenuEnum.复制.toString());
 					tempItems.add(TaskMenuEnum.数据检查并导出.toString());
 					tempItems.add(TaskMenuEnum.任务数据导入.toString());
+					TaskStatus taskStatus=taskListFragment.viewModel.currentSelectedTask.Status;
 					if (taskListFragment.viewModel.currentSelectedTask.IsNew||
-							taskListFragment.viewModel.currentSelectedTask.Status == TaskStatus.Unbelong) {
+							taskStatus == TaskStatus.Unbelong||taskStatus==TaskStatus.Revocation) {
 						tempItems.add(TaskMenuEnum.删除本地任务.toString());
 					}
 				}
 				break;
 			case Done:// 已完成
 				// 多选状态
+				TaskStatus selectTask=taskListFragment.viewModel.currentSelectedTask.Status;
 				if (taskListFragment.viewModel.currentSelectedTask.isChecked) {
-					if (!EIASApplication.IsOffline
-							&& EIASApplication.IsNetworking) {// 没有网络不可以提交
+					if (!EIASApplication.IsOffline				//状态为已完成撤单
+							&& EIASApplication.IsNetworking&&!(selectTask==TaskStatus.DoneRevocation)) {// 没有网络不可以提交
 						tempItems.add(TaskMenuEnum.重新提交选中任务.toString());
 					}
 					tempItems.add(TaskMenuEnum.删除选中任务资源文件.toString());
@@ -290,8 +295,8 @@ public class TaskListMenuOperaotr {
 				}
 				// 非多选状态
 				else {
-					if (EIASApplication.IsNetworking
-							&& !EIASApplication.IsOffline) {
+					if (EIASApplication.IsNetworking		//状态为已完成撤单
+							&& !EIASApplication.IsOffline&&!(selectTask==TaskStatus.DoneRevocation)) {
 						tempItems.add(TaskMenuEnum.重新提交本地任务.toString());
 					}
 					tempItems.add(TaskMenuEnum.查看任务信息.toString());
@@ -313,7 +318,9 @@ public class TaskListMenuOperaotr {
 					} else {
 						tempItems.add(TaskMenuEnum.只显示完成报告任务.toString());
 					}
-					if (taskListFragment.viewModel.currentSelectedTask.IsNew) {
+					//已完成任务，被撤销任务，可以删除
+					TaskStatus doenTaskStatus=taskListFragment.viewModel.currentSelectedTask.Status;
+					if (taskListFragment.viewModel.currentSelectedTask.IsNew||doenTaskStatus==TaskStatus.DoneRevocation) {
 						tempItems.add(TaskMenuEnum.删除本地任务.toString());
 					}
 
@@ -340,7 +347,7 @@ public class TaskListMenuOperaotr {
 					&& taskListFragment.viewModel.currentSelectedTask != null
 			/*
 			 * && taskListFragment.viewModel.currentSelectedTask.DDID == //修改
-			 * 为计算勘察表ID 不同，也可以出现粘贴按钮
+			 * 为就算勘察表ID 不同，也可以出现粘贴按钮
 			 * taskListFragment.viewModel.currentCopiedTask.DDID
 			 */) {
 
@@ -858,6 +865,8 @@ public class TaskListMenuOperaotr {
 				.findViewById(R.id.dialog_view_appointment_name);
 		final EditText dialog_view_appointment_phone = (EditText) appointmentDialog
 				.findViewById(R.id.dialog_view_appointment_phone);
+		final ImageView dialog_view_appointment_phone_call = (ImageView) appointmentDialog
+				.findViewById(R.id.dialog_view_appointment_phone_call);
 		final EditText dialog_view_appointment_date = (EditText) appointmentDialog
 				.findViewById(R.id.dialog_view_appointment_date);
 		final EditText dialog_view_appointment_time = (EditText) appointmentDialog
@@ -872,6 +881,24 @@ public class TaskListMenuOperaotr {
 		resizePikcer(dialog_view_appointment_date2);// 调整datepicker大小
 		// resizePikcer(dialog_view_appointment_time2);//调整timepicker大小
 
+		//点击呼叫电话号码
+		dialog_view_appointment_phone_call.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String phone = dialog_view_appointment_phone.getText().toString().trim();
+				if (!TextUtils.isEmpty(phone)) {
+					//呼叫电话
+					Intent intent = new Intent(Intent.ACTION_DIAL);
+					Uri data = Uri.parse("tel:" + phone);
+					intent.setData(data);
+					homeActivity.startActivity(intent);
+				}else {
+					homeActivity.showToast("请先输入号码");
+				}
+				
+			}
+		});
+		
 		dialog_view_appointment_time2.setIs24HourView(true);
 		btnConfirm.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {

@@ -14,6 +14,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -52,17 +53,21 @@ import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.assist.ImageScaleType;
 import com.yunfang.eias.R;
 import com.yunfang.eias.base.EIASApplication;
+import com.yunfang.eias.maps.BaiduLocationHelper;
+import com.yunfang.eias.maps.BaiduLocationHelper.BaiduLoactionOperatorListener;
 import com.yunfang.eias.model.DataFieldDefine;
 import com.yunfang.eias.model.TaskCategoryInfo;
 import com.yunfang.eias.model.TaskDataItem;
 import com.yunfang.eias.tables.TaskDataWorker;
+import com.yunfang.eias.ui.BaiduAroundActivity;
 import com.yunfang.eias.ui.TaskInfoActivity;
 import com.yunfang.eias.utils.DateTimePickerDialog;
 import com.yunfang.eias.utils.DensityHelper;
+import com.yunfang.eias.view.BaibuMapView;
+import com.yunfang.eias.view.BaibuMapView.OperatorListener;
+import com.yunfang.eias.view.ButtonEditText;
 import com.yunfang.eias.view.TimeEditText;
 import com.yunfang.eias.view.TimeEditText.OnIconClickListener;
-import com.yunfang.framework.maps.BaiduLocationHelper;
-import com.yunfang.framework.maps.BaiduLocationHelper.BaiduLoactionOperatorListener;
 import com.yunfang.framework.model.ResultInfo;
 import com.yunfang.framework.utils.DateTimeUtil;
 import com.yunfang.framework.utils.DialogUtil;
@@ -71,8 +76,6 @@ import com.yunfang.framework.utils.ListUtil;
 import com.yunfang.framework.utils.StringUtil;
 import com.yunfang.framework.utils.ToastUtil;
 import com.yunfang.framework.utils.WinDisplay;
-import com.yunfang.framework.view.BaibuMapView;
-import com.yunfang.framework.view.BaibuMapView.OperatorListener;
 
 /**
  * 
@@ -110,19 +113,23 @@ public class TaskItemControlOperator {
 
 	private BaiduLocationHelper locationHelper;
 
+	public TaskItemControlOperator taskItemControlOperator;
+
 	/**
 	 * 构函数
 	 * 
 	 * @param activity
 	 * @param linearLayout
+	 * @param targetAddress 
 	 */
-	public TaskItemControlOperator(TaskInfoActivity activity,
-			LinearLayout linearLayout, Integer taskID, Integer baseCategoryID) {
+	public TaskItemControlOperator(TaskInfoActivity activity, LinearLayout linearLayout, Integer taskID, Integer baseCategoryID, String targetAddress) {
 		this.mActivity = activity;
 		this.viewLayout = linearLayout;
 		this.taskID = taskID;
 		this.baseCategoryID = baseCategoryID;
+		this.targetAddress = targetAddress;
 		initImageLoader();
+		taskItemControlOperator = this;
 	}
 
 	/***
@@ -145,19 +152,17 @@ public class TaskItemControlOperator {
 	/**
 	 * 全部填充
 	 */
-	private LinearLayout.LayoutParams FILL_PARENT = new LinearLayout.LayoutParams(
-			LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1);
+	private LinearLayout.LayoutParams FILL_PARENT = new LinearLayout.LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT, 1);
 
 	/**
 	 * 按父级大小填充
 	 */
-	private LinearLayout.LayoutParams WRAP_CONTENT = new LinearLayout.LayoutParams(
-			LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 1);
+	private LinearLayout.LayoutParams WRAP_CONTENT = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT, 1);
 
 	/**
 	 * 所有动态生成的子项控件列表
 	 */
-	private Map<String, View> inputMap = new HashMap<String, View>();
+	public Map<String, View> inputMap = new HashMap<String, View>();
 
 	/**
 	 * 单选按钮变更判断
@@ -175,6 +180,11 @@ public class TaskItemControlOperator {
 	 */
 	private Integer baseCategoryID;
 
+	/**
+	 * 目标地址
+	 */
+	private String targetAddress;
+
 	// }}
 
 	// {{ 创建控件
@@ -187,8 +197,7 @@ public class TaskItemControlOperator {
 	 * @param data
 	 *            :任务子项列表
 	 */
-	public Boolean showItems(ArrayList<DataFieldDefine> items,
-			ArrayList<TaskDataItem> data) {
+	public Boolean showItems(ArrayList<DataFieldDefine> items, ArrayList<TaskDataItem> data) {
 		Boolean result = false;
 		viewLayout.removeAllViews();
 		inputMap = new HashMap<String, View>();
@@ -211,8 +220,7 @@ public class TaskItemControlOperator {
 					}
 				}
 				String itemValue = "";
-				if ((dataItem != null && dataItem.Value != null && !dataItem.Value
-						.equals("null"))) {
+				if ((dataItem != null && dataItem.Value != null && !dataItem.Value.equals("null"))) {
 					itemValue = dataItem.Value;
 				}
 				// 新增字段，是否在安卓端展示。
@@ -241,8 +249,7 @@ public class TaskItemControlOperator {
 		}
 		tv.setLayoutParams(WRAP_CONTENT);
 		l.addView(tv);
-		item.Value = (item.Value != null && item.Value.equals("null")) ? ""
-				: item.Value;
+		item.Value = (item.Value != null && item.Value.equals("null")) ? "" : item.Value;
 		String value = (dataItemValue.length() > 0 ? dataItemValue : item.Value);
 		if (item.ItemType != null) {
 			switch (item.ItemType) {
@@ -302,8 +309,7 @@ public class TaskItemControlOperator {
 	 */
 	private OnItemSelectedListener itemSelectedListener = new OnItemSelectedListener() {
 
-		public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2,
-				long arg3) {
+		public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
 
 			String tmp = arg0.getSelectedItem().toString();
 			EditText et = ((EditText) arg0.getTag());
@@ -342,8 +348,7 @@ public class TaskItemControlOperator {
 	 * @param parentLinearLayout
 	 * @param value
 	 */
-	private void createDropdownBox(DataFieldDefine f,
-			LinearLayout parentLinearLayout, final String value) {
+	private void createDropdownBox(DataFieldDefine f, LinearLayout parentLinearLayout, final String value) {
 		final Spinner sp = new Spinner(this.mActivity);
 		final EditText et = new EditText(this.mActivity);
 		// et.setBackgroundColor(Color.BLUE);
@@ -354,18 +359,15 @@ public class TaskItemControlOperator {
 		// sp.setGravity(Gravity.CENTER_HORIZONTAL);
 		sp.setPrompt(" 请选择 ： ");
 		boolean valueIsEmpty = !(value != null && !value.equals(""));
-		final String[] arr = (EIASApplication.DefaultDropDownListValue + "|#|" + f.Content)
-				.split("\\|#\\|");
+		final String[] arr = (EIASApplication.DefaultDropDownListValue + "|#|" + f.Content).split("\\|#\\|");
 		if (!valueIsEmpty && value.endsWith("}")) {
 			arr[arr.length - 1] = value;
 		}
-		final ArrayAdapter<Object> ad = new ArrayAdapter<Object>(
-				this.mActivity, android.R.layout.simple_spinner_item, arr);
+		final ArrayAdapter<Object> ad = new ArrayAdapter<Object>(this.mActivity, android.R.layout.simple_spinner_item, arr);
 		ad.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 		sp.setAdapter(ad);
 
-		if (value != null && !value.equals("")
-				&& !value.equals(EIASApplication.DefaultDropDownListValue)) {
+		if (value != null && !value.equals("") && !value.equals(EIASApplication.DefaultDropDownListValue)) {
 			/*
 			 * String tmp = value.endsWith("}") ? value.substring(0,
 			 * value.indexOf("{")) : value;
@@ -383,23 +385,18 @@ public class TaskItemControlOperator {
 		et.setLayoutParams(FILL_PARENT);
 		et.addTextChangedListener(new TextWatcher() {
 			@Override
-			public void onTextChanged(CharSequence s, int start, int before,
-					int count) {
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
 			}
 
 			@Override
-			public void beforeTextChanged(CharSequence s, int start, int count,
-					int after) {
+			public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 			}
 
 			@Override
 			public void afterTextChanged(Editable s) {
 				String tmp = sp.getSelectedItem().toString();
 				if (tmp.endsWith("}")) {
-					arr[(Integer) sp.getSelectedItemPosition()] = (tmp
-							.substring(0, tmp.indexOf("{"))
-							+ "{"
-							+ et.getText().toString().trim() + "}");
+					arr[(Integer) sp.getSelectedItemPosition()] = (tmp.substring(0, tmp.indexOf("{")) + "{" + et.getText().toString().trim() + "}");
 					ad.notifyDataSetChanged();
 				}
 			}
@@ -425,8 +422,7 @@ public class TaskItemControlOperator {
 		et.setVisibility(View.GONE);
 		if ((value + "").endsWith("}")) {
 			et.setVisibility(View.VISIBLE);
-			et.setText(value.substring(value.indexOf("{") + 1,
-					value.indexOf("}")));
+			et.setText(value.substring(value.indexOf("{") + 1, value.indexOf("}")));
 		}
 		// 设置默认值
 		int i = StringUtil.getIndexForArray(arr, value);
@@ -480,32 +476,29 @@ public class TaskItemControlOperator {
 				AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
 				builder.setTitle("请选择");
 				builder.setView(buildMutiChoiseLayout(arr, checkedItems));
-				builder.setPositiveButton("确定",
-						new android.content.DialogInterface.OnClickListener() {
+				builder.setPositiveButton("确定", new android.content.DialogInterface.OnClickListener() {
 
-							@Override
-							public void onClick(DialogInterface arg0,
-									int clicked) {
-								String strTmp = "";
-								for (int i = 0; i < arr.length; i++) {
-									Log.i("ME", arr[i] + " selected: "
-											+ checkedItems[i]);
-									if (checkedItems[i]) {
-										if (strTmp.length() > 0)
-											strTmp += "、";
-										strTmp += arr[i];
-									}
-
-								}
-
-								selectBtn.setText(strTmp);
-								hasChanged = true;
-
-								String inputValue = strTmp;
-								String inputKey = selectBtn.getTag().toString();
-								changeValueEvent(inputValue, inputKey);
+					@Override
+					public void onClick(DialogInterface arg0, int clicked) {
+						String strTmp = "";
+						for (int i = 0; i < arr.length; i++) {
+							Log.i("ME", arr[i] + " selected: " + checkedItems[i]);
+							if (checkedItems[i]) {
+								if (strTmp.length() > 0)
+									strTmp += "、";
+								strTmp += arr[i];
 							}
-						});
+
+						}
+
+						selectBtn.setText(strTmp);
+						hasChanged = true;
+
+						String inputValue = strTmp;
+						String inputKey = selectBtn.getTag().toString();
+						changeValueEvent(inputValue, inputKey);
+					}
+				});
 				AlertDialog dialog = builder.create();
 				dialog.show();
 			}
@@ -522,23 +515,19 @@ public class TaskItemControlOperator {
 	 * @param checkedItems
 	 * @return
 	 */
-	private ScrollView buildMutiChoiseLayout(final String[] arrItems,
-			final boolean[] checkedItems) {
+	private ScrollView buildMutiChoiseLayout(final String[] arrItems, final boolean[] checkedItems) {
 		ScrollView sv = new ScrollView(this.mActivity);
-		LinearLayout linearLayout = new LinearLayout(this.mActivity, null,
-				R.style.controlBase);
+		LinearLayout linearLayout = new LinearLayout(this.mActivity, null, R.style.controlBase);
 		linearLayout.setOrientation(LinearLayout.VERTICAL);
 		linearLayout.setLayoutParams(FILL_PARENT);
 		for (int i = 0; i < arrItems.length; i++) {
 			String item = arrItems[i];
 			if (item.endsWith("}")) {
-				String otherValue = item.substring(item.indexOf("{") + 1,
-						item.length() - 1);
+				String otherValue = item.substring(item.indexOf("{") + 1, item.length() - 1);
 				LinearLayout childLayout = new LinearLayout(this.mActivity);
 				childLayout.setOrientation(LinearLayout.VERTICAL);
 				linearLayout.setLayoutParams(FILL_PARENT);
-				final CheckBox cb = buildCheckBox(checkedItems,
-						checkedItems[i], item.substring(0, item.indexOf("{")));
+				final CheckBox cb = buildCheckBox(checkedItems, checkedItems[i], item.substring(0, item.indexOf("{")));
 				cb.setTag(i);
 				cb.setLayoutParams(WRAP_CONTENT);
 				childLayout.addView(cb);
@@ -548,21 +537,16 @@ public class TaskItemControlOperator {
 				et.setText(otherValue);
 				et.addTextChangedListener(new TextWatcher() {
 					@Override
-					public void onTextChanged(CharSequence s, int start,
-							int before, int count) {
+					public void onTextChanged(CharSequence s, int start, int before, int count) {
 					}
 
 					@Override
-					public void beforeTextChanged(CharSequence s, int start,
-							int count, int after) {
+					public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 					}
 
 					@Override
 					public void afterTextChanged(Editable s) {
-						arrItems[(Integer) cb.getTag()] = (cb.getText()
-								.toString()
-								+ "{"
-								+ et.getText().toString().trim() + "}");
+						arrItems[(Integer) cb.getTag()] = (cb.getText().toString() + "{" + et.getText().toString().trim() + "}");
 					}
 				});
 				childLayout.addView(et);
@@ -587,11 +571,9 @@ public class TaskItemControlOperator {
 	 * @param item
 	 * @return
 	 */
-	private CheckBox buildCheckBox(final boolean[] checkedItems,
-			boolean ischecked, String item) {
+	private CheckBox buildCheckBox(final boolean[] checkedItems, boolean ischecked, String item) {
 		CheckBox cb = new CheckBox(this.mActivity.getBaseContext());
-		int color = this.mActivity.getBaseContext().getResources()
-				.getColor(R.color.white);
+		int color = this.mActivity.getBaseContext().getResources().getColor(R.color.white);
 		cb.setTextColor(color);
 		cb.setLayoutParams(WRAP_CONTENT);
 		cb.setText(item);
@@ -599,37 +581,37 @@ public class TaskItemControlOperator {
 		cb.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 
 			@Override
-			public void onCheckedChanged(CompoundButton buttonView,
-					boolean isChecked) {
-				checkedItems[(Integer) buttonView.getTag()] = buttonView
-						.isChecked();
+			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+				checkedItems[(Integer) buttonView.getTag()] = buttonView.isChecked();
 			}
 		});
 		return cb;
 	}
 
 	/**
-	 * 创建文本输入框
-	 * 
-	 * @param f
-	 * @param l
-	 * @param value
+	 * 根据key 直接在map里面
+	 * 寻找控件更新值
+	 * @param itemkey
 	 */
-	private void createTextBox(DataFieldDefine f, LinearLayout l, String value) {
-		EditText et = new EditText(this.mActivity);
-		et.setLayoutParams(FILL_PARENT);
-		et.setText(value);
-		int intputType = f.InputFormat.equals("N") ? InputType.TYPE_CLASS_NUMBER
-				: InputType.TYPE_CLASS_TEXT;
-		et.setInputType(intputType);
-		String hintString = f.Hint.isEmpty() ? "" : f.Hint.equals("null") ? ""
-				: f.Hint;
-		et.setHint(hintString);
-		et.addTextChangedListener(watcher);
-		l.addView(et);
-		inputMap.put(f.Name, et);
-		et.setTag(f.Name);
-		et.setOnFocusChangeListener(focusListenter);
+	@SuppressWarnings("rawtypes")
+	public void updataResultValue(String itemkey, String value) {
+		if (inputMap.size() > 0 && !TextUtils.isEmpty(itemkey) && !TextUtils.isEmpty(value)) {
+			//循环找到目标控件
+			Iterator iter = inputMap.entrySet().iterator();
+			while (iter.hasNext()) {
+				Map.Entry entry = (Map.Entry) iter.next();
+				String key = (String) entry.getKey();
+				//找到控件
+				if (itemkey.equals(key)) {
+					EditText val = (EditText) entry.getValue();
+					//在输入框中设置值
+					val.setText(value);
+					//直接写入数据库,因为setText没有触发焦点事件
+					changeValueEvent(value, key);
+					break;
+				}
+			}
+		}
 	}
 
 	/**
@@ -639,15 +621,76 @@ public class TaskItemControlOperator {
 	 * @param l
 	 * @param value
 	 */
-	private void createMutilTextBox(DataFieldDefine f, LinearLayout l,
-			String value) {
+	private void createTextBox(final DataFieldDefine f, LinearLayout l, String value) {
+		ButtonEditText be = new ButtonEditText(mActivity);
+		be.setLayoutParams(FILL_PARENT);
+		EditText et = be.getEditText();
+		Button bt = be.getButton();
+		//如果是M 按钮可见
+		bt.setVisibility(f.InputFormat.equals("M") ? View.VISIBLE : View.GONE);
+		bt.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				Intent intent = new Intent(mActivity, BaiduAroundActivity.class);
+				intent.putExtra(BaiduAroundActivity.INTENT_TASK_TARGET_ADDRESS, targetAddress);
+				intent.putExtra(BaiduAroundActivity.INTENT_KEY_NAME, f.Name);
+				mActivity.currentFragment.startActivityForResult(intent, BaiduAroundActivity.INTENT_REQUESTCODE);
+			}
+		});
+
+		et.setText(value);
+		int intputType = f.InputFormat.equals("N") ? InputType.TYPE_CLASS_NUMBER : InputType.TYPE_CLASS_TEXT;
+		et.setInputType(intputType);
+		String hintString = f.Hint.isEmpty() ? "" : f.Hint.equals("null") ? "" : f.Hint;
+		et.setHint(hintString);
+		et.addTextChangedListener(watcher);
+
+		l.addView(be);
+		inputMap.put(f.Name, et);
+		et.setTag(f.Name);
+		et.setOnFocusChangeListener(focusListenter);
+		
+		Log.i("asddafa"," 控件 = f.Name " + f.Name +  " value = " + value );
+	}
+
+	//	/**
+	//	 * 创建文本输入框
+	//	 * 
+	//	 * @param f
+	//	 * @param l
+	//	 * @param value
+	//	 */
+	//	private void createTextBox(DataFieldDefine f, LinearLayout l, String value) {
+	//		EditText et = new EditText(this.mActivity);
+	//		et.setLayoutParams(FILL_PARENT);
+	//		et.setText(value);
+	//		int intputType = f.InputFormat.equals("N") ? InputType.TYPE_CLASS_NUMBER
+	//				: InputType.TYPE_CLASS_TEXT;
+	//		et.setInputType(intputType);
+	//		String hintString = f.Hint.isEmpty() ? "" : f.Hint.equals("null") ? ""
+	//				: f.Hint;
+	//		et.setHint(hintString);
+	//		et.addTextChangedListener(watcher);
+	//		l.addView(et);
+	//		inputMap.put(f.Name, et);
+	//		et.setTag(f.Name);
+	//		et.setOnFocusChangeListener(focusListenter);
+	//	}
+
+	/**
+	 * 创建文本输入框
+	 * 
+	 * @param f
+	 * @param l
+	 * @param value
+	 */
+	private void createMutilTextBox(DataFieldDefine f, LinearLayout l, String value) {
 		EditText et = new EditText(this.mActivity);
 		et.setLayoutParams(FILL_PARENT);
 		et.setGravity(Gravity.LEFT | Gravity.TOP);
 		et.setLines(3);// 多行的话显示3行
 		et.setText(value);
-		String hintString = f.Hint.isEmpty() ? "" : f.Hint.equals("null") ? ""
-				: f.Hint;
+		String hintString = f.Hint.isEmpty() ? "" : f.Hint.equals("null") ? "" : f.Hint;
 		et.setHint(hintString);
 		et.addTextChangedListener(watcher);
 		l.addView(et);
@@ -665,12 +708,10 @@ public class TaskItemControlOperator {
 			hasChanged = true;
 		}
 
-		public void beforeTextChanged(CharSequence s, int start, int count,
-				int after) {
+		public void beforeTextChanged(CharSequence s, int start, int count, int after) {
 		}
 
-		public void onTextChanged(CharSequence s, int start, int before,
-				int count) {
+		public void onTextChanged(CharSequence s, int start, int before, int count) {
 
 		}
 	};
@@ -681,8 +722,7 @@ public class TaskItemControlOperator {
 	 * @param l
 	 * @param value
 	 */
-	private void createDateTimeTextBox(final DataFieldDefine f, LinearLayout l,
-			String value) {
+	private void createDateTimeTextBox(final DataFieldDefine f, LinearLayout l, String value) {
 		// EditText et = new EditText(this.mActivity);
 		TimeEditText et = new TimeEditText(this.mActivity);
 		et.setFocusable(false);
@@ -699,15 +739,13 @@ public class TaskItemControlOperator {
 
 			}
 		});
-		final DateTimePickerDialog dtpDialog = new DateTimePickerDialog(
-				this.mActivity);
-		dtpDialog
-				.setOnSelecctTimeListener(new DateTimePickerDialog.OnSelectTimeListener() {
-					@Override
-					public void onSelectTime(String time) {
-						changeValueEvent(time, f.Name);
-					}
-				});
+		final DateTimePickerDialog dtpDialog = new DateTimePickerDialog(this.mActivity);
+		dtpDialog.setOnSelecctTimeListener(new DateTimePickerDialog.OnSelectTimeListener() {
+			@Override
+			public void onSelectTime(String time) {
+				changeValueEvent(time, f.Name);
+			}
+		});
 		et.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -715,8 +753,7 @@ public class TaskItemControlOperator {
 				try {
 					dtpDialog.dateTimePicKDialog((TimeEditText) v, 0);
 				} catch (ParseException e) {
-					ToastUtil.longShow(TaskItemControlOperator.this.mActivity,
-							"时间字符串格式错误！");
+					ToastUtil.longShow(TaskItemControlOperator.this.mActivity, "时间字符串格式错误！");
 					e.printStackTrace();
 				}
 			}
@@ -749,7 +786,7 @@ public class TaskItemControlOperator {
 	 * @param v
 	 *            子项控件
 	 */
-	private void changeValueEvent(String inputValue, String inputKey) {
+	public void changeValueEvent(String inputValue, String inputKey) {
 		if (inputKey == null || inputKey.equals("") || inputValue == null) {
 			return;
 		}
@@ -767,9 +804,7 @@ public class TaskItemControlOperator {
 						}
 					}
 					if (addItem) {
-						result.add(new TaskDataItem(baseCategoryID,
-								defineItem.Name, inputValue, defineItem.IOrder,
-								taskID, defineItem.CategoryID, -1));
+						result.add(new TaskDataItem(baseCategoryID, defineItem.Name, inputValue, defineItem.IOrder, taskID, defineItem.CategoryID, -1));
 					}
 					break;
 				}
@@ -802,21 +837,15 @@ public class TaskItemControlOperator {
 	 */
 	private void changeItemValue(ArrayList<TaskDataItem> updateItems) {
 		if (updateItems.size() > 0) {
-			ResultInfo<Integer> saveInfo = TaskDataWorker
-					.saveManyTaskDataItem(updateItems);
+			ResultInfo<Integer> saveInfo = TaskDataWorker.saveManyTaskDataItem(updateItems);
 			if (saveInfo.Success && saveInfo.Data > 0) {
 				// 修改子项数量
 				int valueCount = 0;
-				String bMapDefaultValue = EIASApplication.DefaultBaiduMapTipsValue
-						+ EIASApplication.DefaultBaiduMapUnLocTipsValue;
+				String bMapDefaultValue = EIASApplication.DefaultBaiduMapTipsValue + EIASApplication.DefaultBaiduMapUnLocTipsValue;
 				ArrayList<TaskDataItem> items = dataItems;
 				for (TaskDataItem item : items) {
-					if (item.Value.trim().length() > 0
-							&& !item.Value.trim().equals(
-									EIASApplication.DefaultHorizontalLineValue)
-							&& !item.Value.trim().equals(
-									EIASApplication.DefaultNullString)
-							&& !item.Value.trim().equals(bMapDefaultValue)) {
+					if (item.Value.trim().length() > 0 && !item.Value.trim().equals(EIASApplication.DefaultHorizontalLineValue)
+							&& !item.Value.trim().equals(EIASApplication.DefaultNullString) && !item.Value.trim().equals(bMapDefaultValue)) {
 						valueCount += 1;
 					}
 				}
@@ -839,8 +868,7 @@ public class TaskItemControlOperator {
 	 * @param l
 	 * @param value
 	 */
-	private void createBaiduPositionEditText(DataFieldDefine f, LinearLayout l,
-			String value) {
+	private void createBaiduPositionEditText(DataFieldDefine f, LinearLayout l, String value) {
 		TimeEditText et = new TimeEditText(this.mActivity);
 		et.setFocusable(false);
 		et.setLayoutParams(FILL_PARENT);
@@ -869,8 +897,7 @@ public class TaskItemControlOperator {
 			public void onSelected(BDLocation location) {
 				// TODO 定位成功 获取坐标， 赋值
 				String inputKey = edt.getTag().toString();
-				String latLong = location.getLatitude() + ","
-						+ location.getLongitude();
+				String latLong = location.getLatitude() + "," + location.getLongitude();
 				changeValueEvent(latLong, inputKey);
 				edt.setText(latLong);
 			}
@@ -895,8 +922,7 @@ public class TaskItemControlOperator {
 	 * @param value
 	 */
 	@SuppressWarnings("unused")
-	private void createBaiduPositionTextBox(DataFieldDefine f, LinearLayout l,
-			String value) {
+	private void createBaiduPositionTextBox(DataFieldDefine f, LinearLayout l, String value) {
 		EditText et = new EditText(this.mActivity);
 		et.setLayoutParams(FILL_PARENT);
 		et.setText(value);
@@ -910,20 +936,16 @@ public class TaskItemControlOperator {
 				final String inputKey = temp.getTag().toString();
 				if (hasFocus) {// 获得焦点
 					// 在这里可以对获得焦点进行处理
-					if (temp.getText().length() == 0
-							|| temp.getText().equals("null")) {
-						BaiduLocationHelper locationHelper = new BaiduLocationHelper(
-								mActivity, true);
-						locationHelper
-								.setOperatorListener(new BaiduLoactionOperatorListener() {
-									@Override
-									public void onSelected(BDLocation location) {
-										String latLong = location.getLatitude()
-												+ "," + location.getLongitude();
-										changeValueEvent(latLong, inputKey);
-										temp.setText(latLong);
-									}
-								});
+					if (temp.getText().length() == 0 || temp.getText().equals("null")) {
+						BaiduLocationHelper locationHelper = new BaiduLocationHelper(mActivity, true);
+						locationHelper.setOperatorListener(new BaiduLoactionOperatorListener() {
+							@Override
+							public void onSelected(BDLocation location) {
+								String latLong = location.getLatitude() + "," + location.getLongitude();
+								changeValueEvent(latLong, inputKey);
+								temp.setText(latLong);
+							}
+						});
 					}
 				} else {// 失去焦点
 					changeValueEvent(inputValue, inputKey);
@@ -943,8 +965,7 @@ public class TaskItemControlOperator {
 	 * @param value
 	 */
 	@SuppressWarnings("unused")
-	private void createBaiduMapTextBox(DataFieldDefine f, LinearLayout l,
-			String value) {
+	private void createBaiduMapTextBox(DataFieldDefine f, LinearLayout l, String value) {
 		final Button et = new Button(this.mActivity);
 		final DataFieldDefine finalF = f;
 		et.setGravity(Gravity.CENTER_HORIZONTAL);
@@ -959,8 +980,7 @@ public class TaskItemControlOperator {
 		baiduMaps.setScrollEnable(false);
 		baiduMaps.setRotateEnable(false);
 		baiduMaps.setOverlookEnable(false);
-		baiduMaps.setLayoutParams(new LayoutParams(
-				android.view.ViewGroup.LayoutParams.MATCH_PARENT, 600));
+		baiduMaps.setLayoutParams(new LayoutParams(android.view.ViewGroup.LayoutParams.MATCH_PARENT, 600));
 		et.setTag(baiduMaps);
 
 		et.setOnClickListener(new View.OnClickListener() {
@@ -971,35 +991,28 @@ public class TaskItemControlOperator {
 				if (!latlngString.contains(",")) {
 					latlngString = "";
 				}
-				BaibuMapView baiduMap = new BaibuMapView(mActivity,
-						latlngString);
+				BaibuMapView baiduMap = new BaibuMapView(mActivity, latlngString);
 				baiduMap.setAddressControl(true);
 				FrameLayout frameLayout = new FrameLayout(mActivity);
 				frameLayout.setLayoutParams(FILL_PARENT);
 				frameLayout.addView(baiduMap.mView);
-				final Dialog dialog = DialogUtil.getAboutDialog(mActivity,
-						frameLayout);
-				dialog.getWindow().setLayout(LayoutParams.MATCH_PARENT,
-						LayoutParams.MATCH_PARENT);
+				final Dialog dialog = DialogUtil.getAboutDialog(mActivity, frameLayout);
+				dialog.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 				baiduMap.setOperatorListener(new OperatorListener() {
 					@Override
 					public void onSelected(BDLocation location) {
 						if (location != null) {
-							String loglat = location.getLatitude() + ","
-									+ location.getLongitude();
+							String loglat = location.getLatitude() + "," + location.getLongitude();
 							et.setText(loglat);
 							String inputValue = loglat;
 							String inputKey = finalF.Name.toString();
-							if (!inputValue
-									.equals(EIASApplication.DefaultDropDownListValue)) {
+							if (!inputValue.equals(EIASApplication.DefaultDropDownListValue)) {
 								changeValueEvent(inputValue, inputKey);
 							}
 
 							if (tempView.getTag() != null) {
-								BaibuMapView baiduMap = (BaibuMapView) tempView
-										.getTag();
-								LatLng latlng = new LatLng(location
-										.getLatitude(), location.getLongitude());
+								BaibuMapView baiduMap = (BaibuMapView) tempView.getTag();
+								LatLng latlng = new LatLng(location.getLatitude(), location.getLongitude());
 								baiduMap.setLatlng(latlng);
 							}
 						}
@@ -1040,18 +1053,15 @@ public class TaskItemControlOperator {
 	 * @param l
 	 * @param value
 	 */
-	private void createBaiduMapImgBox(DataFieldDefine f, LinearLayout l,
-			String value) {
+	private void createBaiduMapImgBox(DataFieldDefine f, LinearLayout l, String value) {
 		final Button et = new Button(this.mActivity);
 		final DataFieldDefine finalF = f;
 		et.setGravity(Gravity.CENTER_HORIZONTAL);
 		et.setLayoutParams(FILL_PARENT);
 		final ImageView mappImg = new ImageView(mActivity);
 
-		int width = DensityHelper.getInstance().px2dip(mActivity,
-				WinDisplay.getWidthAndHeight(mActivity).x);
-		mappImg.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT,
-				width * 2));
+		int width = DensityHelper.getInstance().px2dip(mActivity, WinDisplay.getWidthAndHeight(mActivity).x);
+		mappImg.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, width * 2));
 		mappImg.setScaleType(ScaleType.FIT_XY);
 		String mapImgPath = "";
 		if (value.length() > 0) {
@@ -1105,27 +1115,23 @@ public class TaskItemControlOperator {
 	 * @param tempView
 	 * @param finalF
 	 */
-	private void showMapView(String latlngString, final Button tempView,
-			final DataFieldDefine finalF) {
+	private void showMapView(String latlngString, final Button tempView, final DataFieldDefine finalF) {
 		BaibuMapView baiduMap = new BaibuMapView(mActivity, latlngString);
 		baiduMap.setAddressControl(true);
 		FrameLayout frameLayout = new FrameLayout(mActivity);
 		frameLayout.setLayoutParams(FILL_PARENT);
 		frameLayout.addView(baiduMap.mView);
 		final Dialog dialog = DialogUtil.getAboutDialog(mActivity, frameLayout);
-		dialog.getWindow().setLayout(LayoutParams.MATCH_PARENT,
-				LayoutParams.MATCH_PARENT);
+		dialog.getWindow().setLayout(LayoutParams.MATCH_PARENT, LayoutParams.MATCH_PARENT);
 		baiduMap.setOperatorListener(new OperatorListener() {
 			@Override
 			public void onSelected(BDLocation location) {
 				if (location != null) {
-					String loglat = location.getLatitude() + ","
-							+ location.getLongitude();
+					String loglat = location.getLatitude() + "," + location.getLongitude();
 					tempView.setText(loglat);
 					String inputValue = loglat;
 					String inputKey = finalF.Name.toString();
-					if (!inputValue
-							.equals(EIASApplication.DefaultDropDownListValue)) {
+					if (!inputValue.equals(EIASApplication.DefaultDropDownListValue)) {
 						changeValueEvent(inputValue, inputKey);
 					}
 
@@ -1165,8 +1171,7 @@ public class TaskItemControlOperator {
 	 */
 	private String getMapPath(String location) {
 		String[] logLat = location.split(",");
-		StringBuilder mapPaht = new StringBuilder(
-				"http://api.map.baidu.com/staticimage?");
+		StringBuilder mapPaht = new StringBuilder("http://api.map.baidu.com/staticimage?");
 		mapPaht.append("width=" + 600 + "&height=" + 400 + "&");
 		mapPaht.append("center=" + logLat[1] + "," + logLat[0] + "&");
 		mapPaht.append("markers=" + logLat[1] + "," + logLat[0] + "&");
@@ -1181,8 +1186,7 @@ public class TaskItemControlOperator {
 	 * @param l
 	 * @param value
 	 */
-	private void createUserNameTextBox(final DataFieldDefine f, LinearLayout l,
-			String value) {
+	private void createUserNameTextBox(final DataFieldDefine f, LinearLayout l, String value) {
 		EditText et = new EditText(this.mActivity);
 		et.setLayoutParams(FILL_PARENT);
 		if (value.length() == 0 || value.equals("null")) {
@@ -1214,13 +1218,11 @@ public class TaskItemControlOperator {
 	 * @param l
 	 * @param value
 	 */
-	private void createUserPhoneTextBox(final DataFieldDefine f,
-			LinearLayout l, String value) {
+	private void createUserPhoneTextBox(final DataFieldDefine f, LinearLayout l, String value) {
 		EditText et = new EditText(this.mActivity);
 		et.setLayoutParams(FILL_PARENT);
 		if (value.length() == 0 || value.equals("null")) {
-			if (EIASApplication.getCurrentUser().Mobile.length() == 0
-					|| EIASApplication.getCurrentUser().Mobile.equals("null")) {
+			if (EIASApplication.getCurrentUser().Mobile.length() == 0 || EIASApplication.getCurrentUser().Mobile.equals("null")) {
 				et.setText("");
 			} else {
 				et.setText(EIASApplication.getCurrentUser().Mobile);
@@ -1234,11 +1236,8 @@ public class TaskItemControlOperator {
 			public void onFocusChange(View v, boolean hasFocus) {
 				EditText temp = (EditText) v;
 				if (hasFocus) {
-					if (temp.getText().length() == 0
-							|| temp.getText().equals("null")) {
-						if (EIASApplication.getCurrentUser().Mobile.length() == 0
-								|| EIASApplication.getCurrentUser().Mobile
-										.equals("null")) {
+					if (temp.getText().length() == 0 || temp.getText().equals("null")) {
+						if (EIASApplication.getCurrentUser().Mobile.length() == 0 || EIASApplication.getCurrentUser().Mobile.equals("null")) {
 							temp.setText("");
 						} else {
 							temp.setText(EIASApplication.getCurrentUser().Mobile);
@@ -1258,23 +1257,20 @@ public class TaskItemControlOperator {
 	 * 
 	 * @return
 	 */
-	public ArrayList<TaskDataItem> getInputDatas(Integer taskID,
-			Integer baseCategoryID) {
+	public ArrayList<TaskDataItem> getInputDatas(Integer taskID, Integer baseCategoryID) {
 		ArrayList<TaskDataItem> result = new ArrayList<TaskDataItem>();
 
 		String inputValue;
 		Iterator<Entry<String, View>> iter = inputMap.entrySet().iterator();
 		while (iter.hasNext()) {
-			Map.Entry<String, View> entry = (Map.Entry<String, View>) iter
-					.next();
+			Map.Entry<String, View> entry = (Map.Entry<String, View>) iter.next();
 			String key = entry.getKey();
 			View controlView = entry.getValue();
 
 			inputValue = "";
 			if (controlView instanceof Spinner) {
 				Spinner sp = (Spinner) controlView;
-				if (!sp.getSelectedItem().toString()
-						.equals(EIASApplication.DefaultDropDownListValue)) {
+				if (!sp.getSelectedItem().toString().equals(EIASApplication.DefaultDropDownListValue)) {
 					inputValue = sp.getSelectedItem().toString();
 				}
 			} else if (controlView instanceof EditText) {
@@ -1282,14 +1278,11 @@ public class TaskItemControlOperator {
 				inputValue = et.getText().toString().trim();
 			} else if (controlView instanceof Button) {
 				Button btn = (Button) controlView;
-				if (btn.getTag() != null
-						&& btn.getTag().toString().trim().length() > 0) {
+				if (btn.getTag() != null && btn.getTag().toString().trim().length() > 0) {
 					inputValue = btn.getTag().toString().trim();
 				} else {
-					String bMapDefaultValue = EIASApplication.DefaultBaiduMapTipsValue
-							+ EIASApplication.DefaultBaiduMapUnLocTipsValue;
-					if (!bMapDefaultValue.equals(btn.getText().toString()
-							.trim())) {
+					String bMapDefaultValue = EIASApplication.DefaultBaiduMapTipsValue + EIASApplication.DefaultBaiduMapUnLocTipsValue;
+					if (!bMapDefaultValue.equals(btn.getText().toString().trim())) {
 						inputValue = btn.getText().toString().trim();
 					}
 				}
@@ -1317,10 +1310,7 @@ public class TaskItemControlOperator {
 							}
 						}
 						if (addItem) {
-							result.add(new TaskDataItem(baseCategoryID,
-									defineItem.Name, inputValue,
-									defineItem.IOrder, taskID,
-									defineItem.CategoryID, -1));
+							result.add(new TaskDataItem(baseCategoryID, defineItem.Name, inputValue, defineItem.IOrder, taskID, defineItem.CategoryID, -1));
 						}
 						break;
 					}
@@ -1340,8 +1330,7 @@ public class TaskItemControlOperator {
 	 * @return
 	 */
 	public static String mkResourceDir(String taskNum, String type) {
-		String dirString = EIASApplication.projectRoot + taskNum
-				+ File.separator + type;
+		String dirString = EIASApplication.projectRoot + taskNum + File.separator + type;
 		FileUtil.mkDir(dirString);
 		return dirString;
 	}
@@ -1356,8 +1345,7 @@ public class TaskItemControlOperator {
 	 * @return 是否通过验证
 	 */
 	@SuppressWarnings({ "rawtypes", "unchecked" })
-	public static ResultInfo<Boolean> checkItemDataFormat(
-			ArrayList<TaskDataItem> items, ArrayList<String> showMsgs) {
+	public static ResultInfo<Boolean> checkItemDataFormat(ArrayList<TaskDataItem> items, ArrayList<String> showMsgs) {
 		ResultInfo<Boolean> result = new ResultInfo<Boolean>();
 		String showMsg = "";
 		// 申请错误提示信息列表
@@ -1381,8 +1369,7 @@ public class TaskItemControlOperator {
 						msg = msg + errorChars.get(j);
 					}
 					showMsgs.add("[" + item.Name + "]" + "存在非法字符[" + msg + "];");
-					showMsg = showMsg + "[" + item.Name + "]" + "存在非法字符[" + msg
-							+ "];\n";
+					showMsg = showMsg + "[" + item.Name + "]" + "存在非法字符[" + msg + "];\n";
 				}
 			}
 		}

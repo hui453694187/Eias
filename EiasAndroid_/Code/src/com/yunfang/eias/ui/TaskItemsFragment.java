@@ -2,10 +2,12 @@ package com.yunfang.eias.ui;
 
 import java.util.ArrayList;
 
+import android.content.Intent;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,7 +33,9 @@ import com.yunfang.framework.utils.ListUtil;
 
 /**
  * 
- * 项目名称：WaiCai 类名称：TaskItemsFragment 类描述：用于显示任务下所属分类下所有子项信息的Fragment 创建人： 贺隽
+ * 项目名称：WaiCai 
+ * 类名称：TaskItemsFragment 
+ * 类描述：用于显示任务下所属分类下所有子项信息的Fragment 创建人： 贺隽
  * 创建时间：2014-4-30 下午4:17:57
  * 
  * @version
@@ -212,6 +216,28 @@ public class TaskItemsFragment extends BaseWorkerFragment {
 		// 发信息给UI线程
 		mUiHandler.sendMessage(uiMsg);
 	}
+	
+	@Override
+	public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		//从百度地图带着周边回来了
+		if (requestCode == BaiduAroundActivity.INTENT_REQUESTCODE
+			&& resultCode == BaiduAroundActivity.INTENT_RESULTCODE) {
+			Bundle extras = data.getExtras();
+			if (extras != null) {
+				//关键字
+				String value = extras.getString(BaiduAroundActivity.INTENT_RESULT_VLAUE, null);
+				String key = extras.getString(BaiduAroundActivity.INTENT_KEY_NAME, null);
+				if (value != null && key != null) {
+					//保存值
+					controlOperator.updataResultValue(key, value);
+//					controlOperator.changeValueEvent(value, key);
+				}
+			}
+		}
+		
+	}
+	
 
 	@SuppressWarnings("unchecked")
 	@Override
@@ -386,7 +412,7 @@ public class TaskItemsFragment extends BaseWorkerFragment {
 		 * if(categoryIndex>=taskInfoActivity
 		 * .viewModel.currentTaskCategoryInfos.size()-1){
 		 * btn_next_Category.setEnabled(false); }
-		 */
+		 */ 
 		// 上一步按钮触发事件
 		btn_previous_Category.setOnClickListener(new OnClickListener() {
 
@@ -415,7 +441,9 @@ public class TaskItemsFragment extends BaseWorkerFragment {
 		btn_save_data.setOnClickListener(commitClickListener);
 		Integer taskID = taskInfoActivity.viewModel.currentTask.IsNew ? taskInfoActivity.viewModel.currentTask.ID : taskInfoActivity.viewModel.currentTask.TaskID;
 		Integer categoryId = taskInfoActivity.viewModel.currentCategory.BaseCategoryID > 0 ? taskInfoActivity.viewModel.currentCategory.BaseCategoryID : taskInfoActivity.viewModel.currentCategory.ID;
-		controlOperator = new TaskItemControlOperator(taskInfoActivity, layout, taskID, categoryId);
+		//新增加目标地址
+		String targetAddress = taskInfoActivity.viewModel.currentTask.TargetAddress;
+		controlOperator = new TaskItemControlOperator(taskInfoActivity, layout, taskID, categoryId,targetAddress);
 		loadItems();
 
 		if (taskInfoActivity.additional) {

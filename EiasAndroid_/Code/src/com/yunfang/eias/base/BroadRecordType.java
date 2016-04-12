@@ -102,6 +102,11 @@ public class BroadRecordType {
 	 */
 	public static final String KEY_SETTING_PHOTOTYPE = "Key_setting_phototype";
 	
+	/**
+	 * 选择拍照模式,在图片选择页面确定是否是连拍模式
+	 */
+	public static final String KEY_SETTING_BURST_MODE = "KEY_SETTING_BURST_MODE";
+	
 	//}}
 	
 	//{{ 选择文件后

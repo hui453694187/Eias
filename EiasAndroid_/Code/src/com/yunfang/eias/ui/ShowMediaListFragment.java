@@ -16,12 +16,14 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
@@ -32,7 +34,9 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-import android.widget.GridView;
+import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.yunfang.eias.R;
@@ -54,12 +58,16 @@ import com.yunfang.eias.ui.Adapter.MeidaListAdapter;
 import com.yunfang.eias.ui.Adapter.SearchAdapter;
 import com.yunfang.eias.ui.Adapter.TypeItemGridViewAdapter;
 import com.yunfang.eias.ui.Adapter.TypeItemGridViewAdapter.ItemType;
+import com.yunfang.eias.view.MyGridView;
+import com.yunfang.eias.view.NewTouchView;
+import com.yunfang.eias.view.NewTouchView.OnNewClickListener;
 import com.yunfang.framework.base.BaseApplication;
 import com.yunfang.framework.base.BaseWorkerFragment;
 import com.yunfang.framework.model.ResultInfo;
 import com.yunfang.framework.utils.CameraUtils;
 import com.yunfang.framework.utils.DialogUtil;
 import com.yunfang.framework.utils.FileUtil;
+import com.yunfang.framework.utils.SpUtil;
 import com.yunfang.framework.utils.ToastUtil;
 
 /**
@@ -74,6 +82,7 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 
 	// {{ 变量
 
+	protected static final String TAG = "ShowMediaListFragment";
 	/**
 	 * 多媒体类型
 	 */
@@ -127,7 +136,7 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 	/**
 	 * 呈现文件的控件
 	 */
-	private GridView mediaGrid;
+	private MyGridView mediaGrid;
 
 	/**
 	 * 上一步按钮(点击后保存数据并且直接跳到上一个分类子项)
@@ -158,14 +167,16 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 	 * 多选后图片选择类型提示信息
 	 */
 	private Button media_bottom_select_tips;
-	
-	/** 媒体类型自动适配框 *//*
-	public MyAutoCompleteTv media_type_autoComplecTv;
-	
-	*//** 默认类型选择视图 *//*
-	private View defult_pic_type_linearLayout;*/
+
+	/** 媒体类型自动适配框 */
+	/*
+	 * public MyAutoCompleteTv media_type_autoComplecTv;
+	 *//** 默认类型选择视图 */
+	/*
+	 * private View defult_pic_type_linearLayout;
+	 */
 	/** 子项类型统计 视图*/
-	private GridView type_item_gridView;
+	private MyGridView type_item_gridView;
 	/** 子项统计视图适配器*/
 	private TypeItemGridViewAdapter typeItemGvAdapter;
 	/**
@@ -182,7 +193,7 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 	 * 需要操作资源的索引
 	 */
 	private int onItemIndex = -1;
-	
+
 	// }}
 
 	// {{ 下面的数字位数 代表 菜单级别 请勿随便修改
@@ -201,6 +212,7 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 	 * 自定义图库
 	 */
 	public static final int TASK_ALBUM = 100;
+
 	/**
 	 * 图库
 	 * */
@@ -256,6 +268,33 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 	 */
 	private final int TASK_SAVETASKITEMS = 124;
 
+	/**
+	 * 拍照
+	 */
+	private Button bt_take_picture;
+
+	/**
+	 * 选取图片
+	 */
+	private Button bt_choose_image;
+
+	/**
+	 * 展开列表
+	 */
+	private Button bt_open_view;
+
+	private LinearLayout ll_top_button;
+
+	private LinearLayout ll_type_item_gridView;
+
+	/**
+	 * 当前是否是连拍模式
+	 * 默认为否
+	 */
+	private boolean isBurstMode = false;
+	private ScrollView scrollView_two;
+	private NewTouchView new_touch_view;
+
 	// }}
 
 	// {{ 方法
@@ -291,9 +330,13 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 		taskInfoActivity = (TaskInfoActivity) getActivity();
 		taskInfoActivity.currentInstanceFragmentName = "TaskItemsFragment";
-		return inflater.inflate(R.layout.task_info_photo_add, null);
+
+		View inflate = inflater.inflate(R.layout.task_info_photo_add, null);
+
+		return inflate;
 	}
 
+	
 	/**
 	 * 加载普通控件
 	 * 
@@ -302,7 +345,23 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
+
 		initView();
+	}
+
+	@Override
+	public void onStart() {
+		super.onStart();
+		initData();
+	}
+
+	/**
+	 * 初始化数据
+	 */
+	private void initData() {
+		//设置是否是连拍模式
+		SpUtil sp = SpUtil.getInstance(BroadRecordType.KEY_SETTINGS);
+		isBurstMode = sp.getBoolean(BroadRecordType.KEY_SETTING_BURST_MODE, false);
 	}
 
 	/**
@@ -320,27 +379,56 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 
 		mView = getView();
 
+		//		initTouchView();
+
 		home_top_title = (TextView) mView.findViewById(R.id.home_top_title);
 		list_reload = (Button) mView.findViewById(R.id.list_reload);
 		btn_menu = (Button) mView.findViewById(R.id.btn_menu);
-		mediaGrid = (GridView) mView.findViewById(R.id.photo_show_gridView);
+		mediaGrid = (MyGridView) mView.findViewById(R.id.photo_show_gridView);
 		home_top_additional = (Button) mView.findViewById(R.id.home_top_additional);
 		media_bottom_bar_delete = (Button) mView.findViewById(R.id.media_bottom_bar_delete);
 		media_bottom_select_tips = (Button) mView.findViewById(R.id.media_bottom_select_tips);
 		header_bar_leave_select_all = (CheckBox) mView.findViewById(R.id.header_bar_leave_select_all);
+
+		bt_take_picture = (Button) mView.findViewById(R.id.bt_take_picture);
+		bt_choose_image = (Button) mView.findViewById(R.id.bt_choose_image);
+		bt_open_view = (Button) mView.findViewById(R.id.bt_open_view);
+		ll_top_button = (LinearLayout) mView.findViewById(R.id.ll_top_button);
+		ll_type_item_gridView = (LinearLayout) mView.findViewById(R.id.ll_type_item_gridView);
+		scrollView_two = (ScrollView) mView.findViewById(R.id.scrollView_two);
+
+		//		mediaGrid.setOnScrollListener(myScrollListener);
+
 		
-		/*defult_pic_type_linearLayout=mView.findViewById(R.id.defult_pic_type_linearLayout);*/
-		type_item_gridView=(GridView)mView.findViewById(R.id.type_item_gridView);
+
+		
+		bt_take_picture.setOnClickListener(myOnClickListener);
+		bt_choose_image.setOnClickListener(myOnClickListener);
+		bt_open_view.setOnClickListener(myOnClickListener);
+
+		/*
+		 * defult_pic_type_linearLayout=mView.findViewById(R.id.
+		 * defult_pic_type_linearLayout);
+		 */
+		type_item_gridView = (MyGridView) mView.findViewById(R.id.type_item_gridView);
 		// 判断当前媒体类型，是否执行加载类型选择视图
-		if(mediaType==CategoryType.PictureCollection){
-			/*media_type_autoComplecTv=(MyAutoCompleteTv)mView.findViewById(R.id.media_type_autoComplecTv);*/
-			/*initPicAutoComplecTv();*/
-		}else{//非图片类型，隐藏
-			/*defult_pic_type_linearLayout.setVisibility(View.GONE);*/
+		if (mediaType == CategoryType.PictureCollection) {
+			/*
+			 * media_type_autoComplecTv=(MyAutoCompleteTv)mView.findViewById(R.id
+			 * .media_type_autoComplecTv);
+			 */
+			/* initPicAutoComplecTv(); */
+
+			//创建悬浮拍照按钮
+			//			MyWindowManager.createSmallWindow(getActivity(),this);
+
+		} else {//非图片类型，隐藏
+			/* defult_pic_type_linearLayout.setVisibility(View.GONE); */
 			type_item_gridView.setVisibility(View.GONE);
+			ll_type_item_gridView.setVisibility(View.GONE);
+			ll_top_button.setVisibility(View.GONE);
 		}
-		
-			
+
 		list_reload.setVisibility(View.GONE);
 
 		btn_menu.setOnClickListener(new OnClickListener() {
@@ -431,13 +519,13 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 		media_bottom_bar_delete.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String msgStr="是否删除图片";
-				if(mediaType==CategoryType.AudioCollection){
-					msgStr="是否删除音频";
-				}else if(mediaType==CategoryType.VideoCollection){
-					msgStr="是否删除视频";
+				String msgStr = "是否删除图片";
+				if (mediaType == CategoryType.AudioCollection) {
+					msgStr = "是否删除音频";
+				} else if (mediaType == CategoryType.VideoCollection) {
+					msgStr = "是否删除视频";
 				}
-				
+
 				DialogUtil.showConfirmationDialog(taskInfoActivity, msgStr, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
@@ -446,13 +534,14 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 					}
 				});
 			}
+
 			/***
 			 * @author kevin
 			 * @date 2015-11-6 下午2:52:44
 			 * @Description: 删除选中的媒体项目     
 			 * @return void    返回类型 
 			 */
-			private void deleteSelectMedia(){
+			private void deleteSelectMedia() {
 				ArrayList<MediaDataInfo> selectItems = new ArrayList<MediaDataInfo>();
 				for (MediaDataInfo item : taskInfoActivity.meidaInfos) {
 					if (item.Path != null && item.Path.length() > 0 && item.check) {
@@ -489,35 +578,287 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 		});
 	}
 
+	/**
+	 * 初始化滑动按钮
+	 */
+	@SuppressWarnings("unused")
+	private void initTouchView() {
+		//滑动控件
+		new_touch_view = (NewTouchView) mView.findViewById(R.id.new_touch_view);
+
+		//测量根高度
+		final RelativeLayout rl_root = (RelativeLayout) mView.findViewById(R.id.rl_root);
+		final ViewTreeObserver vto = rl_root.getViewTreeObserver();
+		vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+			@Override
+			public boolean onPreDraw() {
+				vto.removeOnPreDrawListener(this);
+
+				Log.i(TAG, "mView.getHeight() =" + rl_root.getMeasuredHeight() + " " + rl_root.getMeasuredWidth());
+				new_touch_view.setScreenH(rl_root.getMeasuredHeight());
+				return true;
+			}
+		});
+		new_touch_view.setOnNewClickListener(new OnNewClickListener() {
+			@Override
+			public void OnNewClick() {
+				actionClickTakePicture();
+
+			}
+		});
+	}
+
+	/**
+	 * 
+	 * 点击事件
+	 */
+	private View.OnClickListener myOnClickListener = new OnClickListener() {
+		@Override
+		public void onClick(View v) {
+			switch (v.getId()) {
+			case R.id.bt_take_picture: //拍照
+				actionClickTakePicture();
+				break;
+			case R.id.bt_choose_image: //选取
+
+				actionClickChooseImage();
+				break;
+			case R.id.bt_open_view: //展开
+				actionClickOpen();
+				break;
+			default:
+				break;
+			}
+
+		}
+
+	};
+
+	/**
+	 * 监听滚动事件
+	 */
+	@SuppressWarnings("unused")
+	private OnScrollListener myScrollListener = new android.widget.AbsListView.OnScrollListener() {
+
+		@Override
+		public void onScrollStateChanged(AbsListView view, int scrollState) {
+
+		}
+
+		@Override
+		public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+			if ((firstVisibleItem + visibleItemCount) >= totalItemCount) {
+				//						mediaGrid.requestDisallowInterceptTouchEvent(false);
+
+			}
+			//					mediaGrid.requestDisallowInterceptTouchEvent(false);
+		}
+	};
+
+	/**
+	 * 点击选择图片
+	 */
+	public void actionClickChooseImage() {
+		//如果Adapter == null 退出
+		if (typeItemGvAdapter == null) {
+			ToastUtil.longShow(getActivity(), "没有发现任何类型!");
+			return;
+		}
+		if (!TaskOperator.submiting(taskInfoActivity.viewModel.currentTask.TaskNum)) {
+			// 如果有空间就打开对应的资源列表
+			if (taskInfoActivity.appHeader.checkSDCardHasSize()) {
+				// 选择或者拍摄新的图片
+
+				// 判断类型输入框中的值是否合法，合法记录在ViewModle
+				if (!chackSelectType()) {
+					//选择的不合法，清空缓存
+					taskInfoActivity.viewModel.selectPicType = "";
+					ToastUtil.longShow(getActivity(), "当前类型不存在！");
+
+				}
+				// 跳转到 选择图片界面
+				Intent i = new Intent();
+				i.setClass(taskInfoActivity, MultiSelectAlbumActivity.class);
+				startActivityForResult(i, TASK_ALBUM);
+				//getFileOfMediaLib();
+
+			}
+		} else {
+			ToastUtil.longShow(getActivity(), "当前任务正在提交中，将不能继续操作文件!");
+		}
+
+	}
+
+	/**
+	 * 点击拍照
+	 */
+	public void actionClickTakePicture() {
+		//如果Adapter == null 退出
+		if (typeItemGvAdapter == null) {
+			ToastUtil.longShow(getActivity(), "没有发现任何类型!");
+			return;
+		}
+
+		if (!TaskOperator.submiting(taskInfoActivity.viewModel.currentTask.TaskNum)) {
+			// 如果有空间就打开对应的资源列表
+			if (taskInfoActivity.appHeader.checkSDCardHasSize()) {
+
+				if (CategoryType.PictureCollection == mediaType) {
+					// 类型输入框中的值是否正确， 正确就保存到ViewModel
+					if (!chackSelectType()) {
+						//选择的不合法，清空缓存
+						taskInfoActivity.viewModel.selectPicType = "";
+						ToastUtil.longShow(getActivity(), "当前类型不存在！");
+						return;
+					}
+					String photoType = EIASApplication.getSystemSetting(BroadRecordType.KEY_SETTING_PHOTOTYPE);
+					if (photoType.equals(SystemSettingActivity.photoTypeChooseItem[0])) {
+						getFileOfNewMeida2();
+					} else {
+						getFileOfNewMeida();
+					}
+				} else if (CategoryType.AudioCollection == mediaType) {
+					taskInfoActivity.changMediaFragment(taskInfoActivity.TASK_AUDIO, mediaInfo, true);
+				} else if (CategoryType.VideoCollection == mediaType) {
+					taskInfoActivity.changMediaFragment(taskInfoActivity.TASK_VEDIO, mediaInfo, true);
+				}
+
+			} else {
+				ToastUtil.longShow(getActivity(), "当前任务正在提交中，将不能继续操作文件!");
+			}
+		}
+
+	}
+
+	/**
+	 * 媒体类型是否展开
+	 * false 不展开
+	 * true 展开
+	 * 新的
+	 * false 图片页面
+	 * true 分类项
+	 * 
+	 */
+	private boolean open_type = true;
+	@SuppressWarnings("unused")
+	private LinearLayout.LayoutParams layoutParams;
+
+	//	/**
+	//	 * 点击了展开按钮
+	//	 */
+	//	private void actionClickOpen() {
+	//		List<ItemType> countItemType = countItemType();
+	//		//如果有子项
+	//		if (countItemType != null && countItemType.size() > 0) {
+	//
+	//			layoutParams = (android.widget.LinearLayout.LayoutParams) ll_type_item_gridView.getLayoutParams();
+	//			//展开的话是MATCH_PARENT 否则是100dp
+	//			layoutParams.height = (open_type) ? LayoutParams.MATCH_PARENT : DensityHelper.dp2px(taskInfoActivity, 100);
+	//			//设置修改后的布局。
+	//			ll_type_item_gridView.setLayoutParams(layoutParams);
+	//			
+	//			ViewTreeObserver vto = type_item_gridView.getViewTreeObserver();   
+	//	        vto.addOnGlobalLayoutListener(new OnGlobalLayoutListener() { 
+	//	            @Override  
+	//	            public void onGlobalLayout() { 
+	//	            	type_item_gridView.getViewTreeObserver().removeGlobalOnLayoutListener(this); 
+	//	            	
+	//	            	//如果实际高度小于父控件， 那么设置高度为gridView本身的高度
+	//	            	if (type_item_gridView.getHeight() < ll_type_item_gridView.getHeight()) {
+	//	            		//重新设置修改后的布局。
+	//	            		layoutParams.height = type_item_gridView.getHeight();
+	//	            		ll_type_item_gridView.setLayoutParams(layoutParams);
+	//					}
+	//	            	Log.i(TAG, "ll_type_item_gridView.getHeight() = " + ll_type_item_gridView.getHeight());
+	//	            }   
+	//	        });
+	//			
+	//			//设置按键文字
+	//			bt_open_view.setText((open_type) ? "收起" : "展开");
+	//			//状态取反
+	//			open_type = !open_type;
+	//		}
+	//	}
+
+	//	/**
+	//	 * 点击了展开按钮
+	//	 * 显示或者隐藏
+	//	 */
+	//	private void actionClickOpen() {
+	//		List<ItemType> countItemType = countItemType();
+	//		//如果有子项
+	//		if (countItemType != null && countItemType.size() > 0) {
+	//
+	//			mediaGrid.setVisibility((open_type) ? View.GONE :View.VISIBLE);
+	//	        ll_type_item_gridView.setVisibility((open_type) ? View.VISIBLE :View.GONE);
+	//			//设置按键文字
+	//			bt_open_view.setText((open_type) ? "收起" : "展开");
+	//			//状态取反
+	//			open_type = !open_type;
+	//		}
+	//	}
+
+	/**
+	 * 点击了展开按钮
+	 * 整个都变成ScrollView 
+	 */
+	private void actionClickOpen() {
+		//如果Adapter == null 退出
+		if (typeItemGvAdapter == null) {
+			ToastUtil.longShow(getActivity(), "没有发现任何类型!");
+			return;
+		}
+		List<ItemType> countItemType = countItemType();
+		//如果有子项
+		if (countItemType != null && countItemType.size() > 0) {
+			//			Log.i(TAG, "ll_type_item_gridView.getHeight() = " + ll_type_item_gridView.getHeight());
+			if (open_type) {
+				//滚2次是为了消除掉滚动状态期间，scrollTo不起作用，会被系统动画覆盖掉
+				scrollView_two.scrollTo(0, ll_type_item_gridView.getHeight());
+				scrollView_two.smoothScrollTo(0, ll_type_item_gridView.getHeight());
+			} else {
+				//展开状态
+				scrollView_two.scrollTo(0, 0);
+				scrollView_two.smoothScrollTo(0, 0);
+			}
+			//设置按键文字
+			bt_open_view.setText((open_type) ? "分类项" : "图片");
+			//状态取反
+			open_type = !open_type;
+		}
+	}
+
 	/** 
 	 * @author kevin
 	 * @date 2015-10-8 上午9:04:46
 	 * @Description: 初始化类型选择控件     
 	 * @version V1.0
 	 */
-	/*private void initPicAutoComplecTv() {
-		SearchAdapter<String> typeAcTvAdt= new SearchAdapter<String>(taskInfoActivity,// 
-				 R.layout.auto_text_item_style,// 
-				 taskInfoActivity.viewModel.currentDropDownListData,//
-				 SearchAdapter.ALL);
-		media_type_autoComplecTv.setAdapter(typeAcTvAdt);
-		media_type_autoComplecTv.setOnFocusChangeListener(new OnFocusChangeListener() {
-			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-				if(hasFocus){
-					media_type_autoComplecTv.showDropDown();
-				}
-			}
-		});
-		media_type_autoComplecTv.setOnClickListener(new OnClickListener(){
-			@Override
-			public void onClick(View v) {
-				media_type_autoComplecTv.showDropDown();
-			}
-			
-		});
-	}*/
-
+	/*
+	 * private void initPicAutoComplecTv() {
+	 * SearchAdapter<String> typeAcTvAdt= new
+	 * SearchAdapter<String>(taskInfoActivity,//
+	 * R.layout.auto_text_item_style,//
+	 * taskInfoActivity.viewModel.currentDropDownListData,//
+	 * SearchAdapter.ALL);
+	 * media_type_autoComplecTv.setAdapter(typeAcTvAdt);
+	 * media_type_autoComplecTv.setOnFocusChangeListener(new
+	 * OnFocusChangeListener() {
+	 * @Override
+	 * public void onFocusChange(View v, boolean hasFocus) {
+	 * if(hasFocus){
+	 * media_type_autoComplecTv.showDropDown();
+	 * }
+	 * }
+	 * });
+	 * media_type_autoComplecTv.setOnClickListener(new OnClickListener(){
+	 * @Override
+	 * public void onClick(View v) {
+	 * media_type_autoComplecTv.showDropDown();
+	 * }
+	 * });
+	 * }
+	 */
 
 	/**
 	 * 刷新需要呈现的媒体文件
@@ -525,6 +866,8 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 	private void refreshMediaList() {
 		if (taskInfoActivity.viewModel.currentTask.InworkReportFinish) {
 			taskInfoActivity.appHeader.showDialog("提示信息", "当前任务报告已经完成无法继续操作资源文件");
+			//隐藏掉拍照按钮
+			ll_top_button.setVisibility(View.GONE);
 		} else {
 			taskInfoActivity.loadingWorker.showLoading("文件列表加载中...");
 			Message TaskMsg = new Message();
@@ -548,12 +891,12 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 				// 如果有空间就打开对应的资源列表
 				if (taskInfoActivity.appHeader.checkSDCardHasSize()) {
 					//选择或者拍摄新的图片
-					if (index == 0) {
+					if (index == -20) {
 						if (CategoryType.PictureCollection == mediaType) {
 							// 类型输入框中的值是否正确， 正确就保存到ViewModel
-							if(!chackSelectType()){
+							if (!chackSelectType()) {
 								//选择的不合法，清空缓存
-								taskInfoActivity.viewModel.selectPicType="";
+								taskInfoActivity.viewModel.selectPicType = "";
 								ToastUtil.longShow(getActivity(), "当前类型不存在！");
 								return;
 							}
@@ -583,21 +926,21 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 				ToastUtil.longShow(getActivity(), "当前任务正在提交中，将不能继续操作文件!");
 			}
 		}
-
-		/**
-		 * 自定义照相机
-		 */
-		private void getFileOfNewMeida2() {
-			String thumbnail = getString(R.string.thumbnail_dir);
-			String saveRoot = getString(R.string.project_dir);
-			Intent intent = new Intent(taskInfoActivity, CameraActivity.class);
-			Bundle bundle = new Bundle();
-			bundle.putString("saveRoot", taskInfoActivity.task_p_dir);
-			bundle.putString("thumbnailRoot", taskInfoActivity.task_p_dir.replaceAll(saveRoot, thumbnail));
-			intent.putExtras(bundle);
-			startActivityForResult(intent, 0);
-		}
 	};
+
+	/**
+	 * 自定义照相机
+	 */
+	private void getFileOfNewMeida2() {
+		String thumbnail = getString(R.string.thumbnail_dir);
+		String saveRoot = getString(R.string.project_dir);
+		Intent intent = new Intent(taskInfoActivity, CameraActivity.class);
+		Bundle bundle = new Bundle();
+		bundle.putString("saveRoot", taskInfoActivity.task_p_dir);
+		bundle.putString("thumbnailRoot", taskInfoActivity.task_p_dir.replaceAll(saveRoot, thumbnail));
+		intent.putExtras(bundle);
+		startActivityForResult(intent, 0);
+	}
 
 	/**
 	 * 长按触发
@@ -608,14 +951,14 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 			if (!TaskOperator.submiting(taskInfoActivity.viewModel.currentTask.TaskNum)) {
 				// 如果有空间就打开对应的资源列表
 				//图片集合才可以长按
-				boolean isPic=mediaType==CategoryType.PictureCollection;
+				boolean isPic = mediaType == CategoryType.PictureCollection;
 				if (taskInfoActivity.appHeader.checkSDCardHasSize()) {
 					// 选择或者拍摄新的图片
-					if (index == 0&&isPic) {
+					if (index == -20 && isPic) {
 						// 判断类型输入框中的值是否合法，合法记录在ViewModle
-						if(!chackSelectType()){
+						if (!chackSelectType()) {
 							//选择的不合法，清空缓存
-							taskInfoActivity.viewModel.selectPicType="";
+							taskInfoActivity.viewModel.selectPicType = "";
 							ToastUtil.longShow(getActivity(), "当前类型不存在！");
 							return true;
 						}
@@ -624,7 +967,7 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 						i.setClass(taskInfoActivity, MultiSelectAlbumActivity.class);
 						startActivityForResult(i, TASK_ALBUM);
 						//getFileOfMediaLib();
-					} else if(index != 0){
+					} else {
 						if (!taskInfoActivity.meidaListAdapter.getVisCheck()) {
 							enterEdit();
 						} else {
@@ -685,14 +1028,16 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 		}
 	}
 
-/*	*//**
-	 * 从媒体文件取
-	 *//*
-	@SuppressWarnings("unused")
-	private void getFileOfMediaLib() {
-		Intent intent = CameraUtils.startGetPicPhotoAlbum();
-		startActivityForResult(intent, taskInfoActivity.TASK_PHOTOLIB);
-	}*/
+	/*	*//**
+			* 从媒体文件取
+			*/
+	/*
+	 * @SuppressWarnings("unused")
+	 * private void getFileOfMediaLib() {
+	 * Intent intent = CameraUtils.startGetPicPhotoAlbum();
+	 * startActivityForResult(intent, taskInfoActivity.TASK_PHOTOLIB);
+	 * }
+	 */
 
 	/**
 	 * 返回方法
@@ -701,8 +1046,9 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		super.onActivityResult(requestCode, resultCode, intent);
+		
 		if (resultCode == taskInfoActivity.RESULT_OK) {
-			Boolean isContinue = false;
+						Boolean isContinue = false;
 			if (mediaFile != null) {
 				mediaInfo = new MediaDataInfo("请选择类型", mediaFile);
 			}
@@ -710,8 +1056,8 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 			case TASK_PHOTO:// 系统相机拍照返回
 				if (mediaInfo != null) {
 					// 判断当前分类项中是否有未分类的选项
-					taskInfoActivity.setDropDefaultSelect(mediaInfo,mediaFile);
-					isContinue = true;
+					taskInfoActivity.setDropDefaultSelect(mediaInfo, mediaFile);
+					isContinue = isBurstMode;
 				}
 				break;
 			case TASK_AUDIO:
@@ -790,7 +1136,7 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 					} else {
 						mediaInfo = new MediaDataInfo("请选择种类", files);
 						if (mediaInfo != null) {
-							taskInfoActivity.setDropDefaultSelect(mediaInfo,files);
+							taskInfoActivity.setDropDefaultSelect(mediaInfo, files);
 						}
 					}
 				}
@@ -897,9 +1243,15 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 	 */
 	public void getMedias() {
 		taskInfoActivity.meidaInfos = new ArrayList<MediaDataInfo>();
-		MediaDataInfo addMedia = new MediaDataInfo("", new File(""));
-		addMedia.CategoryId = -1;
-		taskInfoActivity.meidaInfos.add(addMedia);
+
+		//当当前的媒体类型不是图片选择的时候，才+1
+		if (mediaType != CategoryType.PictureCollection) {
+			//源头
+			MediaDataInfo addMedia = new MediaDataInfo("", new File(""));
+			addMedia.CategoryId = -1;
+			taskInfoActivity.meidaInfos.add(addMedia);
+		}
+
 		ResultInfo<TaskInfo> taskInfo = TaskDataWorker.getCompleteTaskInfoById(taskInfoActivity.viewModel.currentTask.IsNew ? taskInfoActivity.viewModel.currentTask.ID
 				: taskInfoActivity.viewModel.currentTask.TaskID, taskInfoActivity.viewModel.currentTask.IsNew);
 
@@ -913,7 +1265,8 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 		} else {
 			getCurrentMedias(taskInfo, filePath, dataDefine);
 		}
-		taskInfoActivity.viewModel.searchAdapter = new SearchAdapter<String>(taskInfoActivity, R.layout.auto_text_item_style, taskInfoActivity.viewModel.currentDropDownListData, SearchAdapter.ALL);// 速度优先
+		taskInfoActivity.viewModel.searchAdapter = new SearchAdapter<String>(taskInfoActivity, R.layout.auto_text_item_style, taskInfoActivity.viewModel.currentDropDownListData,
+				SearchAdapter.ALL);// 速度优先
 	}
 
 	/**
@@ -1033,7 +1386,7 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 		super.handUiMessage(msg);
 		switch (msg.what) {
 		case TASK_ITEMS:
-			taskInfoActivity.meidaListAdapter = new MeidaListAdapter(this,taskInfoActivity, mediaType);
+			taskInfoActivity.meidaListAdapter = new MeidaListAdapter(this, taskInfoActivity, mediaType);
 			mediaGrid.setAdapter(taskInfoActivity.meidaListAdapter);
 			mediaGrid.setOnScrollListener(this);
 			taskInfoActivity.sortTaskItemValue();
@@ -1118,8 +1471,12 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 	private void enterEdit() {
 		((CheckBox) mView.findViewById(R.id.header_bar_leave_select_all)).setChecked(false);
 		taskInfoActivity.meidaListAdapter.visCheck(true);
-		mediaGrid.setPadding(4, 4, 4, 108);
+		mediaGrid.setPadding(4, 4, 4, 4);
 		mView.findViewById(R.id.task_list_title).setVisibility(View.GONE);
+		//隐藏拍照按钮
+		ll_top_button.setVisibility(View.GONE);
+		//隐藏类型
+		ll_type_item_gridView.setVisibility(View.GONE);
 		mView.findViewById(R.id.media_header_bar).setVisibility(View.VISIBLE);
 		mView.findViewById(R.id.media_bottom_bar).setVisibility(View.VISIBLE);
 	}
@@ -1131,13 +1488,15 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 		taskInfoActivity.meidaListAdapter.visCheck(false);
 		mediaGrid.setPadding(4, 4, 4, 4);
 		mView.findViewById(R.id.task_list_title).setVisibility(View.VISIBLE);
+		ll_top_button.setVisibility(View.VISIBLE);
+		ll_type_item_gridView.setVisibility(View.VISIBLE);
 		mView.findViewById(R.id.media_header_bar).setVisibility(View.GONE);
 		mView.findViewById(R.id.media_bottom_bar).setVisibility(View.GONE);
 	}
 
 	/**
- * 
- */
+	* 
+	*/
 	@SuppressLint("ClickableViewAccessibility")
 	private void showSelectDialog() {
 		LayoutInflater inflater = LayoutInflater.from(taskInfoActivity);
@@ -1173,7 +1532,7 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 					}
 					if (selectItems.size() > 0) {
 						for (MediaDataInfo mediaDataInfo : selectItems) {
-							taskInfoActivity.saveTaskItemValue(CategoryType.PictureCollection, mediaDataInfo, selectTypeString,false);
+							taskInfoActivity.saveTaskItemValue(CategoryType.PictureCollection, mediaDataInfo, selectTypeString, false);
 						}
 						leaveEdit();
 						taskInfoActivity.meidaListAdapter.notifyDataSetChanged();
@@ -1199,7 +1558,7 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 			detailDialog.show();
 		}
 	}
-	
+
 	/***
 	 * 
 	 * @author kevin
@@ -1207,27 +1566,28 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 	 * @Description: 检查下拉框的类型输入是否合法    
 	 * @return Boolean 选择的类型是否合法
 	 */
-	private boolean chackSelectType(){
-		boolean result=false;
+	private boolean chackSelectType() {
+		boolean result = false;
+
 		//String selectType=media_type_autoComplecTv.getText().toString();
-		ItemType itemType=typeItemGvAdapter.getItem(typeItemGvAdapter.getCurrentSelectIndex());
-		String selectType=itemType!=null?itemType.getItemName():"";
-		
-		if(selectType.trim().length()<=0){
-			taskInfoActivity.viewModel.selectPicType="";
+		ItemType itemType = typeItemGvAdapter.getItem(typeItemGvAdapter.getCurrentSelectIndex());
+		String selectType = itemType != null ? itemType.getItemName() : "";
+
+		if (selectType.trim().length() <= 0) {
+			taskInfoActivity.viewModel.selectPicType = "";
 			return true;
 		}
-		for(String type:taskInfoActivity.viewModel.currentDropDownListData){
-			if(type.equals(selectType)){
+		for (String type : taskInfoActivity.viewModel.currentDropDownListData) {
+			if (type.equals(selectType)) {
 				//保存当前选择的类型到缓存
-				taskInfoActivity.viewModel.selectPicType=type;
-				result=true;
+				taskInfoActivity.viewModel.selectPicType = type;
+				result = true;
 				break;
 			}
 		}
 		return result;
 	}
-	
+
 	/***
 	 * @author kevin
 	 * @date 2015-11-13 下午2:22:47
@@ -1235,14 +1595,14 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 	 * @return void    返回类型 
 	 * @version V1.0
 	 */
-	private void initTypeItmeData(){
-		if(typeItemGvAdapter==null){
-			typeItemGvAdapter=new TypeItemGridViewAdapter(taskInfoActivity);
+	private void initTypeItmeData() {
+		if (typeItemGvAdapter == null) {
+			typeItemGvAdapter = new TypeItemGridViewAdapter(taskInfoActivity);
 		}
-		List<ItemType> itemTypes=countItemType();
+		List<ItemType> itemTypes = countItemType();
 		typeItemGvAdapter.setItemTypeList(itemTypes);
 	}
-	
+
 	/***
 	 * 
 	 * @author kevin
@@ -1251,13 +1611,17 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 	 * @return List<ItemType>    返回类型 
 	 * @version V1.0
 	 */
-	private List<ItemType> countItemType(){
-		List<ItemType> temps=new ArrayList<ItemType>();
-		for(String type:taskInfoActivity.viewModel.currentDropDownListData){
-			ItemType itemType=typeItemGvAdapter.new ItemType();
+	private List<ItemType> countItemType() {
+		List<ItemType> temps = new ArrayList<ItemType>();
+		//如果adapter为空,返回
+		if (typeItemGvAdapter == null) {
+			return temps;
+		}
+		for (String type : taskInfoActivity.viewModel.currentDropDownListData) {
+			ItemType itemType = typeItemGvAdapter.new ItemType();
 			itemType.setItemName(type);
-			for(MediaDataInfo media:taskInfoActivity.meidaInfos){
-				if(media.ItemName.equals(type)){
+			for (MediaDataInfo media : taskInfoActivity.meidaInfos) {
+				if (media.ItemName.equals(type)) {
 					itemType.itemCountAdd();// 统计加一
 				}
 			}
@@ -1265,7 +1629,7 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 		}
 		return temps;
 	}
-	
+
 	/***
 	 * 
 	 * @author kevin
@@ -1273,8 +1637,8 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 	 * @Description: 更新图片类型子项表格视图  
 	 * @version V1.0
 	 */
-	public void refreshItemTypeView(){
-		if(mediaType==CategoryType.PictureCollection){
+	public void refreshItemTypeView() {
+		if (mediaType == CategoryType.PictureCollection) {
 			initTypeItmeData();
 		}
 	}

@@ -161,7 +161,7 @@ public class MainService extends BaseBackgroundService {
 	 * @param task
 	 */
 	public static void setTask(BackgroundServiceTask task) {
-		if (beforeBackgroundHandler(task)) {
+		if (beforeBackgroundHandler(task) && mbackgroundHandler!= null) {
 			// 建立任务
 			Message msg = new Message();
 			msg.what = task.getServiceTaskId();
@@ -239,8 +239,10 @@ public class MainService extends BaseBackgroundService {
 			if (tempTime == repeatTime) {
 				TaskInfo tempTask = failTasks.get(failTasksTime.keySet()
 						.toArray()[i]);
-				String key = (String) failTasksTime.keySet().toArray()[i];
-				showTasks.put(key, tempTask);
+				if (tempTask != null) {
+					String key = (String) failTasksTime.keySet().toArray()[i];
+					showTasks.put(key, tempTask);
+				}
 			}
 		}
 		return showTasks;
@@ -269,7 +271,6 @@ public class MainService extends BaseBackgroundService {
 		// 没有在执行上传过程时，才重新跳入上传任务的循环，否则不跳入循环。
 		if (!THREADRUNING) {
 			boolean newResourceLibrary = getResUrl();
-
 			while (uploadTasks.size() > 0) {
 				THREADRUNING = true;
 				TaskInfo tempTask = null;
@@ -467,10 +468,11 @@ public class MainService extends BaseBackgroundService {
 							// 去除已经执行提交的任务
 							uploadTasks
 									.remove(uploadTasks.keySet().toArray()[0]);
-							uploadTasks.remove(tempTask.TaskNum);
 							// 添加需要重新提交的任务
 							if (isResubmit) {
 								putFailTasksMap(tempTask);
+							} else {// 提交成功 删除提交失败队列中的任务
+								failTasks.remove(tempTask.TaskNum);
 							}
 						} else {
 							myIntent.putExtra("hideOfflineMsg", "true");

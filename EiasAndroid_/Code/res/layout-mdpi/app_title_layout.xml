@@ -3,7 +3,12 @@
     android:layout_width="match_parent"
     android:layout_height="50dp"
     tools:context=".MainActivity" >
-
+<ImageView
+        android:id="@+id/main_menu_left"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:padding="5dp"
+        android:src="@drawable/main_show_popu_image_selector" />
     <RelativeLayout
         android:id="@+id/main_header_lay_back"
         android:layout_width="60dp"
@@ -18,6 +23,7 @@
             android:src="@drawable/main_header_btn_back_bg" />
     </RelativeLayout>
 
+    
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
@@ -73,10 +79,9 @@
             android:background="@drawable/icon_4g"
             android:visibility="gone" />
 
-        <TextView
+         <TextView
             android:id="@+id/home_btn_info"
-            android:layout_width="0dp"
-            android:layout_weight="4"
+            android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_marginRight="10dp"
             android:gravity="center_vertical"
@@ -84,6 +89,12 @@
             android:textSize="16sp" />
         <!-- android:background="@drawable/icon_user" -->
 
+        <ImageView
+            android:id="@+id/main_menu_right"
+            android:layout_margin="5dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@drawable/main_show_popu_image_selector" />
         <ImageView
             android:id="@+id/eias_app_header_map"
             android:layout_width="32dp"

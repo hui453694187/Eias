@@ -2,12 +2,6 @@ package com.yunfang.framework.base;
 
 import java.util.ArrayList;
 
-import com.baidu.mapapi.SDKInitializer;
-import com.yunfang.framework.base.BaseBroadcastReceiver.afterReceiveBroadcast;
-import com.yunfang.framework.iUtils.IDownloadResultHelper;
-import com.yunfang.framework.iUtils.ILogHelper;
-import com.yunfang.framework.utils.ScreenManager;
-
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
@@ -18,6 +12,11 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Build;
 import android.util.Log;
+
+import com.yunfang.framework.base.BaseBroadcastReceiver.afterReceiveBroadcast;
+import com.yunfang.framework.iUtils.IDownloadResultHelper;
+import com.yunfang.framework.iUtils.ILogHelper;
+import com.yunfang.framework.utils.ScreenManager;
 
 /**
  * Android系统的Application基类
@@ -81,7 +80,7 @@ public class BaseApplication extends Application {
 		super.onCreate();
 		mApplication = this;	
 		
-		SDKInitializer.initialize(this);
+//		SDKInitializer.initialize(this);
 		//初始化自定义Activity管理器 
 		screenManager = ScreenManager.getScreenManager(); 
 	}

@@ -547,9 +547,12 @@ public class TaskListFragment extends BaseWorkerFragment implements
 		case TASK_GETTASKINFOES: {
 			ResultInfo<ArrayList<TaskInfo>> result = (ResultInfo<ArrayList<TaskInfo>>) msg.obj;
 			// 没有数据并且是只显示完成报告任务不刷新
-			if (result.Others != null && result.Others.toString().contains("0")
-					&& viewModel.onlyReportFinish) {
-				// if (viewModel.onlyReportFinish && result.Data.size() <= 0) {
+			/*
+			 * if (result.Others != null &&
+			 * result.Others.toString().contains("0") &&
+			 * viewModel.onlyReportFinish) {
+			 */
+			if (viewModel.onlyReportFinish && result.Data.size() <= 0) {
 				viewModel.onlyReportFinish = false;
 				viewModel.reload = false;
 				viewModel.homeActivity.appHeader.showDialog("提示信息",
@@ -874,8 +877,8 @@ public class TaskListFragment extends BaseWorkerFragment implements
 			}
 			break;
 		case CHEK_VERSION:
-			viewModel.reload=false;
-			colseLoading=false;
+			viewModel.reload = false;
+			colseLoading = false;
 			boolean hasUpdateDatadefin = (boolean) msg.obj;
 			// 检查更新
 			// 今日是否再提示
@@ -1591,9 +1594,10 @@ public class TaskListFragment extends BaseWorkerFragment implements
 								loadData();
 							} else {
 								// showToast("已经是最后一页信息");
-								/*if (viewModel.localTotal % viewModel.pageSize == 0) {
-									viewModel.currentIndex = temp + 1;
-								}*/
+								/*
+								 * if (viewModel.localTotal % viewModel.pageSize
+								 * == 0) { viewModel.currentIndex = temp + 1; }
+								 */
 							}
 						} else {
 						}
@@ -1829,8 +1833,11 @@ public class TaskListFragment extends BaseWorkerFragment implements
 		if (EIASApplication.IsNetworking && !EIASApplication.IsOffline) {
 			try {
 				if (viewModel.taskStatus == TaskStatus.Done) {
-					//同步报告已完成任务状态， 删除任务资源
-					TaskOperator.synchroReportIsFinish(viewModel.currentUser);
+					// 同步报告已完成任务状态， 删除任务资源
+//					TaskOperator.synchroReportIsFinish(viewModel.currentUser);
+					TaskOperator.synchroDoneTaskStatus(viewModel.currentUser);
+					//TODO 调用新的检测任务状态的接口获取任务是否报告完成，与任务状态是否被撤销
+					
 				} else if (viewModel.taskStatus == TaskStatus.Doing) {
 					TaskOperator
 							.syncRemoteData(0, 0, "", viewModel.currentUser);

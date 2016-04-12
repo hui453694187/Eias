@@ -16,6 +16,35 @@
         android:layout_margin="10dp"
         android:orientation="vertical" >
 
+        <RelativeLayout
+            android:id="@+id/me_rl_message"
+            android:layout_width="match_parent"
+            android:layout_height="40dp" >
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center_vertical"
+                android:orientation="horizontal" >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="40dp"
+                    android:text="是否开启连拍模式"
+                    android:textColor="@color/black"
+                    android:textSize="14sp" />
+            </LinearLayout>
+
+            <CheckBox
+                android:id="@+id/checkBox_burst_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="30dp" />
+        </RelativeLayout>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -25,43 +54,45 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="40dip"
-                android:text="@string/system_setting_photo_select"
                 android:gravity="center"
+                android:text="@string/system_setting_photo_select"
                 android:textSize="14sp" />
-			
+
             <RadioGroup
-                android:id="@+id/rg_setting_copyOrPaste" 
+                android:id="@+id/rg_setting_copyOrPaste"
                 android:layout_width="180dp"
                 android:layout_height="40dp"
                 android:layout_marginLeft="4dp"
                 android:layout_marginStart="4dp"
                 android:ems="10"
-                android:orientation="horizontal">
-                <RadioButton 
+                android:orientation="horizontal" >
+
+                <RadioButton
                     android:id="@+id/rb_copy"
-                    android:layout_height="match_parent"
                     android:layout_width="0dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:textSize="14sp"
-                    android:text="@string/system_setting_copy"/>
-                <RadioButton 
+                    android:text="@string/system_setting_copy"
+                    android:textSize="14sp" />
+
+                <RadioButton
                     android:id="@+id/rb_paste"
-                    android:layout_height="match_parent"
                     android:layout_width="0dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:textSize="14sp"
-                    android:text="@string/system_setting_paste"/>
-                
+                    android:text="@string/system_setting_paste"
+                    android:textSize="14sp" />
             </RadioGroup>
-           <!-- <Spinner
+            <!--
+                <Spinner
                 android:id="@+id/et_setting_copyOrPaste"
                 android:layout_width="180dp"
                 android:layout_height="40dip"
                 android:layout_marginLeft="4dp"
                 android:ems="10"
-                android:textSize="14sp" /> -->
+                android:textSize="14sp" />
+            -->
         </LinearLayout>
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -72,39 +103,36 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="40dip"
-                android:text="@string/system_setting_camer_select"
                 android:gravity="center"
+                android:text="@string/system_setting_camer_select"
                 android:textSize="14sp" />
 
-            <RadioGroup 
+            <RadioGroup
                 android:id="@+id/rg_setting_photo"
                 android:layout_width="180dp"
                 android:layout_height="40dp"
                 android:layout_marginLeft="4dp"
                 android:layout_marginStart="4dp"
                 android:ems="10"
-                android:orientation="horizontal">
-                <RadioButton 
+                android:orientation="horizontal" >
+
+                <RadioButton
                     android:id="@+id/rb_custom_camer"
-                    android:layout_height="match_parent"
                     android:layout_width="0dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:textSize="14sp"
-                    android:text="@string/system_setting_custom_camer"/>
-                
-                <RadioButton 
+                    android:text="@string/system_setting_custom_camer"
+                    android:textSize="14sp" />
+
+                <RadioButton
                     android:id="@+id/rb_original_camer"
-                    android:layout_height="match_parent"
                     android:layout_width="0dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1"
-                    android:textSize="14sp"
-                    android:text="@string/system_setting_original_camer"/>
-                
+                    android:text="@string/system_setting_original_camer"
+                    android:textSize="14sp" />
             </RadioGroup>
-            
-
         </LinearLayout>
-
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -136,7 +164,6 @@
                 android:textSize="14sp" />
         </LinearLayout>
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -167,7 +194,6 @@
                 android:textSize="14sp" />
         </LinearLayout>
 
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -197,8 +223,6 @@
                 android:text="(M)"
                 android:textSize="14sp" />
         </LinearLayout>
-
-
 
         <LinearLayout
             android:layout_width="match_parent"

@@ -15,6 +15,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -100,7 +101,7 @@ public class TaskInfoActivity extends BaseWorkerFragmentActivity implements OnSc
 	/**
 	 * 当前所在的Fragment
 	 */
-	private Fragment currentFragment;
+	public Fragment currentFragment;
 
 	/**
 	 * 视图对象
@@ -805,6 +806,9 @@ public class TaskInfoActivity extends BaseWorkerFragmentActivity implements OnSc
 	 * @param 需要切换的用户控件
 	 */
 	public void changFragment(CategoryType type) {
+		//移除悬浮按钮
+//		MyWindowManager.removeSmallWindow(this);
+		
 		categoryFragmentName = "";
 		FragmentManager fm = getSupportFragmentManager();
 		FragmentTransaction ft = fm.beginTransaction();
@@ -1412,6 +1416,8 @@ public class TaskInfoActivity extends BaseWorkerFragmentActivity implements OnSc
 			this.additional(file.getName(), false);
 			this.doSaveMediaInfo("", "", mediaInfo.ItemName, mediaInfo.ItemValue, CategoryType.PictureCollection, true, false);
 		}
+		
+		Log.i("dgasga", meidaInfos.toString());
 
 	}
 

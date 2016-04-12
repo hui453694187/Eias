@@ -19,6 +19,7 @@ import android.util.DisplayMetrics;
 import android.view.WindowManager;
 
 import com.baidu.location.BDLocation;
+import com.baidu.mapapi.SDKInitializer;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
@@ -29,6 +30,8 @@ import com.yunfang.eias.dto.LoginEasyDto;
 import com.yunfang.eias.http.task.BackgroundServiceTask;
 import com.yunfang.eias.logic.DataLogOperator;
 import com.yunfang.eias.logic.LoginInfoOperator;
+import com.yunfang.eias.maps.BaiduLocationHelper;
+import com.yunfang.eias.maps.BaiduLocationHelper.BaiduLoactionOperatorListener;
 import com.yunfang.eias.model.DataDefine;
 import com.yunfang.eias.ui.SystemSettingActivity;
 import com.yunfang.eias.utils.CrashHandler;
@@ -38,8 +41,6 @@ import com.yunfang.framework.base.BaseApplication;
 import com.yunfang.framework.base.BaseBroadcastReceiver;
 import com.yunfang.framework.base.BaseBroadcastReceiver.afterReceiveBroadcast;
 import com.yunfang.framework.db.SQLiteHelper;
-import com.yunfang.framework.maps.BaiduLocationHelper;
-import com.yunfang.framework.maps.BaiduLocationHelper.BaiduLoactionOperatorListener;
 import com.yunfang.framework.model.DeviceInfo;
 import com.yunfang.framework.model.UserInfo;
 import com.yunfang.framework.model.VersionInfo;
@@ -61,7 +62,7 @@ public class EIASApplication extends BaseApplication {
 	/**
 	 * 是否捕获全局异常
 	 */
-	public final boolean isCrashGlobalExce = false;
+	public final boolean isCrashGlobalExce = true;
 
 	/** 当前定位城市名，默认北京 */
 	public static String currentCity = "北京";
@@ -100,7 +101,7 @@ public class EIASApplication extends BaseApplication {
 	 * 任务排序状态等信息
 	 */
 	public static final String SORT_STATUS_SP = "sort_status";
-	/** 更新提示不提示日期 */
+	/** 更新提示日期 */
 	public static final String UPDATE_TIPS = "update_tips_time";
 
 	/**
@@ -234,9 +235,7 @@ public class EIASApplication extends BaseApplication {
 	/**
 	 * 下载完整的文件名称
 	 */
-	public static String downloadFileName = FileUtil.getSDPath()
-			+ Environment.DIRECTORY_DOWNLOADS + File.separator
-			+ EIASApplication.DownLoadApkName;
+	public static String downloadFileName = FileUtil.getSDPath() + Environment.DIRECTORY_DOWNLOADS + File.separator + EIASApplication.DownLoadApkName;
 
 	/**
 	 * 是否为导入中
@@ -266,37 +265,32 @@ public class EIASApplication extends BaseApplication {
 		String resultStr = "";
 		switch (settingType) {
 		case BroadRecordType.KEY_SETTING_REPEATTIME:
-			resultStr = sp
-					.getString(BroadRecordType.KEY_SETTING_REPEATTIME, "");
+			resultStr = sp.getString(BroadRecordType.KEY_SETTING_REPEATTIME, "");
 			if (resultStr == "") {
 				resultStr = String.valueOf(repeatTime);
 			}
 			break;
 		case BroadRecordType.KEY_SETTING_MAXIMAGESIZE:
-			resultStr = sp.getString(BroadRecordType.KEY_SETTING_MAXIMAGESIZE,
-					"");
+			resultStr = sp.getString(BroadRecordType.KEY_SETTING_MAXIMAGESIZE, "");
 			if (resultStr == "") {
 				resultStr = String.valueOf(maxImageSize);
 			}
 			break;
 		case BroadRecordType.KEY_SETTING_SDCARDSIZE:
-			resultStr = sp
-					.getString(BroadRecordType.KEY_SETTING_SDCARDSIZE, "");
+			resultStr = sp.getString(BroadRecordType.KEY_SETTING_SDCARDSIZE, "");
 			if (resultStr == "") {
 				resultStr = String.valueOf(sdcardSizeTips);
 			}
 			break;
 		case BroadRecordType.KEY_SETTING_PICTURECOPYORPASTE:
-			resultStr = sp.getString(
-					BroadRecordType.KEY_SETTING_PICTURECOPYORPASTE, "");
+			resultStr = sp.getString(BroadRecordType.KEY_SETTING_PICTURECOPYORPASTE, "");
 			// 默认是复制
 			if (resultStr == "") {
 				resultStr = SystemSettingActivity.copyTypeChooseItem[0];
 			}
 			break;
 		case BroadRecordType.KEY_SETTING_PHOTOTYPE:
-			resultStr = sp.getString(BroadRecordType.KEY_SETTING_PHOTOTYPE,
-					"系统自带相机");
+			resultStr = sp.getString(BroadRecordType.KEY_SETTING_PHOTOTYPE, "系统自带相机");
 			// 默认是复制
 			if (resultStr == "") {
 				resultStr = SystemSettingActivity.photoTypeChooseItem[1];
@@ -314,6 +308,9 @@ public class EIASApplication extends BaseApplication {
 	@Override
 	public void onCreate() {
 		super.onCreate();
+		//百度地图
+		SDKInitializer.initialize(this);
+
 		mApplication = this;
 		setLoadingWorkerType(LoadingUtil.class);
 		SQLiteHelper.setIDBArchitecture(new DBTableScripts());
@@ -337,8 +334,7 @@ public class EIASApplication extends BaseApplication {
 	}
 
 	private void initImageLoader() {
-		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(
-				this)//
+		ImageLoaderConfiguration config = new ImageLoaderConfiguration.Builder(this)//
 				.threadPriority(Thread.NORM_PRIORITY - 2)//
 				.denyCacheImageMultipleSizesInMemory()//
 				.diskCacheFileNameGenerator(new Md5FileNameGenerator())//
@@ -359,9 +355,10 @@ public class EIASApplication extends BaseApplication {
 		 */
 
 		Services.put("贺隽服务器", "http://192.168.3.66:12000");
+		/*Services.put("贺爷服务器", "http://192.168.3.66:12000");*/
 		Services.put("外业测试服务器", "http://eiastest.yunfangdata.com");
 		Services.put("采图测试服务器", "http://182.92.161.16:18099");
-		
+
 		Services.put("外业正式服务器", "http://waicai.yunfangdata.com");
 
 		company = getString(R.string.app_name_company);
@@ -369,8 +366,7 @@ public class EIASApplication extends BaseApplication {
 		root = FileUtil.getSysPath(company, project);
 		exportRoot = root + getString(R.string.export_dir) + File.separator;
 		importRoot = root + getString(R.string.import_dir) + File.separator;
-		thumbnailRoot = root + getString(R.string.thumbnail_dir)
-				+ File.separator;
+		thumbnailRoot = root + getString(R.string.thumbnail_dir) + File.separator;
 		projectRoot = root + getString(R.string.project_dir) + File.separator;
 		userRoot = root + getString(R.string.user_image_dir) + File.separator;
 		FileUtil.mkDir(root);
@@ -386,10 +382,8 @@ public class EIASApplication extends BaseApplication {
 	 */
 	private void createHideDir() {
 		String sysRoot = Environment.getExternalStorageDirectory() + "";
-		String company = BaseApplication.getInstance().getString(
-				R.string.app_name_company);
-		String dirString = sysRoot + File.separator + company + File.separator
-				+ ".nomedia";
+		String company = BaseApplication.getInstance().getString(R.string.app_name_company);
+		String dirString = sysRoot + File.separator + company + File.separator + ".nomedia";
 		File file = new File(dirString);
 		if (!file.exists()) {
 			try {
@@ -444,8 +438,7 @@ public class EIASApplication extends BaseApplication {
 	 */
 	public void getAndroidVersionInfo() {
 		try {
-			PackageInfo info = getPackageManager().getPackageInfo(
-					getPackageName(), 0);
+			PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), 0);
 			version.LocalPackageName = info.packageName;
 			version.LocalVersionCode = String.valueOf(info.versionCode);
 			version.LocalVersionName = info.versionName;
@@ -473,8 +466,7 @@ public class EIASApplication extends BaseApplication {
 	private void startService() {
 		try {
 			Intent serviceIntent = new Intent();
-			serviceIntent.setClass(this,
-					com.yunfang.eias.base.MainService.class);
+			serviceIntent.setClass(this, com.yunfang.eias.base.MainService.class);
 			startService(serviceIntent);
 			if (!isServiceRunning()) {
 				ToastUtil.longShow(this, "服务开启失败");
@@ -492,10 +484,8 @@ public class EIASApplication extends BaseApplication {
 	 */
 	private boolean isServiceRunning() {
 		ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-		for (RunningServiceInfo service : manager
-				.getRunningServices(Integer.MAX_VALUE)) {
-			if (MainService.class.getName().equals(
-					service.service.getClassName())) {
+		for (RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+			if (MainService.class.getName().equals(service.service.getClassName())) {
 				return true;
 			}
 		}
@@ -526,41 +516,35 @@ public class EIASApplication extends BaseApplication {
 	public void receiverMainServerCreated() {
 		ArrayList<String> temp = new ArrayList<String>();
 		temp.add(BroadRecordType.MAINSERVER_CREATED);
-		mainServerCreatedReceiver = new BaseBroadcastReceiver(
-				getApplicationContext(), temp);
-		mainServerCreatedReceiver
-				.setAfterReceiveBroadcast(new afterReceiveBroadcast() {
-					@Override
-					public void onReceive(final Context context, Intent intent) {
-						String actionType = intent.getAction();
-						switch (actionType) {
-						case BroadRecordType.MAINSERVER_CREATED:
-							BackgroundServiceTask task = new BackgroundServiceTask(
-									MainService.TIMER_PUSH, null);
-							MainService.setTask(task);
-							break;
-						default:
-							break;
-						}
-					}
-				});
+		mainServerCreatedReceiver = new BaseBroadcastReceiver(getApplicationContext(), temp);
+		mainServerCreatedReceiver.setAfterReceiveBroadcast(new afterReceiveBroadcast() {
+			@Override
+			public void onReceive(final Context context, Intent intent) {
+				String actionType = intent.getAction();
+				switch (actionType) {
+				case BroadRecordType.MAINSERVER_CREATED:
+					BackgroundServiceTask task = new BackgroundServiceTask(MainService.TIMER_PUSH, null);
+					MainService.setTask(task);
+					break;
+				default:
+					break;
+				}
+			}
+		});
 	}
 
 	/**
 	 * 开启定位
 	 */
 	public static void initLocationHelper() {
-		locationHelper = new BaiduLocationHelper(EIASApplication.getInstance()
-				.getApplicationContext(), false);
+		locationHelper = new BaiduLocationHelper(EIASApplication.getInstance().getApplicationContext(), false);
 		locationHelper.setOperatorListener(new BaiduLoactionOperatorListener() {
 			@Override
 			public void onSelected(BDLocation location) {
 				try {
-					pushLatlag(location.getLatitude(), location.getLongitude(),
-							location.getCity());
+					pushLatlag(location.getLatitude(), location.getLongitude(), location.getCity());
 				} catch (Exception e) {
-					DataLogOperator.taskHttp("pushLatlag=>位置推推送，异常！",
-							e.toString());
+					DataLogOperator.taskHttp("pushLatlag=>位置推推送，异常！", e.toString());
 					e.printStackTrace();
 				}
 			}
@@ -570,11 +554,8 @@ public class EIASApplication extends BaseApplication {
 	/**
 	 * 推送坐标
 	 */
-	public static void pushLatlag(double latitude, double longitude, String city)
-			throws Exception {
-		if (EIASApplication.IsNetworking
-				&& EIASApplication.getCurrentUser() != null
-				&& EIASApplication.locationHelper != null) {
+	public static void pushLatlag(double latitude, double longitude, String city) throws Exception {
+		if (EIASApplication.IsNetworking && EIASApplication.getCurrentUser() != null && EIASApplication.locationHelper != null) {
 			if (StringUtil.IsNullOrEmpty(city)) {
 				city = currentCity;
 			} else {
@@ -587,8 +568,7 @@ public class EIASApplication extends BaseApplication {
 			para.put("city", city);
 			currentCity = city;
 			// 设置后台运行的任务
-			BackgroundServiceTask task = new BackgroundServiceTask(
-					MainService.PUSH_LATLNG, para);
+			BackgroundServiceTask task = new BackgroundServiceTask(MainService.PUSH_LATLNG, para);
 			// 添加到任务池中
 			MainService.setTask(task);
 		}

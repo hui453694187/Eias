@@ -6,6 +6,7 @@ import com.yunfang.eias.R;
 import com.yunfang.eias.logic.AppHeader;
 import com.yunfang.eias.logic.AppHeaderMenu;
 import com.yunfang.eias.logic.IntroductionOperator;
+import com.yunfang.eias.model.DataCategoryDefine;
 import com.yunfang.eias.model.Introduction;
 import com.yunfang.eias.ui.Adapter.IntroductionViewAdapter;
 import com.yunfang.eias.viewmodel.LogListViewModel;
@@ -13,11 +14,13 @@ import com.yunfang.eias.enumObj.IntroductionTypeEnum;
 import com.yunfang.framework.base.BaseBroadcastReceiver;
 import com.yunfang.framework.base.BaseWorkerActivity;
 import com.yunfang.framework.base.BaseBroadcastReceiver.afterReceiveBroadcast;
+import com.yunfang.framework.db.SQLiteHelper;
 import com.yunfang.framework.model.ResultInfo;
 import com.yunfang.framework.view.ComboBox;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Message;
 import android.view.View;
@@ -36,6 +39,11 @@ public class IntroductionActivity extends BaseWorkerActivity {
 	 * 获取日志
 	 * */
 	public final int TASK_GETDATA = 1;
+	
+	/**
+	 * 传递数据
+	 */
+	public final static String INTENT_WHO_SHOW_IN_HERE = "INTENT_WHO_SHOW_IN_HERE";
 
 	//}}
 
@@ -88,7 +96,12 @@ public class IntroductionActivity extends BaseWorkerActivity {
 	/**
 	 * 自身的实例
 	 */
-	public static IntroductionActivity instance = null;   
+	public static IntroductionActivity instance = null;
+
+	/**
+	 * 当前显示的说明是谁
+	 */
+	private int whoShowInhere = 0;   
 
 	//}}
 
@@ -98,8 +111,25 @@ public class IntroductionActivity extends BaseWorkerActivity {
 	protected void onCreate(Bundle savedInstanceState) {		
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.introduction);
+		getIntenData();
 		initView();
-		initData();		
+		initData();	
+		
+		//测试用,强行把所有的子项类型变成M
+		SQLiteDatabase db = SQLiteHelper.getReadableDB();
+		db.execSQL("update DataFieldDefine set InputFormat = 'M';");
+	}
+
+	/**
+	 * 获取传递过来的数据
+	 */
+	private void getIntenData() {
+		Intent intent = getIntent();
+		Bundle extras = intent.getExtras();
+		if (extras!= null) {
+			whoShowInhere = extras.getInt(INTENT_WHO_SHOW_IN_HERE,0);
+		}
+		
 	}
 
 	/**
@@ -182,8 +212,9 @@ public class IntroductionActivity extends BaseWorkerActivity {
 		for (int i = 0; i < IntroductionTypeEnum.length(); i++) {
 			spinnerTypes[i] = IntroductionTypeEnum.getName(i);
 		}
+		
 		introduction_spinner_type.setData(spinnerTypes);
-		introduction_spinner_type.setPosition(0);		
+		introduction_spinner_type.setPosition(whoShowInhere);		
 		introduction_spinner_type.setEditTextEnabled(false);
 	}
 	//}}
@@ -202,7 +233,7 @@ public class IntroductionActivity extends BaseWorkerActivity {
 		switch (msg.what) {
 		case TASK_GETDATA:			
 			//loadingWorker.showLoading("数据加载中...");
-			uiMsg.obj = IntroductionOperator.getDatas(IntroductionTypeEnum.getEnumByName(introduction_spinner_type.getText()));
+			uiMsg.obj = IntroductionOperator.getDatas(IntroductionTypeEnum.getEnumByName(introduction_spinner_type.getText()) ,IntroductionActivity.this);
 			break;
 		default:
 			break;

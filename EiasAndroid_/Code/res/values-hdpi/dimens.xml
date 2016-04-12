@@ -11,6 +11,6 @@
     <dimen name="text_size_h8">14.0sp</dimen>
     <dimen name="text_size_h9">12.0sp</dimen>
     
-    <dimen name="radio_padding">10dp</dimen>
+    <dimen name="radio_padding">1dp</dimen>
 
 </resources>

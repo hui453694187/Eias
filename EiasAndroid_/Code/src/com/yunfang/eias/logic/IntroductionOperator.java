@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import com.yunfang.eias.R;
 import com.yunfang.eias.enumObj.IntroductionTypeEnum;
 import com.yunfang.eias.model.Introduction;
+import com.yunfang.eias.ui.IntroductionActivity;
 import com.yunfang.framework.model.ResultInfo;
 
 /**
@@ -21,10 +22,11 @@ public class IntroductionOperator {
 
 	/**
 	 * 获取功能介绍数据
+	 * @param introductionActivity 
 	 * @param introductionType:功能类型
 	 * @return
 	 */
-	public static ResultInfo<ArrayList<Introduction>> getDatas(IntroductionTypeEnum introductionType) {
+	public static ResultInfo<ArrayList<Introduction>> getDatas(IntroductionTypeEnum introductionType, IntroductionActivity introductionActivity) {
 		ResultInfo<ArrayList<Introduction>> result = new ResultInfo<ArrayList<Introduction>>();
 		try {
 			switch (introductionType) {
@@ -36,6 +38,9 @@ public class IntroductionOperator {
 				break;
 			case AbountOther:
 				result.Data = getAbountOther();
+				break;
+			case MapAroundOther:
+				result.Data = getMapAround(introductionActivity);
 				break;
 			default:
 				break;
@@ -103,6 +108,18 @@ public class IntroductionOperator {
 		result.add(new Introduction("","咦，临时要勘察任务发现没有对应的领取任务么，没事点击菜单【新建任务】过来吧，我们等着您；",IntroductionTypeEnum.AbountOther,R.drawable.about_other_03));
 		result.add(new Introduction("","被您发现了，这台设备的所有操作都会记录并发送到服务器，如果您的操作记录在这里没有找到，尝试在web版找找哦！",IntroductionTypeEnum.AbountOther,R.drawable.about_other_04));
 		result.add(new Introduction("","嗯嗯，这里是我的版本信息，如果您有什么意见或者是建议记得联系我们哦！",IntroductionTypeEnum.AbountOther,R.drawable.about_other_05));
+		return result;
+	}
+	/**
+	 * 获取关于其他功能的介绍
+	 * @param introductionActivity 
+	 * @return
+	 */
+	private static ArrayList<Introduction> getMapAround(IntroductionActivity introductionActivity) {
+		ArrayList<Introduction> result = new ArrayList<Introduction>();
+		result.add(new Introduction("",introductionActivity.getString(R.string.map_around_readme_1),IntroductionTypeEnum.MapAroundOther,R.drawable.map_around_1));
+		result.add(new Introduction("",introductionActivity.getString(R.string.map_around_readme_2)
+				,IntroductionTypeEnum.MapAroundOther,R.drawable.map_around_2));
 		return result;
 	}
 

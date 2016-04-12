@@ -1,7 +1,7 @@
 package com.yunfang.eias.model;
 
 import com.baidu.mapapi.map.BitmapDescriptor;
-import com.yunfang.framework.maps.MapPointBase;
+import com.yunfang.eias.maps.MapPointBase;
 
 public class MapPointObj extends MapPointBase {
 
