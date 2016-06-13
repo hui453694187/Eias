@@ -13,7 +13,6 @@ import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v4.widget.DrawerLayout;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -163,11 +162,6 @@ public class HomeActivity extends BaseWorkerFragmentActivity implements
 	 * 任务匹配的界面名称
 	 */
 	public final String taskMatchFragmentName = "TaskMatchFragment";
-
-	/**
-	 * 主页面的抽屉
-	 */
-	private DrawerLayout drawer_layout;
 
 	// }}
 
@@ -340,8 +334,6 @@ public class HomeActivity extends BaseWorkerFragmentActivity implements
 		rollingTv = (TextView) findViewById(R.id.rolling_tv);
 		rollingTv.setSelected(true);
 
-		drawer_layout = (DrawerLayout) findViewById(R.id.drawer_layout);
-
 		homeLayout.setOnTouchListener(menuBodyOnTouchListener);
 		radioGroup.setOnCheckedChangeListener(this);
 		changFragment(1);
@@ -365,9 +357,6 @@ public class HomeActivity extends BaseWorkerFragmentActivity implements
 		appHeader = new AppHeader(this, R.id.home_title);
 		String title=this.getString(R.string.app_title)+" v"+EIASApplication.version.LocalVersionName;
 		appHeader.setTitle(title);
-
-		//侧滑菜单设置到appHeader
-		appHeader.setDrawer_layout(drawer_layout);
 		checkVersion();
 	}
 

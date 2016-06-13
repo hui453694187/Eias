@@ -150,11 +150,10 @@ public class AppHeaderMenu {
 		mPopupWindow = new PopupWindow(mPopView,
 				LinearLayout.LayoutParams.WRAP_CONTENT,
 				LinearLayout.LayoutParams.WRAP_CONTENT);
-		
-		mPopupWindow.setFocusable(true); // 设置PopupWindow可获得焦点
-	    mPopupWindow.setTouchable(true); // 设置PopupWindow可触摸
-	    mPopupWindow.setOutsideTouchable(true); // 设置非PopupWindow区域可触摸
+
+		mPopupWindow.setOutsideTouchable(true);
 		mPopupWindow.setContentView(mPopView);
+		mPopupWindow.setOutsideTouchable(true);
 		mPopupWindow.setBackgroundDrawable(new ColorDrawable(-0000));
 		mPopupWindow.setAnimationStyle(R.style.popupwindow_animation);
 

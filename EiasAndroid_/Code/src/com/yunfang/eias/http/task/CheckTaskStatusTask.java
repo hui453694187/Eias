@@ -1,5 +1,6 @@
 package com.yunfang.eias.http.task;
 
+import java.util.HashMap;
 import java.util.Hashtable;
 
 import org.json.JSONArray;
@@ -33,8 +34,8 @@ public class CheckTaskStatusTask implements IRequestTask{
 	 * @param dataDefine：任务主表信息
 	 * @return
 	 */
-	public ResultInfo<JSONArray> request(String taskNums) {
-		ResultInfo<JSONArray> result = new ResultInfo<JSONArray>();
+	public ResultInfo<HashMap<String, Integer>> request(String taskNums) {
+		ResultInfo<HashMap<String, Integer>> result = new ResultInfo<HashMap<String, Integer>>();
 		String url =EIASApplication.getCurrentUser().LatestServer + "/apis/CheckTaskStatus";// "http://123.57.152.44:8100/apis/CheckTaskStatus";//
 		// 填充参数，key-value。key是接口要求传的变量名称
 		Hashtable<String, Object> params = new Hashtable<String, Object>(1);
@@ -59,13 +60,14 @@ public class CheckTaskStatusTask implements IRequestTask{
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public ResultInfo<JSONArray> getResponseData() {
-		ResultInfo<JSONArray> result = new ResultInfo<JSONArray>();
+	public ResultInfo<HashMap<String, Integer>> getResponseData() {
+		ResultInfo<HashMap<String, Integer>> result = new ResultInfo<HashMap<String, Integer>>();
 		if (mData != null) {
 			String dataString = new String(mData);
 			try {
 				JSONObject json = new JSONObject(dataString.toString());
 				result = JSONHelper.parseObject(json, result.getClass());
+				HashMap<String, Integer> map=new HashMap<>();
 				if(result.Success){
 					dataString = json.getString("Data");
 					if(dataString != null && !dataString.equals("null")){
@@ -74,22 +76,22 @@ public class CheckTaskStatusTask implements IRequestTask{
 							result.Message = json.getString("Message");
 						}else{
 							JSONArray jsonArray = new JSONArray(dataString);
-							/*for(int i=0;i<jsonArray.length();i++){
+							for(int i=0;i<jsonArray.length();i++){
 								JSONObject jsonObj=(JSONObject) jsonArray.get(i);
 								String taskNumb=jsonObj.getString("PID");
 								int status=jsonObj.getInt("Status");
 								//该任务的所有者ID
 								int taskUserId=jsonObj.getInt("InquirerNumber");
 								map.put(taskNumb+','+taskUserId, status);
-							}*/
-							result.Data=jsonArray;
+							}
+							result.Data=map;
 						}
 					}
 				}
 			} catch (Exception e) {
 				result.Success = false;
-				result.Message = "服务器异常，获取任务状态信息失败";
-				DataLogOperator.taskHttp("GetTaskInfoTask=>获取任务状态信息失败(getResponseData)",e.getMessage());
+				result.Message = "服务器异常，获取任务信息失败";
+				DataLogOperator.taskHttp("GetTaskInfoTask=>获取任务勘察信息失败(getResponseData)",e.getMessage());
 			}
 		} else {
 			result.Success = false;

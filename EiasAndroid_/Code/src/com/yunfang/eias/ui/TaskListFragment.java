@@ -1834,10 +1834,7 @@ public class TaskListFragment extends BaseWorkerFragment implements
 			try {
 				if (viewModel.taskStatus == TaskStatus.Done) {
 					// 同步报告已完成任务状态， 删除任务资源
-//					TaskOperator.synchroReportIsFinish(viewModel.currentUser);
-					TaskOperator.synchroDoneTaskStatus(viewModel.currentUser);
-					//TODO 调用新的检测任务状态的接口获取任务是否报告完成，与任务状态是否被撤销
-					
+					TaskOperator.synchroReportIsFinish(viewModel.currentUser);
 				} else if (viewModel.taskStatus == TaskStatus.Doing) {
 					TaskOperator
 							.syncRemoteData(0, 0, "", viewModel.currentUser);

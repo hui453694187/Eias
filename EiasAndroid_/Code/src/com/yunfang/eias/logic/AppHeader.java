@@ -19,10 +19,7 @@ import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.os.Environment;
 import android.os.StatFs;
-import android.support.v4.widget.DrawerLayout;
 import android.text.TextUtils;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
@@ -149,28 +146,7 @@ public class AppHeader {
 	 */
 	public Dialog dialog_result;
 
-	/**
-	 * 右边的菜单按钮
-	 */
-	private ImageView main_menu_right;
-
-	/**
-	 * 左边的侧滑按钮
-	 */
-	private ImageView main_menu_left;
-
-	/**
-	 * 主页面的抽屉
-	 */
-	private DrawerLayout drawer_layout;
-
 	// }}
-	/**
-	 * 设置主页面的抽屉
-	 */
-	public void setDrawer_layout(DrawerLayout drawer_layout) {
-		this.drawer_layout = drawer_layout;
-	}
 
 	/**
 	 * 实现软件的头部控件的事件与功能
@@ -183,36 +159,28 @@ public class AppHeader {
 	public AppHeader(Context context, int viewID) {
 		currentContext = context;
 		headerView = (LinearLayout) ((Activity) context).findViewById(viewID);
-		main_menu_left = (ImageView) headerView.findViewById(R.id.main_menu_left);
-
 		home_btn_wifi = (Button) headerView.findViewById(R.id.home_btn_wifi);
 		home_btn_2g = (Button) headerView.findViewById(R.id.home_btn_2g);
 		home_btn_3g = (Button) headerView.findViewById(R.id.home_btn_3g);
 		home_btn_4g = (Button) headerView.findViewById(R.id.home_btn_4g);
 		home_btn_info = (TextView) headerView.findViewById(R.id.home_btn_info);
-		main_menu_right = (ImageView) headerView.findViewById(R.id.main_menu_right);
-		home_txt_title = (TextView) headerView.findViewById(R.id.home_txt_title);
-		eias_app_header_map = (ImageView) headerView.findViewById(R.id.eias_app_header_map);
-		main_header_btn_back = (ImageButton) headerView.findViewById(R.id.main_header_btn_back);
-		main_header_lay_back = (RelativeLayout) headerView.findViewById(R.id.main_header_lay_back);
+		home_txt_title = (TextView) headerView
+				.findViewById(R.id.home_txt_title);
+		eias_app_header_map = (ImageView) headerView
+				.findViewById(R.id.eias_app_header_map);
+		main_header_btn_back = (ImageButton) headerView
+				.findViewById(R.id.main_header_btn_back);
+		main_header_lay_back = (RelativeLayout) headerView
+				.findViewById(R.id.main_header_lay_back);
 		home_btn_info.setText(EIASApplication.getCurrentUser().Name);
 
 		appHeaderMenu = new AppHeaderMenu(currentContext);
 
 		main_header_btn_back.setOnClickListener(back);
-		//		home_btn_info.setOnClickListener(new OnClickListener() {
-		//			@Override
-		//			public void onClick(View v) {
-		//				appHeaderMenu.mPopupWindow.showAsDropDown(home_btn_info);
-		//			}
-		//		});
-		main_menu_right.setOnClickListener(new OnClickListener() {
+		home_btn_info.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				Log.i("ashfoisfuaiaklaoi", "appHeaderMenu.mPopupWindow.isShowing() = " + appHeaderMenu.mPopupWindow.isShowing());
-				if (!appHeaderMenu.mPopupWindow.isShowing()) {
-					appHeaderMenu.mPopupWindow.showAsDropDown(main_menu_right);
-				}
+				appHeaderMenu.mPopupWindow.showAsDropDown(home_btn_info);
 			}
 		});
 
@@ -220,7 +188,8 @@ public class AppHeader {
 		// 获取NotificationManager的引用
 		String notificationService = Context.NOTIFICATION_SERVICE;
 		// 初始化通知管理器
-		notificationManager = (NotificationManager) context.getSystemService(notificationService);
+		notificationManager = (NotificationManager) context
+				.getSystemService(notificationService);
 		// 声明消息接收对象
 		ArrayList<String> temp = new ArrayList<String>();
 		temp.add(String.valueOf(ConnectivityManager.CONNECTIVITY_ACTION));
@@ -235,53 +204,23 @@ public class AppHeader {
 					onAppHeaderReceive(context, intent);
 					break;
 				case BroadRecordType.SUBMITED_RESULT_NOTIFICATION: // 通知消息
-					Integer notificationId = Integer.parseInt(intent.getStringExtra("notificationId"));
+					Integer notificationId = Integer.parseInt(intent
+							.getStringExtra("notificationId"));
 					String title = intent.getStringExtra("title");
 					String contentTop = intent.getStringExtra("contentTop");
-					String contentBottom = intent.getStringExtra("contentBottom");
+					String contentBottom = intent
+							.getStringExtra("contentBottom");
 					String tickerText = intent.getStringExtra("tickerText");
 					NotificationUtils unils = new NotificationUtils();
-					unils.showNotification(notificationId, title, contentTop, contentBottom, tickerText, true, Notification.FLAG_AUTO_CANCEL, null, null);
+					unils.showNotification(notificationId, title, contentTop,
+							contentBottom, tickerText, true,
+							Notification.FLAG_AUTO_CANCEL, null, null);
 					break;
 				default:
 					break;
 				}
 			}
 		});
-
-		//点击侧滑按钮
-		main_menu_left.setOnClickListener(myOnClickListener);
-	}
-
-	@SuppressLint("RtlHardcoded")
-	private OnClickListener myOnClickListener = new OnClickListener() {
-
-		@Override
-		public void onClick(View v) {
-			switch (v.getId()) {
-			case R.id.main_menu_left: //点击侧滑按钮
-				actionClickOpenDrawer();
-				break;
-
-			default:
-				break;
-			}
-		}
-	};
-	
-	/**
-	 * 点击打开抽屉
-	 */
-	@SuppressLint("RtlHardcoded")
-	private void actionClickOpenDrawer() {
-		//打开侧滑菜单
-		if (drawer_layout!= null) {
-			if (drawer_layout.isDrawerOpen(Gravity.LEFT)) {
-				drawer_layout.closeDrawer(Gravity.LEFT);
-			}else {
-				drawer_layout.openDrawer(Gravity.LEFT);
-			}
-		}
 	}
 
 	/**
@@ -291,7 +230,8 @@ public class AppHeader {
 		@Override
 		public void onClick(View v) {
 			((Activity) currentContext).finish();
-			((Activity) currentContext).overridePendingTransition(R.anim.slide_right_in, R.anim.slide_right_out);
+			((Activity) currentContext).overridePendingTransition(
+					R.anim.slide_right_in, R.anim.slide_right_out);
 		}
 	};
 
@@ -334,7 +274,8 @@ public class AppHeader {
 			// 设置任务参数
 			HashMap<String, Object> para = new HashMap<String, Object>();
 			// 设置后台运行的任务
-			BackgroundServiceTask task = new BackgroundServiceTask(MainService.RESTARTTASK_SUMIT, para);
+			BackgroundServiceTask task = new BackgroundServiceTask(
+					MainService.RESTARTTASK_SUMIT, para);
 			// 添加到任务池中
 			MainService.setTask(task);
 		}
@@ -400,10 +341,8 @@ public class AppHeader {
 	public void visUserInfo(Boolean vis) {
 		if (vis) {
 			home_btn_info.setVisibility(View.VISIBLE);
-			main_menu_right.setVisibility(View.VISIBLE);
 		} else {
 			home_btn_info.setVisibility(View.GONE);
-			main_menu_right.setVisibility(View.GONE);
 		}
 	}
 
@@ -440,9 +379,13 @@ public class AppHeader {
 			try {
 				// 如果版本不一致就下载最新的
 				// 检查服务端版本名是否为空，本地版本名于服务端版本是否一致， 不能为空， 不可以为null字符串
-				boolean isNull = TextUtils.isEmpty(EIASApplication.version.ServerVersionName) || EIASApplication.version.ServerVersionName.equals("null");
+				boolean isNull = TextUtils
+						.isEmpty(EIASApplication.version.ServerVersionName)
+						|| EIASApplication.version.ServerVersionName
+								.equals("null");
 				// 本地版本名于服务端版本是否一致
-				boolean different = !EIASApplication.version.LocalVersionName.equals(EIASApplication.version.ServerVersionName);
+				boolean different = !EIASApplication.version.LocalVersionName
+						.equals(EIASApplication.version.ServerVersionName);
 				if (!isNull && different) {
 					showVersionUpdateDialog();
 				} else {
@@ -467,15 +410,22 @@ public class AppHeader {
 			try {
 				// 如果版本不一致就下载最新的
 				// 检查服务端版本名是否为空，本地版本名于服务端版本是否一致， 不能为空， 不可以为null字符串
-				boolean isNull = TextUtils.isEmpty(EIASApplication.version.ServerVersionName) || EIASApplication.version.ServerVersionName.equals("null");
+				boolean isNull = TextUtils
+						.isEmpty(EIASApplication.version.ServerVersionName)
+						|| EIASApplication.version.ServerVersionName
+								.equals("null");
 				// 本地版本名于服务端版本是否一致
-				boolean different = !EIASApplication.version.LocalVersionName.equals(EIASApplication.version.ServerVersionName);
+				boolean different = !EIASApplication.version.LocalVersionName
+						.equals(EIASApplication.version.ServerVersionName);
 				if (!isNull && different) {
 					OpenDialogHelper odh = new OpenDialogHelper(currentContext);
 					String confirmTxt = "马上更新";
 					String cancelTxt = "今天不再提示";
-					String title = "确认(当前版本:" + EIASApplication.version.LocalVersionName + ")";
-					String msgTxt = "发现新版本[" + EIASApplication.version.ServerVersionName + "]是否需要更新?";
+					String title = "确认(当前版本:"
+							+ EIASApplication.version.LocalVersionName + ")";
+					String msgTxt = "发现新版本["
+							+ EIASApplication.version.ServerVersionName
+							+ "]是否需要更新?";
 					OnClickListener confirmL = new OnClickListener() {
 
 						@Override
@@ -504,7 +454,8 @@ public class AppHeader {
 					};
 
 					if (dialog == null) {
-						dialog = odh.showCommDialog(confirmTxt, cancelTxt, title, msgTxt, confirmL, cancelL);
+						dialog=odh.showCommDialog(confirmTxt, cancelTxt, title,
+								msgTxt, confirmL, cancelL);
 					}
 
 					dialog.show();
@@ -535,20 +486,20 @@ public class AppHeader {
 		sp.putString(EIASApplication.UPDATE_TIPS, dateTime);
 
 	}
-
+	
 	/***
 	 * 获取提示更新日期
 	 * @return
 	 */
-	public boolean getUpdateTipsIsShow() {
-		boolean show = true;
+	public boolean getUpdateTipsIsShow(){
+		boolean show=true;
 		SpUtil sp = SpUtil.getInstance(EIASApplication.SORT_STATUS_SP);
-		String updateTime = sp.getString(EIASApplication.UPDATE_TIPS, "");
+		String updateTime=sp.getString(EIASApplication.UPDATE_TIPS,"");
 		Date tady = new Date();
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 		String dateTime = sdf.format(tady.getTime());
-		if (!updateTime.equals("") && dateTime.equals(updateTime)) {
-			show = false;
+		if(!updateTime.equals("")&&dateTime.equals(updateTime)){
+			show=false;
 		}
 		return show;
 	}
@@ -567,8 +518,14 @@ public class AppHeader {
 				}
 			}
 		};
-		new AlertDialog.Builder(currentContext).setTitle("确认(当前版本:" + EIASApplication.version.LocalVersionName + ")")
-				.setMessage("发现新版本[" + EIASApplication.version.ServerVersionName + "]是否需要更新?").setPositiveButton("是", listener).setNegativeButton("否", null).show();
+		new AlertDialog.Builder(currentContext)
+				.setTitle(
+						"确认(当前版本:" + EIASApplication.version.LocalVersionName
+								+ ")")
+				.setMessage(
+						"发现新版本[" + EIASApplication.version.ServerVersionName
+								+ "]是否需要更新?").setPositiveButton("是", listener)
+				.setNegativeButton("否", null).show();
 	}
 
 	/***
@@ -578,19 +535,22 @@ public class AppHeader {
 		// 设置任务参数
 		HashMap<String, Object> para = new HashMap<String, Object>();
 		// 设置后台运行的任务
-		BackgroundServiceTask task = new BackgroundServiceTask(MainService.DOWN_LAST_VERSION, para);
+		BackgroundServiceTask task = new BackgroundServiceTask(
+				MainService.DOWN_LAST_VERSION, para);
 		// 添加到任务池中
 		MainService.setTask(task);
 		UserInfo user = EIASApplication.getCurrentUser();
 		// 用户点击更新， 记录日志，
-		DataLogWorker.createDataLog(user, "用户[" + user.Name + "]点击了更新。", OperatorTypeEnum.VersionUpdate, LogType.UserOperation);
+		DataLogWorker.createDataLog(user, "用户[" + user.Name + "]点击了更新。",
+				OperatorTypeEnum.VersionUpdate, LogType.UserOperation);
 	}
 
 	@SuppressWarnings("deprecation")
 	public Boolean checkSDCardHasSize() {
 		Boolean result = true;
 		// 判断是否有插入存储卡
-		if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)) {
+		if (Environment.getExternalStorageState().equals(
+				Environment.MEDIA_MOUNTED)) {
 			// 获取出厂内置SD卡 例如三星 和 小米
 			File path = Environment.getExternalStorageDirectory();
 			// 取得SDcard文件路径
@@ -604,11 +564,15 @@ public class AppHeader {
 			// 剩余百分比
 			int sdhasSize = (int) ((totalBlocks - availaBlock) / totalBlocks * 100);
 			// 获取剩余容量小于指定大小时 提示
-			String minSDCardSize = EIASApplication.getSystemSetting(BroadRecordType.KEY_SETTING_SDCARDSIZE);
+			String minSDCardSize = EIASApplication
+					.getSystemSetting(BroadRecordType.KEY_SETTING_SDCARDSIZE);
 			// 剩余容量是否小于指定大小
-			if (availaBlock * blockSize / 1024 / 1024 < Integer.parseInt(minSDCardSize)) {
-				final Dialog dialog_checksdcard = DialogUtil.commonDialog(currentContext, R.layout.dialog_view_task_sdcard);
-				WindowManager.LayoutParams params = dialog_checksdcard.getWindow().getAttributes();
+			if (availaBlock * blockSize / 1024 / 1024 < Integer
+					.parseInt(minSDCardSize)) {
+				final Dialog dialog_checksdcard = DialogUtil.commonDialog(
+						currentContext, R.layout.dialog_view_task_sdcard);
+				WindowManager.LayoutParams params = dialog_checksdcard
+						.getWindow().getAttributes();
 				Point point = WinDisplay.getWidthAndHeight(currentContext);
 				switch (EIASApplication.PageSize) {
 				case 6:// 手机
@@ -622,10 +586,12 @@ public class AppHeader {
 					dialog_checksdcard.getWindow().setAttributes(params);
 					break;
 				}
-				ProgressBar dialog_progressBar = (ProgressBar) dialog_checksdcard.findViewById(R.id.dialog_progressBar);
+				ProgressBar dialog_progressBar = (ProgressBar) dialog_checksdcard
+						.findViewById(R.id.dialog_progressBar);
 				dialog_progressBar.setMax(100);
 				dialog_progressBar.setProgress(sdhasSize);
-				Button dialog_check = (Button) dialog_checksdcard.findViewById(R.id.dialog_check);
+				Button dialog_check = (Button) dialog_checksdcard
+						.findViewById(R.id.dialog_check);
 				dialog_check.setOnClickListener(new OnClickListener() {
 					@Override
 					public void onClick(View v) {
@@ -647,8 +613,10 @@ public class AppHeader {
 		if (activityIsFinishing()) {
 			return;
 		}
-		final Dialog dialog_checksdcard = DialogUtil.commonDialog(currentContext, R.layout.dialog_view_info);
-		WindowManager.LayoutParams params = dialog_checksdcard.getWindow().getAttributes();
+		final Dialog dialog_checksdcard = DialogUtil.commonDialog(
+				currentContext, R.layout.dialog_view_info);
+		WindowManager.LayoutParams params = dialog_checksdcard.getWindow()
+				.getAttributes();
 		Point point = WinDisplay.getWidthAndHeight(currentContext);
 		switch (EIASApplication.PageSize) {
 		case 6:// 手机
@@ -662,9 +630,12 @@ public class AppHeader {
 			dialog_checksdcard.getWindow().setAttributes(params);
 			break;
 		}
-		TextView dialog_view_info_concent = (TextView) dialog_checksdcard.findViewById(R.id.dialog_view_info_concent);
-		TextView dialog_view_info_title = (TextView) dialog_checksdcard.findViewById(R.id.dialog_view_info_title);
-		Button dialog_view_info_confirm = (Button) dialog_checksdcard.findViewById(R.id.dialog_view_info_confirm);
+		TextView dialog_view_info_concent = (TextView) dialog_checksdcard
+				.findViewById(R.id.dialog_view_info_concent);
+		TextView dialog_view_info_title = (TextView) dialog_checksdcard
+				.findViewById(R.id.dialog_view_info_title);
+		Button dialog_view_info_confirm = (Button) dialog_checksdcard
+				.findViewById(R.id.dialog_view_info_confirm);
 
 		dialog_view_info_title.setText(title);
 		dialog_view_info_concent.setText(msg);
@@ -682,12 +653,15 @@ public class AppHeader {
 		}
 	}
 
-	public void showDialog(String title, String msg, OnClickListener confirmListener) {
+	public void showDialog(String title, String msg,
+			OnClickListener confirmListener) {
 		if (activityIsFinishing()) {
 			return;
 		}
-		final Dialog dialog_checksdcard = DialogUtil.commonDialog(currentContext, R.layout.dialog_view_info);
-		WindowManager.LayoutParams params = dialog_checksdcard.getWindow().getAttributes();
+		final Dialog dialog_checksdcard = DialogUtil.commonDialog(
+				currentContext, R.layout.dialog_view_info);
+		WindowManager.LayoutParams params = dialog_checksdcard.getWindow()
+				.getAttributes();
 		Point point = WinDisplay.getWidthAndHeight(currentContext);
 		switch (EIASApplication.PageSize) {
 		case 6:// 手机
@@ -701,9 +675,12 @@ public class AppHeader {
 			dialog_checksdcard.getWindow().setAttributes(params);
 			break;
 		}
-		TextView dialog_view_info_concent = (TextView) dialog_checksdcard.findViewById(R.id.dialog_view_info_concent);
-		TextView dialog_view_info_title = (TextView) dialog_checksdcard.findViewById(R.id.dialog_view_info_title);
-		Button dialog_view_info_confirm = (Button) dialog_checksdcard.findViewById(R.id.dialog_view_info_confirm);
+		TextView dialog_view_info_concent = (TextView) dialog_checksdcard
+				.findViewById(R.id.dialog_view_info_concent);
+		TextView dialog_view_info_title = (TextView) dialog_checksdcard
+				.findViewById(R.id.dialog_view_info_title);
+		Button dialog_view_info_confirm = (Button) dialog_checksdcard
+				.findViewById(R.id.dialog_view_info_confirm);
 
 		dialog_view_info_title.setText(title);
 		dialog_view_info_concent.setText(msg);
@@ -729,12 +706,16 @@ public class AppHeader {
 	 * @param checksucess
 	 * @param click
 	 */
-	public void showDialogResult(String title, ArrayList<DialogTipsDTO> notices, boolean visConfirm, OnClickListener confirmClick) {
+	public void showDialogResult(String title,
+			ArrayList<DialogTipsDTO> notices, boolean visConfirm,
+			OnClickListener confirmClick) {
 		if (activityIsFinishing()) {
 			return;
 		}
-		dialog_result = DialogUtil.commonDialog(currentContext, R.layout.dialog_view_task_result);
-		WindowManager.LayoutParams params = dialog_result.getWindow().getAttributes();
+		dialog_result = DialogUtil.commonDialog(currentContext,
+				R.layout.dialog_view_task_result);
+		WindowManager.LayoutParams params = dialog_result.getWindow()
+				.getAttributes();
 		Point point = WinDisplay.getWidthAndHeight(currentContext);
 		switch (EIASApplication.PageSize) {
 		case 6:// 手机
@@ -748,13 +729,18 @@ public class AppHeader {
 			dialog_result.getWindow().setAttributes(params);
 			break;
 		}
-		TextView dialog_title = (TextView) dialog_result.findViewById(R.id.dialog_view_task_result_title);
-		ListView dialog_list = (ListView) dialog_result.findViewById(R.id.dialog_view_task_result_list);
-		Button dialog_confirm = (Button) dialog_result.findViewById(R.id.dialog_view_task_result_confirm);
-		Button dialog_cancel = (Button) dialog_result.findViewById(R.id.dialog_view_task_result_cancel);
+		TextView dialog_title = (TextView) dialog_result
+				.findViewById(R.id.dialog_view_task_result_title);
+		ListView dialog_list = (ListView) dialog_result
+				.findViewById(R.id.dialog_view_task_result_list);
+		Button dialog_confirm = (Button) dialog_result
+				.findViewById(R.id.dialog_view_task_result_confirm);
+		Button dialog_cancel = (Button) dialog_result
+				.findViewById(R.id.dialog_view_task_result_cancel);
 
 		dialog_title.setText(title);
-		DialogResultListAdapter mAdapter = new DialogResultListAdapter(currentContext, notices);
+		DialogResultListAdapter mAdapter = new DialogResultListAdapter(
+				currentContext, notices);
 		dialog_list.setAdapter(mAdapter);
 
 		if (visConfirm) {

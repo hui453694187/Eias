@@ -19,22 +19,18 @@ public enum IntroductionTypeEnum {
 	/**
 	 * 其他功能说明
 	 */
-	AbountOther("其他功能说明", 2),
-	/**
-	 * 其他功能说明
-	 */
-	MapAroundOther("获取周边信息说明", 3);
+	AbountOther("其他功能说明", 2);
 	// }}
 	
 	//{{ 获取最大值
 	
 	/**
 	 * 注意！！！！！！！！！！！！！！这里用到了循环所以每次加枚举的时候 请把新加的一个枚举放到下面去
-	 * MapAroundOther.index + 1;  如果要加 请把 MapAroundOther替换最新加的枚举
+	 * AbountOther.index + 1;  如果要加 请把 AbountOther替换最新加的枚举
 	 * @return
 	 */
 	public static int length(){
-		return MapAroundOther.index + 1;
+		return AbountOther.index + 1;
 	}
 	
 	//}}

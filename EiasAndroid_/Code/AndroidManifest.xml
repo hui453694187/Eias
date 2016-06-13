@@ -184,13 +184,6 @@
             android:label="@string/app_name_ch"
             android:screenOrientation="portrait" >
         </activity>
-           <!-- 百度地图搜索周边 -->
-        <activity
-            android:name=".ui.BaiduAroundActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/app_name_ch"
-            android:screenOrientation="portrait" >
-        </activity>
 
         <uses-library android:name="android.test.runner" />
         <!-- 服务 -->
@@ -212,7 +205,6 @@
         <meta-data
             android:name="com.baidu.lbsapi.API_KEY"
             android:value="6coMH7OYGfW2u22mPtT1OR9q" />
-        <!-- zhu  android:value="muWWsRkiYnyCK9BAPOcG9WXrttnfqk14" -->
         <!-- ljp  android:value="EGgXaPLRzCywWFBFgqNRsGFS" -->
         <!-- hj android:value="9QSqCU63TAZiGiTN7aPOwnC2" /> -->
         <!-- gorson android:value="RuBg0RZc9GDGKnEifscfnrGG" /> -->
@@ -241,7 +233,8 @@
     </uses-permission>
     <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" >
     </uses-permission>
-
+    <uses-permission android:name="android.permission.WRITE_APN_SETTINGS" >
+    </uses-permission>
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" >
     </uses-permission>
     <uses-permission android:name="android.launcher.permission.READ_SETTINGS" />

@@ -161,7 +161,7 @@ public class MainService extends BaseBackgroundService {
 	 * @param task
 	 */
 	public static void setTask(BackgroundServiceTask task) {
-		if (beforeBackgroundHandler(task) && mbackgroundHandler!= null) {
+		if (beforeBackgroundHandler(task)) {
 			// 建立任务
 			Message msg = new Message();
 			msg.what = task.getServiceTaskId();

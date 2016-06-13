@@ -33,12 +33,13 @@
             android:layout_height="wrap_content"
             android:background="@android:color/white"
             android:orientation="vertical" >
-
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:orientation="vertical" >
+
+               
 
                 <EditText
                     android:id="@+id/dialog_view_appointment_name"
@@ -59,21 +60,19 @@
                 android:layout_marginRight="10dp"
                 android:orientation="horizontal" >
 
+                <!--
+                 <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="联系电话：" />-->
+
                 <EditText
                     android:id="@+id/dialog_view_appointment_phone"
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="40dp"
-                    android:layout_weight="5"
                     android:hint="请输入联系电话"
                     android:inputType="phone"
                     android:maxLength="50" />
-
-                <ImageView
-                    android:id="@+id/dialog_view_appointment_phone_call"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:src="@drawable/btn_phone_state_selector" />
             </LinearLayout>
 
             <LinearLayout
@@ -163,8 +162,8 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginBottom="10dp"
-        android:background="@color/white"
         android:gravity="center"
+        android:background="@color/white"
         android:orientation="horizontal" >
 
         <Button

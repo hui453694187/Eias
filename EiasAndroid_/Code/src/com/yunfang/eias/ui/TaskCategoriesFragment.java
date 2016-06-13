@@ -224,13 +224,6 @@ public class TaskCategoriesFragment extends BaseWorkerFragment {
 		btn_back.setText("返回");
 
 		viewModel.taskInfoActivity.appHeader.visBackView(true);
-		
-
-		//2016年4月6日10:07:00  回桌面后回来,偶然报空指针,估计内存不足被干掉了
-		if (viewModel.currentTask.TaskNum == null) {
-			getActivity().finish();
-		}
-		
 		viewModel.taskInfoActivity.appHeader.setTitle(viewModel.currentTask.TaskNum);
 
 		if (!viewModel.taskInfoActivity.additional) {

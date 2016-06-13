@@ -101,7 +101,7 @@ public class TaskInfoActivity extends BaseWorkerFragmentActivity implements OnSc
 	/**
 	 * 当前所在的Fragment
 	 */
-	public Fragment currentFragment;
+	private Fragment currentFragment;
 
 	/**
 	 * 视图对象

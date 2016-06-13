@@ -336,7 +336,6 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 		return inflate;
 	}
 
-	
 	/**
 	 * 加载普通控件
 	 * 
@@ -399,9 +398,6 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 
 		//		mediaGrid.setOnScrollListener(myScrollListener);
 
-		
-
-		
 		bt_take_picture.setOnClickListener(myOnClickListener);
 		bt_choose_image.setOnClickListener(myOnClickListener);
 		bt_open_view.setOnClickListener(myOnClickListener);
@@ -967,7 +963,7 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 						i.setClass(taskInfoActivity, MultiSelectAlbumActivity.class);
 						startActivityForResult(i, TASK_ALBUM);
 						//getFileOfMediaLib();
-					} else {
+					} else if (index != 0) {
 						if (!taskInfoActivity.meidaListAdapter.getVisCheck()) {
 							enterEdit();
 						} else {
@@ -1046,9 +1042,9 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 	@Override
 	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
 		super.onActivityResult(requestCode, resultCode, intent);
-		
+
 		if (resultCode == taskInfoActivity.RESULT_OK) {
-						Boolean isContinue = false;
+			Boolean isContinue = false;
 			if (mediaFile != null) {
 				mediaInfo = new MediaDataInfo("请选择类型", mediaFile);
 			}
@@ -1471,12 +1467,8 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 	private void enterEdit() {
 		((CheckBox) mView.findViewById(R.id.header_bar_leave_select_all)).setChecked(false);
 		taskInfoActivity.meidaListAdapter.visCheck(true);
-		mediaGrid.setPadding(4, 4, 4, 4);
+		mediaGrid.setPadding(4, 4, 4, 108);
 		mView.findViewById(R.id.task_list_title).setVisibility(View.GONE);
-		//隐藏拍照按钮
-		ll_top_button.setVisibility(View.GONE);
-		//隐藏类型
-		ll_type_item_gridView.setVisibility(View.GONE);
 		mView.findViewById(R.id.media_header_bar).setVisibility(View.VISIBLE);
 		mView.findViewById(R.id.media_bottom_bar).setVisibility(View.VISIBLE);
 	}
@@ -1488,8 +1480,6 @@ public class ShowMediaListFragment extends BaseWorkerFragment implements OnScrol
 		taskInfoActivity.meidaListAdapter.visCheck(false);
 		mediaGrid.setPadding(4, 4, 4, 4);
 		mView.findViewById(R.id.task_list_title).setVisibility(View.VISIBLE);
-		ll_top_button.setVisibility(View.VISIBLE);
-		ll_type_item_gridView.setVisibility(View.VISIBLE);
 		mView.findViewById(R.id.media_header_bar).setVisibility(View.GONE);
 		mView.findViewById(R.id.media_bottom_bar).setVisibility(View.GONE);
 	}

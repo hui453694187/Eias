@@ -5,10 +5,8 @@
     android:layout_height="match_parent" >
 
     <LinearLayout
-        android:id="@+id/ll_content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/media_bottom_bar"
         android:orientation="vertical" >
 
         <include
@@ -106,25 +104,25 @@
                         android:padding="4dip"
                         android:stretchMode="columnWidth"
                         android:verticalSpacing="4dip" />
+
+                    <include
+                        android:id="@+id/media_bottom_bar"
+                        android:layout_width="fill_parent"
+                        android:layout_height="50dp"
+                        android:layout_alignParentBottom="true"
+                        android:layout_gravity="bottom"
+                        layout="@layout/media_bottom_bar"
+                        android:visibility="gone" />
                 </RelativeLayout>
             </LinearLayout>
         </ScrollView>
     </LinearLayout>
 
-    <include
-        android:id="@+id/media_bottom_bar"
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
-        android:layout_gravity="bottom"
-        layout="@layout/media_bottom_bar"
-        android:visibility="gone" />
-
     <com.yunfang.eias.view.NewTouchView
+        android:visibility="gone"
         android:id="@+id/new_touch_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:visibility="gone" />
+        android:layout_alignParentTop="true" />
 
 </RelativeLayout>

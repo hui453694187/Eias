@@ -67,7 +67,7 @@
     <string name="thumbnail_dir">任务缩略图</string>
     <string name="project_dir">任务资源</string>
     <string name="user_image_dir">用户头像</string>
-
+    
     <!-- 系统设置 -->
     <string name="system_setting_copy">复制</string>
     <string name="system_setting_paste">剪切</string>
@@ -75,7 +75,7 @@
     <string name="system_setting_custom_camer">外采定制相机</string>
     <string name="system_setting_photo_select">图库图片操作</string>
     <string name="system_setting_camer_select">拍照相机选择</string>
-
+    
     <!-- 下拉刷新控件 -->
     <string name="head">这里是HeadView</string>
     <string name="pull_to_refresh">下拉刷新</string>
@@ -88,22 +88,7 @@
     <string name="loading">正在加载...</string>
     <string name="load_succeed">加载成功</string>
     <string name="load_fail">加载失败</string>
+    
     <string name="taskInfo_address">任务地址</string>
     <string name="recordErr_info">录音不成功，请确认是否禁用了外采系统录音权限，请尝试开启录音权限</string>
-    <string name="please_enter_address">请输入详细地址(必须包含省和市)</string>
-    <string name="super_maker">超市</string>
-    <string name="map_readme"></string>
-    <string name="new_read_me">这里是生成的结果展示,可以在这里修改结果.&lt;br />以下是简易教程:&lt;br />1.点击右下角的&lt;font color=\'#ff0000\'>搜索周边&lt;/font>.&lt;br />2.等待结果出现,点击&lt;font color=\'#0000ff\'>确认返回&lt;/font>.</string>
-    <string name="map_not_result">请先点击右下角的&lt;font color=\'#ff0000\'>搜索周边&lt;/font>获取结果</string>
-    <string name="map_around_readme_1">1.[目标地址]这里地址是任务中的目标地址.注意要在地图上确认位置是否正确.\n
-        (1)如果地图上未找到该地址,请在地址前加上省和市.\n
-(2)如果你嫌烦的话,可以直接点击地图更新目标位置.\n\n
-2.[地址检索]如果你手动修改了地址,点击该按钮可以将[目标地址]在地图上定位.\n
-3.[搜索关键字]如果关键字不准确,可以手动修改.如\"公共交通站点\"可能搜索不到结果,修改为\"公交站\"后或许就能搜索到结果了.</string>
-    <string name="map_around_readme_2">1.[搜索周边] 当[目标地址]和[搜索关键字]填写完毕后,可以点击该按钮进行周边搜索.\n
-2.[地图]地图上会把搜索出来的结果进行展示.绿色的圈代表方圆2000m的范围.\n
-3.[结果展示]如果对生成的结果不满意,或者结果不准确,可以直接在这里修改.\n
-4.[确认返回]确认[结果展示]无误后,点击该按钮可以将结果写入任务.\n
-[例外]如果确实搜索不到结果,可以点击左上角的返回按钮返回.\n</string>
-
 </resources>

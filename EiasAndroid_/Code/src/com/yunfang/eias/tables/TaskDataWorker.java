@@ -744,10 +744,9 @@ public class TaskDataWorker {
 			StringBuilder sqlBuilder = new StringBuilder(
 					"from TaskInfo where User='");
 			sqlBuilder.append(currentUser.Name + "'");
-			// 查询获取待提交任务，和暂停任务，不属于当前用户的任务 20160407 待提交撤销任务
+			// 查询获取待提交任务，和暂停任务，不属于当前用户的任务
 			sqlBuilder.append(" and Status in ('" + status.getIndex() + "','"
 					+ TaskStatus.Pause.getIndex() + "','"
-					+ TaskStatus.Revocation.getIndex() + "','"// 待提交撤销任务
 					+ TaskStatus.Unbelong.getIndex() + "')");
 			if (isNew.length() > 0) {
 				sqlBuilder.append(" and IsNew=1 ");
@@ -1260,11 +1259,7 @@ public class TaskDataWorker {
 			StringBuilder sqlBuilder = new StringBuilder(
 					"from TaskInfo where User='");
 			sqlBuilder.append(currentUser.Name + "'");
-			//查询已完成任务，已完成后撤销的任务
-			sqlBuilder.append(" and Status in ('" + status.getIndex() + "','"
-					+ TaskStatus.DoneRevocation.getIndex()+"')");
-			//sqlBuilder.append(" and Status=" + status.getIndex());
-			
+			sqlBuilder.append(" and Status=" + status.getIndex());
 			if (selectStr.trim().length() > 0) {
 				sqlBuilder.append(" AND (TaskNum");
 				sqlBuilder.append(" like '%" + selectStr);
@@ -2279,14 +2274,13 @@ public class TaskDataWorker {
 	}
 
 	/**
-	 * 获取本地的服务器任务 获取状态类型为， 待提交、暂停、不属于当前用户、已撤销 的任务
+	 * 获取本地的服务器任务
 	 * 
 	 * @param currentUser
 	 *            当前用户
 	 * @return
 	 */
-	public static ResultInfo<String> getServerTaskByLoc(UserInfo currentUser,
-			int[] taskStatuss) {
+	public static ResultInfo<String> getServerTaskByLoc(UserInfo currentUser) {
 		ResultInfo<String> result = new ResultInfo<String>();
 		SQLiteDatabase db = null;
 		try {
@@ -2297,15 +2291,7 @@ public class TaskDataWorker {
 					+ " where User='");
 			queryStr.append(currentUser.Name + "'");// 当前用户
 			queryStr.append(" and IsNew = 0");// 服务器任务
-			// 需要同步状态的任务的状态类型， 待提交，暂停，不属于当前用户，已撤销的任务
-			StringBuilder statusStr = new StringBuilder();
-			if (taskStatuss.length > 0) {// 拼接任务状态条件
-				for (int status : taskStatuss) {
-					statusStr.append("'" + status + "',");
-				}
-				String subStr=statusStr.substring(0, statusStr.length() - 1);
-				queryStr.append(" and Status in (" + subStr + ")");// 当前任务状态
-			}
+			queryStr.append(" and Status in ('1','-99','"+TaskStatus.Unbelong.getIndex()+"')");// 当前任务状态
 			Cursor cursor = db.rawQuery(
 					"select TaskNum from " + queryStr.toString(), null);
 			if (cursor != null) {
